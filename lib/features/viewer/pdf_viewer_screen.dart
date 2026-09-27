@@ -28,11 +28,15 @@ enum MarkupAnnotationType { highlight, underline, strikethrough, squiggly }
 class PdfViewerScreen extends ConsumerStatefulWidget {
   final String filePath;
   final bool isExternalLaunch;
+  final int initialPage;
+  final bool openAnnotationInspector;
 
   const PdfViewerScreen({
     super.key,
     required this.filePath,
     this.isExternalLaunch = false,
+    this.initialPage = 1,
+    this.openAnnotationInspector = false,
   });
 
   @override
@@ -82,8 +86,19 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _pdfViewerController = PdfViewerController();
+    if (widget.initialPage > 1) {
+      _initialPage = widget.initialPage;
+      _currentPage = widget.initialPage;
+    }
     _loadMetadataAndProgress();
     _sessionStopwatch.start();
+    if (widget.openAnnotationInspector) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showAnnotationInspectorSheet();
+        }
+      });
+    }
   }
 
   @override
@@ -133,7 +148,10 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
       setState(() {
         _userBookmarks = bookmarks;
         _pdfNotes = notes;
-        if (pdfFile != null && pdfFile.lastOpenedPage > 1) {
+        if (widget.initialPage > 1) {
+          _initialPage = widget.initialPage;
+          _currentPage = widget.initialPage;
+        } else if (pdfFile != null && pdfFile.lastOpenedPage > 1) {
           _initialPage = pdfFile.lastOpenedPage;
         }
       });
@@ -966,6 +984,503 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showAnnotationInspectorSheet() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final paletteColors = [
+      (EditorialTokens.primary, 'Terracotta'),
+      (const Color(0xFFC2843A), 'Ochre'),
+      (const Color(0xFF5D7052), 'Sage'),
+      (const Color(0xFF2C2825), 'Charcoal'),
+      (const Color(0xFF4E5866), 'Slate'),
+    ];
+    final strokeWidths = ['0.5mm', '1.0mm', '2.0mm'];
+    final noteController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          final notesOnCurrentPage = _pdfNotes.where((n) => n.pageNumber == _currentPage).toList();
+
+          return Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.85,
+            ),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(EditorialTokens.r8)),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x2A1C1A18),
+                  blurRadius: 16,
+                  offset: Offset(0, -4),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Pull indicator
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Header
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              EditorialEyebrow(
+                                text: 'DOCUMENT STUDIO / PAGE $_currentPage OF ${_totalPages > 0 ? _totalPages : 1}',
+                                color: EditorialTokens.primary,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Annotation Inspector',
+                                style: EditorialTokens.titleMedium(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 20),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          onPressed: () => Navigator.pop(bottomSheetContext),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const EditorialDivider(),
+                    const SizedBox(height: 14),
+
+                    // Associated Formula Block (from Stitch Page 1 & 2)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        border: Border.all(
+                          color: EditorialTokens.primary.withOpacity(0.3),
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.functions, size: 14, color: EditorialTokens.primary),
+                              const SizedBox(width: 6),
+                              Text(
+                                'ASSOCIATED FORMULATION (PAGE $_currentPage)',
+                                style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  Clipboard.setData(const ClipboardData(
+                                    text: r'\mathcal{L}\{\ddot{x} + 2\zeta\omega_n\dot{x} + \omega_n^2x\} = X(s)(s^2 + 2\zeta\omega_n s + \omega_n^2)',
+                                  ));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('LaTeX expression copied to clipboard')),
+                                  );
+                                },
+                                child: Text(
+                                  'COPY TEX',
+                                  style: EditorialTokens.metadata(color: EditorialTokens.tertiary).copyWith(fontSize: 9, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.paper,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              border: Border.all(
+                                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                            child: Text(
+                              r'\mathcal{L}\{\ddot{x} + 2\zeta\omega_n\dot{x} + \omega_n^2x\} = X(s)(s^2 + 2\zeta\omega_n s + \omega_n^2)',
+                              style: EditorialTokens.mono(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ).copyWith(fontSize: 11),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Stationery Suite / Markup Tools
+                    Text(
+                      'MARKUP INSTRUMENTS',
+                      style: EditorialTokens.eyebrow(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ).copyWith(fontSize: 10),
+                    ),
+                    const SizedBox(height: 8),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildStationeryToolPill(
+                            id: 'pen',
+                            icon: Icons.edit,
+                            label: 'Pen',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'pen');
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'chisel',
+                            icon: Icons.brush_outlined,
+                            label: 'Chisel',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'chisel');
+                              Navigator.pop(bottomSheetContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Highlight active: Select text on document to highlight')),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'eraser',
+                            icon: Icons.cleaning_services_outlined,
+                            label: 'Eraser',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'eraser');
+                              Navigator.pop(bottomSheetContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Eraser active: Select annotation to remove')),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'sketch',
+                            icon: Icons.gesture,
+                            label: 'Sketch',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'sketch');
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'sign',
+                            icon: Icons.verified_outlined,
+                            label: 'Sign',
+                            onTap: () {
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Stroke Width and Opacity Selector
+                    Row(
+                      children: [
+                        Text(
+                          'STROKE',
+                          style: EditorialTokens.eyebrow(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 9),
+                        ),
+                        const SizedBox(width: 8),
+                        ...strokeWidths.map((w) {
+                          final isSel = _selectedStrokeWidth == w;
+                          return InkWell(
+                            onTap: () {
+                              setState(() => _selectedStrokeWidth = w);
+                              setModalState(() {});
+                            },
+                            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                              margin: const EdgeInsets.only(right: 6),
+                              decoration: BoxDecoration(
+                                color: isSel ? EditorialTokens.primary.withOpacity(0.12) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                border: Border.all(
+                                  color: isSel ? EditorialTokens.primary : (isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft),
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Text(
+                                w,
+                                style: EditorialTokens.metadata(
+                                  color: isSel ? EditorialTokens.primary : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                                ).copyWith(fontSize: 10, fontWeight: isSel ? FontWeight.w600 : FontWeight.w400),
+                              ),
+                            ),
+                          );
+                        }),
+                        const Spacer(),
+                        Text(
+                          'PALETTE',
+                          style: EditorialTokens.eyebrow(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 9),
+                        ),
+                        const SizedBox(width: 8),
+                        ...paletteColors.map((cp) {
+                          final isSel = _selectedAnnotationColor == cp.$1;
+                          return InkWell(
+                            onTap: () {
+                              setState(() => _selectedAnnotationColor = cp.$1);
+                              setModalState(() {});
+                            },
+                            child: Container(
+                              width: 18,
+                              height: 18,
+                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                              decoration: BoxDecoration(
+                                color: cp.$1,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSel ? EditorialTokens.ink : Colors.transparent,
+                                  width: 2.0,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const EditorialDivider(),
+                    const SizedBox(height: 14),
+
+                    // Verified Signature Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        border: Border.all(
+                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.verified, size: 24, color: EditorialTokens.tertiary),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'VERIFIED SIGNATURE STAMP',
+                                  style: EditorialTokens.eyebrow(color: EditorialTokens.tertiary).copyWith(fontSize: 10),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Stamp signed vector graphic on Page $_currentPage',
+                                  style: EditorialTokens.bodySmall(
+                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  ).copyWith(fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          ),
+                          EditorialSecondaryButton(
+                            label: 'STAMP',
+                            icon: Icons.draw,
+                            onPressed: () {
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Marginalia Note Section
+                    Text(
+                      'PAGE MARGINALIA & MEMORANDA',
+                      style: EditorialTokens.eyebrow(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ).copyWith(fontSize: 10),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.paper,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        border: Border.all(
+                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: noteController,
+                            maxLines: 2,
+                            style: EditorialTokens.bodyMedium(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ).copyWith(fontSize: 12),
+                            decoration: InputDecoration(
+                              hintText: 'Enter marginalia note for page $_currentPage...',
+                              hintStyle: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              EditorialButton(
+                                label: 'RECORD NOTE',
+                                icon: Icons.save_outlined,
+                                onPressed: () async {
+                                  final text = noteController.text.trim();
+                                  if (text.isNotEmpty) {
+                                    await DatabaseHelper.instance.addNote(
+                                      PdfNote(
+                                        filePath: widget.filePath,
+                                        pageNumber: _currentPage,
+                                        noteText: text,
+                                        createdAt: DateTime.now().millisecondsSinceEpoch,
+                                      ),
+                                    );
+                                    noteController.clear();
+                                    await _loadMetadataAndProgress();
+                                    setModalState(() {});
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Note recorded on page $_currentPage')),
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (notesOnCurrentPage.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      ...notesOnCurrentPage.map((n) => Container(
+                        margin: const EdgeInsets.only(top: 6),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.notes, size: 14, color: EditorialTokens.primary),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                n.noteText,
+                                style: EditorialTokens.bodySmall(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ).copyWith(fontSize: 11),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, size: 14),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                              color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                              onPressed: () async {
+                                if (n.id != null) {
+                                  await DatabaseHelper.instance.deleteNote(n.id!);
+                                  await _loadMetadataAndProgress();
+                                  setModalState(() {});
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      )),
+                    ],
+                    const SizedBox(height: 14),
+                    const EditorialDivider(),
+                    const SizedBox(height: 10),
+                    // Autosave Telemetry Strip
+                    Row(
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: EditorialTokens.tertiary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Local Vault: Synced / Ready · Auto-commit active',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -1985,11 +2500,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
                           icon: Icons.draw_outlined,
                           label: 'Annotate',
                           isActive: _isAnnotationToolbarOpen,
-                          onTap: () {
-                            setState(() {
-                              _isAnnotationToolbarOpen = !_isAnnotationToolbarOpen;
-                            });
-                          },
+                          onTap: _showAnnotationInspectorSheet,
                         ),
                         _buildBottomToolTrigger(
                           icon: Icons.psychology_outlined,
