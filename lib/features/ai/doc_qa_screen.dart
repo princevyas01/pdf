@@ -268,7 +268,7 @@ class _DocQaScreenState extends ConsumerState<DocQaScreen> {
                               Text(
                                 msg.text,
                                 style: TextStyle(
-                                  fontFamily: 'serif',
+                                  fontFamily: EditorialTokens.serifFamily,
                                   fontSize: 14,
                                   height: 1.5,
                                   color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,

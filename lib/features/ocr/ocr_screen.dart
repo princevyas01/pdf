@@ -516,7 +516,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                                 maxLines: null,
                                 expands: true,
                                 style: const TextStyle(
-                                  fontFamily: 'monospace',
+                                  fontFamily: EditorialTokens.monoFamily,
                                   fontSize: 13,
                                   height: 1.5,
                                   color: EditorialTokens.ink,
@@ -596,7 +596,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                                               controller: _pageTextControllers[index],
                                               maxLines: null,
                                               style: TextStyle(
-                                                fontFamily: 'monospace',
+                                                fontFamily: EditorialTokens.monoFamily,
                                                 fontSize: 12.5,
                                                 height: 1.45,
                                                 color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
@@ -681,7 +681,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                                           child: Text(
                                             formula,
                                             style: const TextStyle(
-                                              fontFamily: 'monospace',
+                                              fontFamily: EditorialTokens.monoFamily,
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
                                             ),
