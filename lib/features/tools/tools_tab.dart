@@ -21,6 +21,20 @@ class ToolsTab extends StatefulWidget {
 
 class _ToolsTabState extends State<ToolsTab> {
   String _selectedCategory = 'all'; // 'all', 'transform', 'capture', 'security'
+  final TextEditingController _searchController = TextEditingController();
+  String _searchFilter = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  bool _matches(String title, String desc) {
+    if (_searchFilter.isEmpty) return true;
+    return title.toLowerCase().contains(_searchFilter) ||
+        desc.toLowerCase().contains(_searchFilter);
+  }
 
   void _openTool(BuildContext context, String toolName, Widget screen) {
     DatabaseHelper.instance.incrementToolUsage(toolName);
@@ -106,6 +120,110 @@ class _ToolsTabState extends State<ToolsTab> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
+          // Queued Workspace Banner
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.layers, size: 16, color: EditorialTokens.primary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'QUEUED WORKSPACE',
+                        style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        'Direct sandboxed execution available',
+                        style: EditorialTokens.metadata(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ).copyWith(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                EditorialSecondaryButton(
+                  label: 'INSPECT →',
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('All document pipelines operational and idle.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Search / Filter Input
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            height: 38,
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.paper,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.search,
+                  size: 16,
+                  color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (val) => setState(() => _searchFilter = val.trim().toLowerCase()),
+                    style: EditorialTokens.bodyMedium(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ).copyWith(fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: 'Filter transforms, processors, or integrity',
+                      hintStyle: EditorialTokens.bodyMedium(
+                        color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                      ).copyWith(fontSize: 12),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+                if (_searchFilter.isNotEmpty)
+                  GestureDetector(
+                    onTap: () {
+                      _searchController.clear();
+                      setState(() => _searchFilter = '');
+                    },
+                    child: Icon(
+                      Icons.close,
+                      size: 14,
+                      color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
           // Filter Chips Strip
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -147,24 +265,27 @@ class _ToolsTabState extends State<ToolsTab> {
               count: '3 modules',
             ),
             const SizedBox(height: 6),
-            EditorialToolCard(
-              icon: Icons.layers_outlined,
-              title: 'Merge PDF Documents',
-              description: 'Combine multiple PDF files into a single sequential document',
-              onTap: () => _openTool(context, 'merge', const MergeScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.splitscreen_outlined,
-              title: 'Split & Extract Pages',
-              description: 'Divide documents into separate files or chapters with page range selector',
-              onTap: () => _openTool(context, 'split', const SplitScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.delete_sweep_outlined,
-              title: 'Delete Pages',
-              description: 'Selectively remove unwanted pages using visual thumbnail selection',
-              onTap: () => _openTool(context, 'delete_pages', const DeletePagesScreen()),
-            ),
+            if (_matches('Merge PDF Documents', 'Combine multiple PDF files into a single sequential document'))
+              EditorialToolCard(
+                icon: Icons.layers_outlined,
+                title: 'Merge PDF Documents',
+                description: 'Combine multiple PDF files into a single sequential document',
+                onTap: () => _openTool(context, 'merge', const MergeScreen()),
+              ),
+            if (_matches('Split & Extract Pages', 'Divide documents into separate files or chapters with page range selector'))
+              EditorialToolCard(
+                icon: Icons.splitscreen_outlined,
+                title: 'Split & Extract Pages',
+                description: 'Divide documents into separate files or chapters with page range selector',
+                onTap: () => _openTool(context, 'split', const SplitScreen()),
+              ),
+            if (_matches('Delete Pages', 'Selectively remove unwanted pages using visual thumbnail selection'))
+              EditorialToolCard(
+                icon: Icons.delete_sweep_outlined,
+                title: 'Delete Pages',
+                description: 'Selectively remove unwanted pages using visual thumbnail selection',
+                onTap: () => _openTool(context, 'delete_pages', const DeletePagesScreen()),
+              ),
             const SizedBox(height: 16),
           ],
 
@@ -176,26 +297,29 @@ class _ToolsTabState extends State<ToolsTab> {
               count: '3 modules',
             ),
             const SizedBox(height: 6),
-            EditorialToolCard(
-              icon: Icons.document_scanner_outlined,
-              title: 'Document Scanner',
-              description: 'Capture physical documents with high-contrast filter and perspective cropping',
-              badge: 'Vision v2',
-              onTap: () => _openTool(context, 'scan', const ScanDocumentScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.text_snippet_outlined,
-              title: 'OCR & Text Extraction',
-              description: 'On-device text recognition with formula extraction and searchable PDF export',
-              badge: 'ML Kit',
-              onTap: () => _openTool(context, 'ocr', const OcrScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.compare_arrows_outlined,
-              title: 'Document Comparison',
-              description: 'Side-by-side visual diff and page comparison across document versions',
-              onTap: () => _openTool(context, 'compare', const PdfCompareScreen()),
-            ),
+            if (_matches('Document Scanner', 'Capture physical documents with high-contrast filter and perspective cropping'))
+              EditorialToolCard(
+                icon: Icons.document_scanner_outlined,
+                title: 'Document Scanner',
+                description: 'Capture physical documents with high-contrast filter and perspective cropping',
+                badge: 'Vision v2',
+                onTap: () => _openTool(context, 'scan', const ScanDocumentScreen()),
+              ),
+            if (_matches('OCR & Text Extraction', 'On-device text recognition with formula extraction and searchable PDF export'))
+              EditorialToolCard(
+                icon: Icons.text_snippet_outlined,
+                title: 'OCR & Text Extraction',
+                description: 'On-device text recognition with formula extraction and searchable PDF export',
+                badge: 'ML Kit',
+                onTap: () => _openTool(context, 'ocr', const OcrScreen()),
+              ),
+            if (_matches('Document Comparison', 'Side-by-side visual diff and page comparison across document versions'))
+              EditorialToolCard(
+                icon: Icons.compare_arrows_outlined,
+                title: 'Document Comparison',
+                description: 'Side-by-side visual diff and page comparison across document versions',
+                onTap: () => _openTool(context, 'compare', const PdfCompareScreen()),
+              ),
             const SizedBox(height: 16),
           ],
 
@@ -207,26 +331,29 @@ class _ToolsTabState extends State<ToolsTab> {
               count: '3 modules',
             ),
             const SizedBox(height: 6),
-            EditorialToolCard(
-              icon: Icons.tune_outlined,
-              title: 'Compress to Target Size',
-              description: 'Targeted size reduction (e.g. Email <1MB, Academic <5MB) with quality controls',
-              badge: 'Isolate',
-              onTap: () => _openTool(context, 'compress_target_size', const CompressPdfToTargetSizeScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.photo_size_select_small_outlined,
-              title: 'Compress Images to Size',
-              description: 'Downsize standalone images to an exact target kilobyte threshold',
-              onTap: () => _openTool(context, 'compress_image_target_size', const CompressImageToTargetSizeScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.lock_outline,
-              title: 'Encrypt PDF',
-              description: 'Standard AES-256 encryption with password protection and permission locks',
-              badge: 'AES-256',
-              onTap: () => _openTool(context, 'encrypt', const EncryptPdfScreen()),
-            ),
+            if (_matches('Compress to Target Size', 'Targeted size reduction (e.g. Email <1MB, Academic <5MB) with quality controls'))
+              EditorialToolCard(
+                icon: Icons.tune_outlined,
+                title: 'Compress to Target Size',
+                description: 'Targeted size reduction (e.g. Email <1MB, Academic <5MB) with quality controls',
+                badge: 'Isolate',
+                onTap: () => _openTool(context, 'compress_target_size', const CompressPdfToTargetSizeScreen()),
+              ),
+            if (_matches('Compress Images to Size', 'Downsize standalone images to an exact target kilobyte threshold'))
+              EditorialToolCard(
+                icon: Icons.photo_size_select_small_outlined,
+                title: 'Compress Images to Size',
+                description: 'Downsize standalone images to an exact target kilobyte threshold',
+                onTap: () => _openTool(context, 'compress_image_target_size', const CompressImageToTargetSizeScreen()),
+              ),
+            if (_matches('Encrypt PDF', 'Standard AES-256 encryption with password protection and permission locks'))
+              EditorialToolCard(
+                icon: Icons.lock_outline,
+                title: 'Encrypt PDF',
+                description: 'Standard AES-256 encryption with password protection and permission locks',
+                badge: 'AES-256',
+                onTap: () => _openTool(context, 'encrypt', const EncryptPdfScreen()),
+              ),
             const SizedBox(height: 16),
           ],
 

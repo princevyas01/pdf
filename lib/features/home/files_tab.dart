@@ -44,6 +44,14 @@ class FilesTab extends ConsumerStatefulWidget {
 class _FilesTabState extends ConsumerState<FilesTab> {
   SortOption _sortOption = SortOption.dateNewest;
   String _activeFilter = 'all'; // 'all', 'recent', 'starred'
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   String _getSortLabel() {
     switch (_sortOption) {
@@ -1063,12 +1071,12 @@ class _FilesTabState extends ConsumerState<FilesTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const EditorialEyebrow(
-                      text: 'LOCAL STORAGE',
+                      text: 'DOCUMENT STUDIO',
                       color: EditorialTokens.primary,
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      'Library',
+                      'Files',
                       style: EditorialTokens.displayMedium(
                         color: isDark
                             ? EditorialTokens.darkInk
@@ -1191,7 +1199,12 @@ class _FilesTabState extends ConsumerState<FilesTab> {
           pdfState.when(
             data: (files) {
               final filtered = _applyFilter(files);
-              final sorted = _sortFiles(filtered);
+              final searchFiltered = _searchQuery.isEmpty
+                  ? filtered
+                  : filtered.where((f) =>
+                      f.name.toLowerCase().contains(_searchQuery) ||
+                      f.path.toLowerCase().contains(_searchQuery)).toList();
+              final sorted = _sortFiles(searchFiltered);
               final totalBytes =
                   files.fold<int>(0, (sum, f) => sum + f.sizeBytes);
 
@@ -1239,7 +1252,7 @@ class _FilesTabState extends ConsumerState<FilesTab> {
                                 const SizedBox(width: 5),
                                 Flexible(
                                   child: Text(
-                                    '${files.length} Docs · ${Utils.formatBytes(totalBytes)} · Indexed (Offline)',
+                                    '${sorted.length} Docs · ${Utils.formatBytes(totalBytes)} · Indexed (Offline)',
                                     style: EditorialTokens.metadata(
                                       color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
                                     ).copyWith(fontSize: 10),
@@ -1251,6 +1264,64 @@ class _FilesTabState extends ConsumerState<FilesTab> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+
+                    // Search documents, tags bar matching Design 01 Page 1 Screen 3
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+                      child: Container(
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.paper,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search,
+                              size: 16,
+                              color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                onChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
+                                style: EditorialTokens.bodyMedium(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ).copyWith(fontSize: 13),
+                                decoration: InputDecoration(
+                                  hintText: 'Search documents, tags...',
+                                  hintStyle: EditorialTokens.bodyMedium(
+                                    color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                  ).copyWith(fontSize: 13),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                              ),
+                            ),
+                            if (_searchQuery.isNotEmpty)
+                              GestureDetector(
+                                onTap: () {
+                                  _searchController.clear();
+                                  setState(() => _searchQuery = '');
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  size: 14,
+                                  color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
 
