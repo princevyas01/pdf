@@ -337,7 +337,7 @@ class _PdfCompareScreenState extends State<PdfCompareScreen> {
                                       child: Text(
                                         '+ $l',
                                         style: const TextStyle(
-                                          fontFamily: 'monospace',
+                                          fontFamily: EditorialTokens.monoFamily,
                                           fontSize: 12,
                                           color: Color(0xFF2E6F40),
                                         ),
@@ -358,7 +358,7 @@ class _PdfCompareScreenState extends State<PdfCompareScreen> {
                                       child: Text(
                                         '- $l',
                                         style: const TextStyle(
-                                          fontFamily: 'monospace',
+                                          fontFamily: EditorialTokens.monoFamily,
                                           fontSize: 12,
                                           color: Color(0xFFB33A3A),
                                         ),

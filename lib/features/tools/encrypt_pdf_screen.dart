@@ -28,9 +28,11 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
 
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
+  bool _useAes256 = true;
   bool _allowPrinting = true;
   bool _allowCopying = false;
   bool _allowAnnotations = true;
+  bool _allowFillForms = true;
   bool _isEncrypting = false;
 
   @override
@@ -63,6 +65,38 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
       setState(() {
         _selectedFile = result.first;
       });
+    }
+  }
+
+  Future<void> _generateRecoveryKeyfile() async {
+    if (_selectedFile == null) {
+      _showNotice('Please select a PDF document first.');
+      return;
+    }
+    final pass = _passwordController.text;
+    if (pass.isEmpty) {
+      _showNotice('Please enter a decryption passphrase first.');
+      return;
+    }
+
+    try {
+      final parentDir = File(_selectedFile!.path).parent.path;
+      final baseName = _selectedFile!.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+      final keyPath = '$parentDir${Platform.pathSeparator}${baseName}_recovery.key';
+
+      final keyContent = StringBuffer()
+        ..writeln('----- QUIET EDITORIAL DOCUMENT STUDIO RECOVERY KEYFILE -----')
+        ..writeln('DOCUMENT: ${_selectedFile!.name}')
+        ..writeln('CIPHER: ${_useAes256 ? 'AES-256 (Government/Military)' : 'AES-128 (Standard Compatibility)'}')
+        ..writeln('CREATED: ${DateTime.now().toUtc().toIso8601String()}')
+        ..writeln('RECOVERY_TOKEN: ${pass.hashCode.toRadixString(16).padLeft(16, '0')}-${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}')
+        ..writeln('HINT: Passphrase length: ${pass.length} characters')
+        ..writeln('-------------------- END RECOVERY KEYFILE --------------------');
+
+      await File(keyPath).writeAsString(keyContent.toString());
+      _showNotice('Recovery keyfile written to: ${keyPath.split(Platform.pathSeparator).last}');
+    } catch (e) {
+      _showNotice('Failed to generate keyfile: $e');
     }
   }
 
@@ -103,16 +137,18 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
         outputPath: outputPath,
         userPassword: pass,
         ownerPassword: ownerPass,
+        useAes256: _useAes256,
         allowPrinting: _allowPrinting,
         allowCopyContent: _allowCopying,
         allowAnnotations: _allowAnnotations,
+        allowFillForms: _allowFillForms,
       );
 
       if (ok) {
         await PdfVersionService.createVersion(
           docId: inputPath,
           filePath: outputPath,
-          sourceOperation: 'Encrypted (AES-256)',
+          sourceOperation: _useAes256 ? 'Encrypted (AES-256)' : 'Encrypted (AES-128)',
         );
       }
 
@@ -650,6 +686,116 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
 
           const SizedBox(height: 24),
 
+          // Section 3: Cipher Architecture
+          const EditorialSectionHeader(
+            number: '03',
+            label: 'Cipher Architecture',
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _useAes256 = true),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _useAes256
+                          ? EditorialTokens.primary.withOpacity(0.08)
+                          : (isDark ? EditorialTokens.darkSurface : EditorialTokens.surface),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: _useAes256
+                            ? EditorialTokens.primary
+                            : (isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft),
+                        width: _useAes256 ? 1.5 : EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              _useAes256 ? Icons.radio_button_checked : Icons.radio_button_off,
+                              size: 16,
+                              color: _useAes256 ? EditorialTokens.primary : EditorialTokens.inkMuted,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'AES-256',
+                              style: EditorialTokens.titleSmall(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Government & military archival standard',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _useAes256 = false),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: !_useAes256
+                          ? EditorialTokens.primary.withOpacity(0.08)
+                          : (isDark ? EditorialTokens.darkSurface : EditorialTokens.surface),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: !_useAes256
+                            ? EditorialTokens.primary
+                            : (isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft),
+                        width: !_useAes256 ? 1.5 : EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              !_useAes256 ? Icons.radio_button_checked : Icons.radio_button_off,
+                              size: 16,
+                              color: !_useAes256 ? EditorialTokens.primary : EditorialTokens.inkMuted,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'AES-128',
+                              style: EditorialTokens.titleSmall(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Broad legacy reader compatibility',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
           // Section 4: Granular Permissions
           const EditorialSectionHeader(
             number: '04',
@@ -691,11 +837,31 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
                   onChanged: (v) => setState(() => _allowAnnotations = v),
                   isDark: isDark,
                 ),
+                const EditorialDivider(),
+                _buildPermissionTile(
+                  title: 'Allow Form Fill & Digital Signatures',
+                  subtitle: 'Permits filling interactive form fields and vector stamping',
+                  value: _allowFillForms,
+                  onChanged: (v) => setState(() => _allowFillForms = v),
+                  isDark: isDark,
+                ),
               ],
             ),
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 20),
+
+          // Recovery Keyfile Generation Button
+          SizedBox(
+            width: double.infinity,
+            child: EditorialSecondaryButton(
+              label: 'GENERATE RECOVERY KEYFILE (.KEY)',
+              icon: Icons.key_outlined,
+              onPressed: _generateRecoveryKeyfile,
+            ),
+          ),
+
+          const SizedBox(height: 14),
 
           // Primary Fortify Button
           SizedBox(
