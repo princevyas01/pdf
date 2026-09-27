@@ -1070,9 +1070,23 @@ class _FilesTabState extends ConsumerState<FilesTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const EditorialEyebrow(
-                      text: 'DOCUMENT STUDIO',
-                      color: EditorialTokens.primary,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const EditorialEyebrow(
+                          text: 'DOCUMENT STUDIO',
+                          color: EditorialTokens.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'LOCAL STORAGE',
+                          style: EditorialTokens.metadata(
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 1),
                     Text(

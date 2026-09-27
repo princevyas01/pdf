@@ -111,6 +111,8 @@ void main() {
       expect(find.byType(ToolsTab), findsOneWidget);
       expect(find.text('Document Utilities'), findsOneWidget);
       expect(find.text('Document Transformation'), findsOneWidget);
+      await tester.drag(find.byType(ListView).first, const Offset(0, -350));
+      await tester.pumpAndSettle();
       expect(find.text('Conversion & Capture'), findsOneWidget);
     });
 
