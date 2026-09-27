@@ -345,10 +345,14 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       ListTile(
                         dense: true,
-                        leading: Icon(
-                          Icons.info_outline,
-                          size: 20,
-                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                          child: Image.asset(
+                            'assets/images/app_logo.png',
+                            width: 32,
+                            height: 32,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                         title: Text(
                           'Quiet Editorial Document Studio',
@@ -388,7 +392,25 @@ class SettingsScreen extends ConsumerWidget {
                           size: 18,
                           color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
                         ),
-                        onTap: () => showLicensePage(context: context),
+                        onTap: () => showLicensePage(
+                          context: context,
+                          applicationName: 'Offline PDF Reader',
+                          applicationVersion: '1.0.0 (Quiet Editorial Studio)',
+                          applicationLegalese:
+                              'Crafted for offline private document management and archival study.',
+                          applicationIcon: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              child: Image.asset(
+                                'assets/images/app_logo.png',
+                                width: 56,
+                                height: 56,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
