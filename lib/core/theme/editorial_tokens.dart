@@ -11,30 +11,31 @@ class EditorialTokens {
   static const monoFamily = 'JetBrainsMono';
 
   // --- Foundational Palette (Stitch Design 01 Specification) ---
-  static const Color canvas = Color(0xFFFBF9F5); // Paper canvas
+  static const Color canvas = Color(0xFFF4EFEB); // Neutral #F4EFEB
   static const Color surface = Color(0xFFFFFFFF); // Card surface
-  static const Color surfaceSubtle = Color(0xFFF4F1EA); // Subtle secondary strip
+  static const Color surfaceSubtle = Color(0xFFF4EFEB); // Subtle secondary strip
   static const Color surfaceMuted = Color(0xFFEBE6DC); // Tertiary neutral
   static const Color surfaceStrong = Color(0xFFFFFFFF);
 
   // Accents
-  static const Color primary = Color(0xFF7A3E26); // Terracotta / warm burnt umber
-  static const Color secondary = Color(0xFF3E2718); // Dark roast chocolate brown
-  static const Color tertiary = Color(0xFF233547); // Slate ink blue
+  static const Color primary = Color(0xFF7D4E2D); // #7D4E2D warm terracotta / burnt umber
+  static const Color secondary = Color(0xFF3E2718); // #3E2718 dark roast chocolate brown
+  static const Color tertiary = Color(0xFF266169); // #266169 slate / ocean teal
   static const Color accentSecondary = Color(0xFF8C5333);
+  static const Color neutral = Color(0xFFF4EFEB); // #F4EFEB
 
   // Ink / Text
-  static const Color ink = Color(0xFF1C1E21); // Main text
-  static const Color inkSecondary = Color(0xFF6B6862); // Muted / secondary
-  static const Color inkMuted = Color(0xFF98948C); // Faint metadata
+  static const Color ink = Color(0xFF1C1A18); // #1C1A18 main text
+  static const Color inkSecondary = Color(0xFF68615A); // #68615A secondary text
+  static const Color inkMuted = Color(0xFF928A82); // #928A82 muted metadata
 
   // Hairlines & Borders
-  static const Color border = Color(0xFFD8D0C3); // Framing border
-  static const Color borderSoft = Color(0xFFE7E3DA); // Subtle divider hairline
+  static const Color border = Color(0xFFD9D1C8); // #D9D1C8 framing border
+  static const Color borderSoft = Color(0xFFE7E0D8); // #E7E0D8 subtle hairline
 
   // Document & Canvas
-  static const Color viewerBed = Color(0xFFE8E4DA); // PDF viewer background bed
-  static const Color paper = Color(0xFFFFFFFF); // Physical paper page
+  static const Color viewerBed = Color(0xFFE8E4DA); // #E8E4DA viewer bed
+  static const Color paper = Color(0xFFFBF8F4); // #FBF8F4 physical paper page
 
   // Semantic
   static const Color success = Color(0xFF2D6E3F);

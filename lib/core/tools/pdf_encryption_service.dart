@@ -7,9 +7,11 @@ class PdfEncryptionService {
     required String outputPath,
     required String userPassword,
     String? ownerPassword,
+    bool useAes256 = true,
     bool allowPrinting = true,
     bool allowCopyContent = true,
     bool allowAnnotations = true,
+    bool allowFillForms = true,
   }) async {
     try {
       final bytes = await File(inputPath).readAsBytes();
@@ -18,7 +20,9 @@ class PdfEncryptionService {
       final security = document.security;
       security.userPassword = userPassword;
       security.ownerPassword = ownerPassword ?? userPassword;
-      security.algorithm = sf.PdfEncryptionAlgorithm.aesx256Bit;
+      security.algorithm = useAes256
+          ? sf.PdfEncryptionAlgorithm.aesx256Bit
+          : sf.PdfEncryptionAlgorithm.aesx128Bit;
       security.permissions.clear();
       if (allowPrinting) {
         security.permissions.add(sf.PdfPermissionsFlags.print);
@@ -28,6 +32,9 @@ class PdfEncryptionService {
       }
       if (allowAnnotations) {
         security.permissions.add(sf.PdfPermissionsFlags.editAnnotations);
+      }
+      if (allowFillForms) {
+        security.permissions.add(sf.PdfPermissionsFlags.fillForm);
       }
 
       final encryptedBytes = await document.save();
