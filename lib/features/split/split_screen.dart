@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import '../../core/storage/database_helper.dart';
 import '../../core/storage/pdf_metadata_helper.dart';
 import '../../core/theme/editorial_tokens.dart';
 import '../../core/utils/utils.dart';
+import '../../models/annotation_meta.dart';
 import '../../models/pdf_file.dart';
 import '../../widgets/editorial_components.dart';
 import '../../widgets/pdf_tool_file_picker_screen.dart';
@@ -33,6 +35,16 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
   bool _isSplitting = false;
   List<String> _createdFilePaths = [];
+
+  bool _extractAsSingleCompiled = true;
+  bool _preserveBookmarks = true;
+  bool _retainAnnotations = true;
+
+  List<String> _getRangeSegments() {
+    final raw = _rangeController.text.trim();
+    if (raw.isEmpty) return [];
+    return raw.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+  }
 
   @override
   void initState() {
@@ -97,18 +109,48 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
       final List<String> newFiles = [];
 
       if (_method == SplitMethod.ranges) {
-        final pagesToExtract = Utils.parsePageRanges(_rangeController.text, totalPages);
-        if (pagesToExtract.isNotEmpty) {
-          final outDoc = PdfDocument();
-          for (final pageNum in pagesToExtract) {
-            final template = sourceDoc.pages[pageNum - 1].createTemplate();
-            final newPage = outDoc.pages.add();
-            newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+        final rawRanges = _rangeController.text.trim();
+        final segments = _getRangeSegments();
+
+        if (_extractAsSingleCompiled) {
+          final pagesToExtract = Utils.parsePageRanges(rawRanges, totalPages);
+          if (pagesToExtract.isNotEmpty) {
+            final outDoc = PdfDocument();
+            for (final pageNum in pagesToExtract) {
+              final template = sourceDoc.pages[pageNum - 1].createTemplate();
+              final newPage = outDoc.pages.add();
+              newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+            }
+            if (_preserveBookmarks && sourceDoc.bookmarks.count > 0) {
+              for (int b = 0; b < sourceDoc.bookmarks.count; b++) {
+                final srcBm = sourceDoc.bookmarks[b];
+                outDoc.bookmarks.add(srcBm.title);
+              }
+            }
+            final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_extracted.pdf';
+            await File(targetPath).writeAsBytes(await outDoc.save());
+            outDoc.dispose();
+            newFiles.add(targetPath);
           }
-          final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_split.pdf';
-          await File(targetPath).writeAsBytes(await outDoc.save());
-          outDoc.dispose();
-          newFiles.add(targetPath);
+        } else {
+          int partIdx = 1;
+          for (final seg in segments) {
+            final segPages = Utils.parsePageRanges(seg, totalPages);
+            if (segPages.isNotEmpty) {
+              final outDoc = PdfDocument();
+              for (final pageNum in segPages) {
+                final template = sourceDoc.pages[pageNum - 1].createTemplate();
+                final newPage = outDoc.pages.add();
+                newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+              }
+              final cleanSeg = seg.replaceAll(' ', '').replaceAll('-', '_');
+              final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_part_${partIdx}_pp$cleanSeg.pdf';
+              await File(targetPath).writeAsBytes(await outDoc.save());
+              outDoc.dispose();
+              newFiles.add(targetPath);
+              partIdx++;
+            }
+          }
         }
       } else if (_method == SplitMethod.singlePages) {
         for (int i = 0; i < totalPages; i++) {
@@ -142,6 +184,20 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
       }
 
       sourceDoc.dispose();
+
+      if (_retainAnnotations && _selectedFile != null) {
+        final sourceNotes = await DatabaseHelper.instance.getNotesForFile(_selectedFile!.path);
+        for (final newPath in newFiles) {
+          for (final n in sourceNotes) {
+            await DatabaseHelper.instance.addNote(PdfNote(
+              filePath: newPath,
+              pageNumber: n.pageNumber,
+              noteText: n.noteText,
+              createdAt: DateTime.now().millisecondsSinceEpoch,
+            ));
+          }
+        }
+      }
 
       for (final p in newFiles) {
         final registered = await PdfMetadataHelper.registerAndSyncPdf(p);
@@ -575,6 +631,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         const SizedBox(height: 6),
                         TextField(
                           controller: _rangeController,
+                          onChanged: (_) => setState(() {}),
                           style: EditorialTokens.bodyMedium(
                             color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
                           ),
@@ -595,6 +652,35 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        if (_getRangeSegments().isNotEmpty) ...[
+                          Text(
+                            'PARSED SEQUENCE PREVIEW',
+                            style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                          ),
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children: _getRangeSegments().asMap().entries.map((e) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: EditorialTokens.primary.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                  border: Border.all(
+                                    color: EditorialTokens.primary.withOpacity(0.3),
+                                    width: EditorialTokens.hairline,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Part ${e.key + 1}: pp. ${e.value}',
+                                  style: EditorialTokens.metadata(color: EditorialTokens.primary).copyWith(fontSize: 10),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                         const SizedBox(height: 14),
                       ],
                       if (_method == SplitMethod.everyNPages) ...[
@@ -652,6 +738,76 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                             ),
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 14),
+                      const EditorialDivider(),
+                      const SizedBox(height: 10),
+                      Text(
+                        'EXTRACTION FIDELITY PROTOCOLS',
+                        style: EditorialTokens.eyebrow(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ).copyWith(fontSize: 10),
+                      ),
+                      const SizedBox(height: 6),
+                      if (_method == SplitMethod.ranges)
+                        SwitchListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            'Compile into Single Document',
+                            style: EditorialTokens.bodyMedium(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ).copyWith(fontSize: 12),
+                          ),
+                          subtitle: Text(
+                            _extractAsSingleCompiled
+                                ? 'All parsed ranges will be bound into one extracted PDF'
+                                : 'Each range segment will generate an isolated discrete PDF',
+                            style: EditorialTokens.metadata(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ).copyWith(fontSize: 10),
+                          ),
+                          value: _extractAsSingleCompiled,
+                          activeColor: EditorialTokens.primary,
+                          onChanged: (v) => setState(() => _extractAsSingleCompiled = v),
+                        ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Preserve Table of Contents & Outlines',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Transfer navigational bookmarks into target extracted documents',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _preserveBookmarks,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _preserveBookmarks = v),
+                      ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Retain Marginalia & Notes',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Mirror local marginalia annotations into generated file ledger',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _retainAnnotations,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _retainAnnotations = v),
                       ),
                     ],
                   ),

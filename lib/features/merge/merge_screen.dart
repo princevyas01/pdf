@@ -29,6 +29,10 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
   double _progress = 0.0;
   String? _outputFilePath;
 
+  bool _standardizeA4 = true;
+  bool _generateTocBookmarks = true;
+  bool _sanitizeMetadata = true;
+
   @override
   void initState() {
     super.initState();
@@ -94,12 +98,41 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
         try {
           final bytes = await File(file.path).readAsBytes();
           final inputDoc = sf.PdfDocument(inputBytes: bytes);
+          final bookmarkPageIndex = outputDocument.pages.count;
 
           for (int i = 0; i < inputDoc.pages.count; i++) {
-            final template = inputDoc.pages[i].createTemplate();
-            final newPage = outputDocument.pages.add();
-            newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+            final srcPage = inputDoc.pages[i];
+            final template = srcPage.createTemplate();
+            final sf.PdfPage newPage;
+            if (_standardizeA4) {
+              outputDocument.pageSettings.size = sf.PdfPageSize.a4;
+              newPage = outputDocument.pages.add();
+              final a4Size = newPage.getClientSize();
+              final double scale = (a4Size.width / srcPage.size.width)
+                  .clamp(0.1, a4Size.height / srcPage.size.height);
+              final double scaledW = srcPage.size.width * scale;
+              final double scaledH = srcPage.size.height * scale;
+              final double offsetX = (a4Size.width - scaledW) / 2;
+              final double offsetY = (a4Size.height - scaledH) / 2;
+              newPage.graphics.drawPdfTemplate(
+                template,
+                Offset(offsetX, offsetY),
+                Size(scaledW, scaledH),
+              );
+            } else {
+              outputDocument.pageSettings.size = srcPage.size;
+              newPage = outputDocument.pages.add();
+              newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+            }
           }
+
+          if (_generateTocBookmarks && outputDocument.pages.count > bookmarkPageIndex) {
+            final startPage = outputDocument.pages[bookmarkPageIndex];
+            final cleanName = file.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+            final bookmark = outputDocument.bookmarks.add(cleanName);
+            bookmark.destination = sf.PdfDestination(startPage, const Offset(0, 0));
+          }
+
           inputDoc.dispose();
         } catch (_) {}
 
@@ -107,6 +140,14 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
         setState(() {
           _progress = processedCount / _selectedFiles.length;
         });
+      }
+
+      if (_sanitizeMetadata) {
+        outputDocument.documentInformation.author = '';
+        outputDocument.documentInformation.creator = 'Quiet Editorial Studio';
+        outputDocument.documentInformation.producer = 'Offline PDF Reader';
+        outputDocument.documentInformation.subject = '';
+        outputDocument.documentInformation.keywords = '';
       }
 
       final savedBytes = await outputDocument.save();
@@ -428,6 +469,87 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+
+                // Bookmaking Protocols (Design 01 Page 5 Screen 2)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const EditorialEyebrow(
+                        text: 'BOOKMAKING PROTOCOLS',
+                        color: EditorialTokens.primary,
+                      ),
+                      const SizedBox(height: 6),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Standardize Page Geometry (A4 210×297mm)',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Normalize mixed canvas dimensions to uniform archival standard',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _standardizeA4,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _standardizeA4 = v),
+                      ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Generate Master Table of Contents Bookmarks',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Insert navigational document bookmarks at chapter boundaries',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _generateTocBookmarks,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _generateTocBookmarks = v),
+                      ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Sanitize Source Metadata',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Purge tracking identifiers, author signatures, and software fingerprints',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _sanitizeMetadata,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _sanitizeMetadata = v),
+                      ),
+                    ],
                   ),
                 ),
 
