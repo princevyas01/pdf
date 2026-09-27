@@ -34,7 +34,11 @@ class PdfEncryptionService {
         security.permissions.add(sf.PdfPermissionsFlags.editAnnotations);
       }
       if (allowFillForms) {
-        security.permissions.add(sf.PdfPermissionsFlags.fillForm);
+        if (!useAes256) {
+          security.permissions.add(sf.PdfPermissionsFlags.fillFields);
+        } else {
+          security.permissions.add(sf.PdfPermissionsFlags.editAnnotations);
+        }
       }
 
       final encryptedBytes = await document.save();

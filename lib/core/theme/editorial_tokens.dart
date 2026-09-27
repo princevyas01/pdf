@@ -187,4 +187,52 @@ class EditorialTokens {
       color: color,
     );
   }
+
+  static TextStyle mono({
+    double fontSize = 11,
+    FontWeight fontWeight = FontWeight.w400,
+    Color color = ink,
+    double height = 1.25,
+    FontStyle? fontStyle,
+  }) {
+    return TextStyle(
+      fontFamily: monoFamily,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      color: color,
+      fontStyle: fontStyle,
+    );
+  }
+
+  static TextStyle monospace({
+    double fontSize = 11,
+    FontWeight fontWeight = FontWeight.w400,
+    Color color = ink,
+    double height = 1.25,
+    FontStyle? fontStyle,
+  }) => mono(
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    color: color,
+    height: height,
+    fontStyle: fontStyle,
+  );
+
+  static TextStyle serif({
+    double fontSize = 14,
+    FontWeight fontWeight = FontWeight.w400,
+    Color color = ink,
+    double height = 1.35,
+    FontStyle? fontStyle,
+  }) {
+    return TextStyle(
+      fontFamily: serifFamily,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      color: color,
+      fontStyle: fontStyle,
+    );
+  }
 }
