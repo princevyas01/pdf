@@ -11,7 +11,8 @@
     <application
         android:label="Offline PDF Reader"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
         
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
