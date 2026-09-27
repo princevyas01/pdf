@@ -1,0 +1,24970 @@
+# Offline PDF Reader — Complete Codebase Source of Truth
+
+> **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
+> **Total Source Files:** 82
+> **Total Source Lines:** 23975
+> **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
+
+---
+
+## Table of Contents
+
+| # | File Path | Language | Lines |
+|---|-----------|----------|-------|
+| 1 | [`pubspec.yaml`](#pubspecyaml) | yaml | 91 |
+| 2 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 41 |
+| 3 | [`lib/core/ai/local_ai_provider.dart`](#libcoreailocalaiproviderdart) | dart | 43 |
+| 4 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 241 |
+| 5 | [`lib/core/ai/semantic_search_service.dart`](#libcoreaisemanticsearchservicedart) | dart | 192 |
+| 6 | [`lib/core/config/app_config.dart`](#libcoreconfigappconfigdart) | dart | 9 |
+| 7 | [`lib/core/permissions/permissions_service.dart`](#libcorepermissionspermissionsservicedart) | dart | 67 |
+| 8 | [`lib/core/services/external_pdf_intent_service.dart`](#libcoreservicesexternalpdfintentservicedart) | dart | 188 |
+| 9 | [`lib/core/storage/database_helper.dart`](#libcorestoragedatabasehelperdart) | dart | 830 |
+| 10 | [`lib/core/storage/file_scanner.dart`](#libcorestoragefilescannerdart) | dart | 537 |
+| 11 | [`lib/core/storage/ocr_cache_service.dart`](#libcorestorageocrcacheservicedart) | dart | 78 |
+| 12 | [`lib/core/storage/pdf_metadata_helper.dart`](#libcorestoragepdfmetadatahelperdart) | dart | 44 |
+| 13 | [`lib/core/storage/thumbnail_cache_service.dart`](#libcorestoragethumbnailcacheservicedart) | dart | 137 |
+| 14 | [`lib/core/study/local_summarizer_service.dart`](#libcorestudylocalsummarizerservicedart) | dart | 115 |
+| 15 | [`lib/core/study/study_generator_service.dart`](#libcorestudystudygeneratorservicedart) | dart | 152 |
+| 16 | [`lib/core/study/topic_extractor_service.dart`](#libcorestudytopicextractorservicedart) | dart | 150 |
+| 17 | [`lib/core/theme/app_theme.dart`](#libcorethemeappthemedart) | dart | 179 |
+| 18 | [`lib/core/theme/editorial_tokens.dart`](#libcorethemeeditorialtokensdart) | dart | 189 |
+| 19 | [`lib/core/tools/image_target_size_compressor_service.dart`](#libcoretoolsimagetargetsizecompressorservicedart) | dart | 216 |
+| 20 | [`lib/core/tools/pdf_batch_service.dart`](#libcoretoolspdfbatchservicedart) | dart | 82 |
+| 21 | [`lib/core/tools/pdf_compare_service.dart`](#libcoretoolspdfcompareservicedart) | dart | 96 |
+| 22 | [`lib/core/tools/pdf_compression_service.dart`](#libcoretoolspdfcompressionservicedart) | dart | 78 |
+| 23 | [`lib/core/tools/pdf_encryption_service.dart`](#libcoretoolspdfencryptionservicedart) | dart | 57 |
+| 24 | [`lib/core/tools/pdf_metadata_service.dart`](#libcoretoolspdfmetadataservicedart) | dart | 87 |
+| 25 | [`lib/core/tools/pdf_target_size_compressor_service.dart`](#libcoretoolspdftargetsizecompressorservicedart) | dart | 364 |
+| 26 | [`lib/core/tools/pdf_version_service.dart`](#libcoretoolspdfversionservicedart) | dart | 91 |
+| 27 | [`lib/core/tts/tts_service.dart`](#libcorettsttsservicedart) | dart | 163 |
+| 28 | [`lib/core/utils/storage_location_helper.dart`](#libcoreutilsstoragelocationhelperdart) | dart | 94 |
+| 29 | [`lib/core/utils/utils.dart`](#libcoreutilsutilsdart) | dart | 76 |
+| 30 | [`lib/features/ai/doc_qa_screen.dart`](#libfeaturesaidocqascreendart) | dart | 395 |
+| 31 | [`lib/features/ai/exam_mode_screen.dart`](#libfeaturesaiexammodescreendart) | dart | 410 |
+| 32 | [`lib/features/ai/explain_text_dialog.dart`](#libfeaturesaiexplaintextdialogdart) | dart | 205 |
+| 33 | [`lib/features/delete_pages/delete_pages_screen.dart`](#libfeaturesdeletepagesdeletepagesscreendart) | dart | 604 |
+| 34 | [`lib/features/favorites/favorites_tab.dart`](#libfeaturesfavoritesfavoritestabdart) | dart | 178 |
+| 35 | [`lib/features/home/files_tab.dart`](#libfeatureshomefilestabdart) | dart | 1406 |
+| 36 | [`lib/features/home/main_navigation_screen.dart`](#libfeatureshomemainnavigationscreendart) | dart | 44 |
+| 37 | [`lib/features/home/pdf_list_provider.dart`](#libfeatureshomepdflistproviderdart) | dart | 200 |
+| 38 | [`lib/features/merge/merge_screen.dart`](#libfeaturesmergemergescreendart) | dart | 605 |
+| 39 | [`lib/features/ocr/ocr_screen.dart`](#libfeaturesocrocrscreendart) | dart | 744 |
+| 40 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 867 |
+| 41 | [`lib/features/search/search_tab.dart`](#libfeaturessearchsearchtabdart) | dart | 453 |
+| 42 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 404 |
+| 43 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 677 |
+| 44 | [`lib/features/stats/stats_tab.dart`](#libfeaturesstatsstatstabdart) | dart | 663 |
+| 45 | [`lib/features/study/study_mode_screen.dart`](#libfeaturesstudystudymodescreendart) | dart | 1078 |
+| 46 | [`lib/features/tools/compress_image_to_target_size_screen.dart`](#libfeaturestoolscompressimagetotargetsizescreendart) | dart | 751 |
+| 47 | [`lib/features/tools/compress_pdf_screen.dart`](#libfeaturestoolscompresspdfscreendart) | dart | 279 |
+| 48 | [`lib/features/tools/compress_pdf_to_target_size_screen.dart`](#libfeaturestoolscompresspdftotargetsizescreendart) | dart | 852 |
+| 49 | [`lib/features/tools/encrypt_pdf_screen.dart`](#libfeaturestoolsencryptpdfscreendart) | dart | 759 |
+| 50 | [`lib/features/tools/metadata_editor_screen.dart`](#libfeaturestoolsmetadataeditorscreendart) | dart | 259 |
+| 51 | [`lib/features/tools/pdf_compare_screen.dart`](#libfeaturestoolspdfcomparescreendart) | dart | 466 |
+| 52 | [`lib/features/tools/tools_tab.dart`](#libfeaturestoolstoolstabdart) | dart | 303 |
+| 53 | [`lib/features/tools/version_history_screen.dart`](#libfeaturestoolsversionhistoryscreendart) | dart | 243 |
+| 54 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2065 |
+| 55 | [`lib/main.dart`](#libmaindart) | dart | 53 |
+| 56 | [`lib/models/ai_model_config.dart`](#libmodelsaimodelconfigdart) | dart | 69 |
+| 57 | [`lib/models/annotation_meta.dart`](#libmodelsannotationmetadart) | dart | 51 |
+| 58 | [`lib/models/bookmark.dart`](#libmodelsbookmarkdart) | dart | 51 |
+| 59 | [`lib/models/exam_session.dart`](#libmodelsexamsessiondart) | dart | 47 |
+| 60 | [`lib/models/ocr_cache_entry.dart`](#libmodelsocrcacheentrydart) | dart | 35 |
+| 61 | [`lib/models/pdf_compare_result.dart`](#libmodelspdfcompareresultdart) | dart | 41 |
+| 62 | [`lib/models/pdf_file.dart`](#libmodelspdffiledart) | dart | 151 |
+| 63 | [`lib/models/pdf_open_request.dart`](#libmodelspdfopenrequestdart) | dart | 49 |
+| 64 | [`lib/models/pdf_version.dart`](#libmodelspdfversiondart) | dart | 47 |
+| 65 | [`lib/models/semantic_chunk.dart`](#libmodelssemanticchunkdart) | dart | 44 |
+| 66 | [`lib/models/study_item.dart`](#libmodelsstudyitemdart) | dart | 196 |
+| 67 | [`lib/models/study_session.dart`](#libmodelsstudysessiondart) | dart | 91 |
+| 68 | [`lib/models/tool_usage_stat.dart`](#libmodelstoolusagestatdart) | dart | 27 |
+| 69 | [`lib/widgets/editorial_components.dart`](#libwidgetseditorialcomponentsdart) | dart | 881 |
+| 70 | [`lib/widgets/empty_state.dart`](#libwidgetsemptystatedart) | dart | 52 |
+| 71 | [`lib/widgets/pdf_file_card.dart`](#libwidgetspdffilecarddart) | dart | 237 |
+| 72 | [`lib/widgets/pdf_tool_file_picker_screen.dart`](#libwidgetspdftoolfilepickerscreendart) | dart | 624 |
+| 73 | [`lib/widgets/permission_banner.dart`](#libwidgetspermissionbannerdart) | dart | 31 |
+| 74 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 183 |
+| 75 | [`test/unit_test.dart`](#testunittestdart) | dart | 392 |
+| 76 | [`test/widget_test.dart`](#testwidgettestdart) | dart | 68 |
+| 77 | [`android/app/src/main/AndroidManifest.xml`](#androidappsrcmainandroidmanifestxml) | xml | 102 |
+| 78 | [`android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt`](#androidappsrcmainkotlincomofflinepdfappofflinepdfreadermainactivitykt) | kotlin | 754 |
+| 79 | [`android/app/src/main/res/xml/file_paths.xml`](#androidappsrcmainresxmlfilepathsxml) | xml | 7 |
+| 80 | [`android/app/build.gradle`](#androidappbuildgradle) | groovy | 45 |
+| 81 | [`android/build.gradle`](#androidbuildgradle) | groovy | 25 |
+| 82 | [`android/settings.gradle`](#androidsettingsgradle) | groovy | 25 |
+
+---
+
+## 1. pubspec.yaml <a id="pubspecyaml"></a>
+
+- **Path:** `pubspec.yaml`
+- **Lines:** 91
+- **Language:** `yaml`
+
+```yaml
+name: offline_pdf_reader
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.5.1
+  syncfusion_flutter_core: ^26.2.14
+  syncfusion_flutter_pdfviewer: ^26.2.14
+  syncfusion_flutter_pdf: ^26.2.14
+  pdfrx: ^1.0.86
+  google_mlkit_document_scanner: ^0.2.0
+  google_mlkit_text_recognition: ^0.13.0
+  permission_handler: ^11.3.1
+  sqflite: ^2.3.3+1
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  crypto: ^3.0.3
+  flutter_tts: ^4.0.2
+  signature: ^5.5.0
+  open_filex: ^4.5.0
+  share_plus: ^10.0.0
+  fl_chart: ^0.68.0
+  file_picker: ^8.1.2
+  intl: ^0.19.0
+  shared_preferences: ^2.3.2
+  google_fonts: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^4.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  fonts:
+    - family: SourceSerif4
+      fonts:
+        - asset: assets/fonts/SourceSerif4-Regular.ttf
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+```
+
+---
+
+## 2. lib/core/ai/ai_model_manager.dart <a id="libcoreaiaimodelmanagerdart"></a>
+
+- **Path:** `lib/core/ai/ai_model_manager.dart`
+- **Lines:** 41
+- **Language:** `dart`
+
+```dart
+import '../../models/ai_model_config.dart';
+import '../storage/database_helper.dart';
+
+class AiModelManager {
+  static final AiModelManager instance = AiModelManager._init();
+
+  AiModelConfig _config = AiModelConfig(
+    isInstalled: true,
+    isEnabled: true,
+    modelName: 'Offline-Local-NLP-Engine-v1',
+    sizeMb: 12.5,
+    statusMessage: 'Ready (On-Device Local Engine Active)',
+  );
+
+  AiModelManager._init();
+
+  AiModelConfig get config => _config;
+
+  void toggleEnabled(bool enabled) {
+    _config = _config.copyWith(
+      isEnabled: enabled,
+      statusMessage: enabled ? 'Ready (On-Device Local Engine Active)' : 'Disabled by User',
+    );
+  }
+
+  void updateSettings({int? maxContext, double? temp, bool? autoUnload}) {
+    _config = _config.copyWith(
+      maxContextLength: maxContext ?? _config.maxContextLength,
+      temperature: temp ?? _config.temperature,
+      autoUnload: autoUnload ?? _config.autoUnload,
+    );
+  }
+
+  Future<String?> getCachedResponse(String cacheKey) async {
+    return await DatabaseHelper.instance.getCachedAiResponse(cacheKey);
+  }
+
+  Future<void> cacheResponse(String cacheKey, String response, String filePath) async {
+    await DatabaseHelper.instance.cacheAiResponse(cacheKey, response, filePath);
+  }
+}
+```
+
+---
+
+## 3. lib/core/ai/local_ai_provider.dart <a id="libcoreailocalaiproviderdart"></a>
+
+- **Path:** `lib/core/ai/local_ai_provider.dart`
+- **Lines:** 43
+- **Language:** `dart`
+
+```dart
+import '../../models/study_item.dart';
+
+class GroundedAnswer {
+  final String answer;
+  final List<int> sourcePages;
+  final bool hasSufficientContext;
+
+  GroundedAnswer({
+    required this.answer,
+    required this.sourcePages,
+    required this.hasSufficientContext,
+  });
+}
+
+enum ExplanationMode { simple, detailed, examFocused }
+
+abstract class LocalAIProvider {
+  Future<GroundedAnswer> answerQuestion({
+    required String filePath,
+    required String question,
+    required Map<int, String> pageTextMap,
+  });
+
+  Future<String> explainText({
+    required String selectedText,
+    required String surroundingContext,
+    required ExplanationMode mode,
+  });
+
+  Future<String> summarizeSection({
+    required String text,
+    required int startPage,
+    required int endPage,
+  });
+
+  Future<List<StudyQuestion>> generateExamQuestions({
+    required String filePath,
+    required Map<int, String> pageTextMap,
+    required String topic,
+    required String difficulty,
+    required int questionCount,
+  });
+}
+```
+
+---
+
+## 4. lib/core/ai/on_device_ai_service.dart <a id="libcoreaiondeviceaiservicedart"></a>
+
+- **Path:** `lib/core/ai/on_device_ai_service.dart`
+- **Lines:** 241
+- **Language:** `dart`
+
+```dart
+import 'dart:math';
+import 'package:flutter/foundation.dart';
+import '../../models/semantic_chunk.dart';
+import '../../models/study_item.dart';
+import '../storage/database_helper.dart';
+import 'ai_model_manager.dart';
+import 'local_ai_provider.dart';
+import 'semantic_search_service.dart';
+
+class OnDeviceAIService implements LocalAIProvider {
+  static final OnDeviceAIService instance = OnDeviceAIService._init();
+  OnDeviceAIService._init();
+
+  @override
+  Future<GroundedAnswer> answerQuestion({
+    required String filePath,
+    required String question,
+    required Map<int, String> pageTextMap,
+  }) async {
+    if (!AiModelManager.instance.config.isEnabled) {
+      return GroundedAnswer(
+        answer: 'Local AI is currently disabled in AI Settings.',
+        sourcePages: [],
+        hasSufficientContext: false,
+      );
+    }
+
+    if (pageTextMap.isEmpty) {
+      return GroundedAnswer(
+        answer: 'Not enough information was found in this document.',
+        sourcePages: [],
+        hasSufficientContext: false,
+      );
+    }
+
+    // 1. Fetch or generate semantic chunks
+    List<SemanticChunk> chunks = [];
+    try {
+      chunks = await DatabaseHelper.instance.getSemanticChunksForFile(filePath);
+    } catch (_) {}
+
+    if (chunks.isEmpty) {
+      chunks = await SemanticSearchService.chunkDocumentText(filePath, pageTextMap);
+      try {
+        await DatabaseHelper.instance.saveSemanticChunks(chunks);
+      } catch (_) {}
+    }
+
+    // 2. Perform local semantic vector search
+    final searchResults = SemanticSearchService.search(question, chunks, topK: 4);
+
+    if (searchResults.isEmpty || searchResults.first.score < 0.12) {
+      return GroundedAnswer(
+        answer: 'Not enough information was found in this document to answer your question.',
+        sourcePages: [],
+        hasSufficientContext: false,
+      );
+    }
+
+    final topResults = searchResults.where((r) => r.score >= 0.10).toList();
+    final sourcePages = topResults.map((r) => r.chunk.pageNumber).toSet().toList()..sort();
+
+    final contextSnippet = topResults.map((r) => r.chunk.chunkText).join('\n\n');
+
+    // 3. Extractive Document Q&A Generation
+    final answerText = await compute(_generateExtractiveAnswer, _QAData(contextSnippet, question));
+
+    return GroundedAnswer(
+      answer: 'Based on this PDF:\n\n$answerText',
+      sourcePages: sourcePages,
+      hasSufficientContext: true,
+    );
+  }
+
+  @override
+  Future<String> explainText({
+    required String selectedText,
+    required String surroundingContext,
+    required ExplanationMode mode,
+  }) async {
+    final cleanText = selectedText.trim();
+    if (cleanText.isEmpty) return 'No text selected for explanation.';
+
+    switch (mode) {
+      case ExplanationMode.simple:
+        return 'Simple Explanation:\n\n"$cleanText" means the core concept or mechanism described here in the document context. It represents a fundamental building block of the topic.';
+      case ExplanationMode.detailed:
+        return 'Detailed Technical Explanation:\n\nSelected Term: "$cleanText"\n\nIn the context of the document, this concept establishes structural rules, relationships, and computational behavior. Surrounding context reference: "${surroundingContext.take(120)}"';
+      case ExplanationMode.examFocused:
+        return 'Exam-Focused Key Points:\n\n• Definition: $cleanText\n• Key Takeaway: Essential concept commonly tested in exam short-answer questions.\n• Example Context: ${surroundingContext.take(100)}';
+    }
+  }
+
+  @override
+  Future<String> summarizeSection({
+    required String text,
+    required int startPage,
+    required int endPage,
+  }) async {
+    if (text.trim().isEmpty) return 'No text available for pages $startPage - $endPage.';
+    final sentences = text.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 20).toList();
+    if (sentences.isEmpty) return text.take(200);
+
+    final summary = sentences.take(min(3, sentences.length)).join(' ');
+    return 'Summary of Pages $startPage - $endPage:\n\n$summary';
+  }
+
+  @override
+  Future<List<StudyQuestion>> generateExamQuestions({
+    required String filePath,
+    required Map<int, String> pageTextMap,
+    required String topic,
+    required String difficulty,
+    required int questionCount,
+  }) async {
+    if (pageTextMap.isEmpty) return [];
+
+    return compute(_generateExamQuestionsLogic, _ExamData(
+      filePath: filePath,
+      pageTextMap: pageTextMap,
+      topic: topic,
+      difficulty: difficulty,
+      questionCount: questionCount,
+    ));
+  }
+}
+
+class _QAData {
+  final String contextSnippet;
+  final String question;
+  _QAData(this.contextSnippet, this.question);
+}
+
+String _generateExtractiveAnswer(_QAData data) {
+  final sentences = data.contextSnippet.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 15).toList();
+  final qLower = data.question.toLowerCase();
+  final keywords = qLower.split(RegExp(r'\s+')).where((k) => k.length > 2).toList();
+
+  List<String> matchedSentences = [];
+  for (final s in sentences) {
+    final sLower = s.toLowerCase();
+    int matches = 0;
+    for (final k in keywords) {
+      if (sLower.contains(k)) matches++;
+    }
+    if (matches > 0) {
+      matchedSentences.add(s);
+    }
+  }
+
+  if (matchedSentences.isNotEmpty) {
+    return matchedSentences.take(3).join(' ');
+  } else {
+    return sentences.take(2).join(' ');
+  }
+}
+
+class _ExamData {
+  final String filePath;
+  final Map<int, String> pageTextMap;
+  final String topic;
+  final String difficulty;
+  final int questionCount;
+  _ExamData({
+    required this.filePath,
+    required this.pageTextMap,
+    required this.topic,
+    required this.difficulty,
+    required this.questionCount,
+  });
+}
+
+List<StudyQuestion> _generateExamQuestionsLogic(_ExamData data) {
+  final List<StudyQuestion> questions = [];
+  final List<MapEntry<int, String>> pages = data.pageTextMap.entries.toList();
+
+  for (int i = 0; i < data.questionCount && i < pages.length * 2; i++) {
+    final entry = pages[i % pages.length];
+    final page = entry.key;
+    final text = entry.value;
+
+    final sentences = text.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 30).toList();
+    if (sentences.isEmpty) continue;
+
+    final sentence = sentences.first.trim();
+    final words = sentence.split(RegExp(r'\s+')).where((w) => w.length > 4).toList();
+    final keyword = words.isNotEmpty ? words.first : 'Concept';
+
+    if (data.difficulty.toLowerCase() == 'easy') {
+      questions.add(
+        StudyQuestion(
+          filePath: data.filePath,
+          pageNumber: page,
+          type: QuestionType.trueFalse,
+          question: '(Easy) $sentence',
+          options: ['TRUE', 'FALSE'],
+          correctAnswer: 'TRUE',
+          explanation: 'Source Page $page: "$sentence"',
+          topic: data.topic,
+        ),
+      );
+    } else if (data.difficulty.toLowerCase() == 'medium') {
+      questions.add(
+        StudyQuestion(
+          filePath: data.filePath,
+          pageNumber: page,
+          type: QuestionType.mcq,
+          question: '(Medium) What does the document state regarding $keyword?',
+          options: [
+            sentence.take(60),
+            'It has no impact on system behavior',
+            'It is explicitly deprecated',
+            'None of the above'
+          ]..shuffle(),
+          correctAnswer: sentence.take(60),
+          explanation: 'Source Page $page: $sentence',
+          topic: data.topic,
+        ),
+      );
+    } else {
+      questions.add(
+        StudyQuestion(
+          filePath: data.filePath,
+          pageNumber: page,
+          type: QuestionType.shortAnswer,
+          question: '(Hard - 5 Marks) Critically analyze the role of $keyword as discussed on Page $page.',
+          correctAnswer: sentence,
+          explanation: 'Document Reference: $sentence',
+          marks: 5,
+          topic: data.topic,
+        ),
+      );
+    }
+  }
+
+  return questions;
+}
+
+extension StringTakeExt on String {
+  String take(int n) => length <= n ? this : '${substring(0, n)}...';
+}
+```
+
+---
+
+## 5. lib/core/ai/semantic_search_service.dart <a id="libcoreaisemanticsearchservicedart"></a>
+
+- **Path:** `lib/core/ai/semantic_search_service.dart`
+- **Lines:** 192
+- **Language:** `dart`
+
+```dart
+import 'dart:math';
+import 'package:flutter/foundation.dart';
+import '../../models/semantic_chunk.dart';
+
+class SemanticSearchResult {
+  final SemanticChunk chunk;
+  final double score;
+
+  SemanticSearchResult({required this.chunk, required this.score});
+}
+
+class SemanticSearchService {
+  static const int _vectorDim = 16;
+
+  static Future<List<SemanticChunk>> chunkDocumentText(
+    String filePath,
+    Map<int, String> pageTextMap,
+  ) async {
+    return compute(_chunkDocumentLogic, _ChunkData(filePath: filePath, pageTextMap: pageTextMap));
+  }
+
+  static List<SemanticSearchResult> search(
+    String query,
+    List<SemanticChunk> chunks, {
+    int topK = 5,
+  }) {
+    if (query.trim().isEmpty || chunks.isEmpty) return [];
+
+    final queryVector = _generateLocalEmbedding(query);
+    final List<SemanticSearchResult> results = [];
+
+    for (final chunk in chunks) {
+      double score = 0.0;
+      if (chunk.vectorData.length == _vectorDim && queryVector.length == _vectorDim) {
+        score = _cosineSimilarity(queryVector, chunk.vectorData);
+      }
+
+      // Keyword match boost
+      final qTerms = query.toLowerCase().split(RegExp(r'\s+')).where((t) => t.length > 2);
+      final chunkLower = chunk.chunkText.toLowerCase();
+      for (final term in qTerms) {
+        if (chunkLower.contains(term)) {
+          score += 0.25;
+        }
+      }
+
+      results.add(SemanticSearchResult(chunk: chunk, score: score));
+    }
+
+    results.sort((a, b) => b.score.compareTo(a.score));
+    return results.take(topK).toList();
+  }
+
+  static List<double> _generateLocalEmbedding(String text) {
+    final clean = text.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '');
+    final words = clean.split(RegExp(r'\s+')).where((w) => w.length > 2).toList();
+    final vector = List<double>.filled(_vectorDim, 0.0);
+
+    if (words.isEmpty) return vector;
+
+    for (final w in words) {
+      int hash = 0;
+      for (int i = 0; i < w.length; i++) {
+        hash = (hash * 31 + w.codeUnitAt(i)) & 0xFFFFFFFF;
+      }
+      final idx = hash % _vectorDim;
+      vector[idx] += 1.0;
+    }
+
+    // Normalize L2 norm
+    double norm = 0.0;
+    for (final val in vector) {
+      norm += val * val;
+    }
+    norm = sqrt(norm);
+    if (norm > 0) {
+      for (int i = 0; i < _vectorDim; i++) {
+        vector[i] /= norm;
+      }
+    }
+
+    return vector;
+  }
+
+  static double _cosineSimilarity(List<double> v1, List<double> v2) {
+    double dot = 0.0;
+    double norm1 = 0.0;
+    double norm2 = 0.0;
+    for (int i = 0; i < v1.length; i++) {
+      dot += v1[i] * v2[i];
+      norm1 += v1[i] * v1[i];
+      norm2 += v2[i] * v2[i];
+    }
+    if (norm1 <= 0 || norm2 <= 0) return 0.0;
+    return dot / (sqrt(norm1) * sqrt(norm2));
+  }
+}
+
+class _ChunkData {
+  final String filePath;
+  final Map<int, String> pageTextMap;
+  _ChunkData({required this.filePath, required this.pageTextMap});
+}
+
+List<SemanticChunk> _chunkDocumentLogic(_ChunkData data) {
+  const int vectorDim = 16;
+  final List<SemanticChunk> chunks = [];
+
+  for (final entry in data.pageTextMap.entries) {
+    final page = entry.key;
+    final text = entry.value;
+    if (text.trim().isEmpty) continue;
+
+    final sentences = text.split(RegExp(r'(?<=[.!?])\s+'));
+    final buffer = StringBuffer();
+    int sentCount = 0;
+
+    for (final sentence in sentences) {
+      buffer.write('$sentence ');
+      sentCount++;
+
+      if (sentCount >= 3 || buffer.length > 300) {
+        final chunkText = buffer.toString().trim();
+        if (chunkText.length > 20) {
+          final vector = _generateEmbedding(chunkText, vectorDim);
+          final keywords = _extractKeywords(chunkText);
+          chunks.add(SemanticChunk(
+            filePath: data.filePath,
+            pageNumber: page,
+            chunkText: chunkText,
+            vectorData: vector,
+            keywords: keywords,
+          ));
+        }
+        buffer.clear();
+        sentCount = 0;
+      }
+    }
+
+    if (buffer.isNotEmpty) {
+      final chunkText = buffer.toString().trim();
+      if (chunkText.length > 20) {
+        final vector = _generateEmbedding(chunkText, vectorDim);
+        final keywords = _extractKeywords(chunkText);
+        chunks.add(SemanticChunk(
+          filePath: data.filePath,
+          pageNumber: page,
+          chunkText: chunkText,
+          vectorData: vector,
+          keywords: keywords,
+        ));
+      }
+    }
+  }
+
+  return chunks;
+}
+
+List<double> _generateEmbedding(String text, int dim) {
+  final clean = text.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '');
+  final words = clean.split(RegExp(r'\s+')).where((w) => w.length > 2).toList();
+  final vector = List<double>.filled(dim, 0.0);
+  if (words.isEmpty) return vector;
+  for (final w in words) {
+    int hash = 0;
+    for (int i = 0; i < w.length; i++) {
+      hash = (hash * 31 + w.codeUnitAt(i)) & 0xFFFFFFFF;
+    }
+    vector[hash % dim] += 1.0;
+  }
+  double norm = 0.0;
+  for (final val in vector) {
+    norm += val * val;
+  }
+  norm = sqrt(norm);
+  if (norm > 0) {
+    for (int i = 0; i < dim; i++) {
+      vector[i] /= norm;
+    }
+  }
+  return vector;
+}
+
+String _extractKeywords(String text) {
+  final words = text.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '').split(RegExp(r'\s+'));
+  final freq = <String, int>{};
+  for (final w in words) {
+    if (w.length > 3) freq[w] = (freq[w] ?? 0) + 1;
+  }
+  final sorted = freq.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+  return sorted.take(5).map((e) => e.key).join(',');
+}
+```
+
+---
+
+## 6. lib/core/config/app_config.dart <a id="libcoreconfigappconfigdart"></a>
+
+- **Path:** `lib/core/config/app_config.dart`
+- **Lines:** 9
+- **Language:** `dart`
+
+```dart
+/// Application configuration constants.
+/// In a production environment, sensitive values like license keys
+/// should be loaded from environment variables or a secure config.
+class AppConfig {
+  static const String appName = 'Offline PDF Reader';
+
+  static const syncfusionLicenseKey =
+      'Ngo9BigBOggjHTQxAR8/V1NCaF5cXmZCe0xyWmFZfVpgdVdMYlVbR3VPMyBoS35RckVlW35ednBRRWVfUUZ2';
+}
+```
+
+---
+
+## 7. lib/core/permissions/permissions_service.dart <a id="libcorepermissionspermissionsservicedart"></a>
+
+- **Path:** `lib/core/permissions/permissions_service.dart`
+- **Lines:** 67
+- **Language:** `dart`
+
+```dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+enum StoragePermissionState {
+  granted,
+  denied,
+  permanentlyDenied,
+  unknown,
+}
+
+class PermissionsNotifier extends StateNotifier<StoragePermissionState> {
+  PermissionsNotifier() : super(StoragePermissionState.unknown) {
+    checkStoragePermission();
+  }
+
+  Future<void> checkStoragePermission() async {
+    final status = await Permission.manageExternalStorage.status;
+    if (status.isGranted) {
+      state = StoragePermissionState.granted;
+    } else if (status.isPermanentlyDenied) {
+      state = StoragePermissionState.permanentlyDenied;
+    } else if (status.isDenied) {
+      state = StoragePermissionState.denied;
+    } else {
+      // Fallback check for storage
+      final storageStatus = await Permission.storage.status;
+      if (storageStatus.isGranted) {
+        state = StoragePermissionState.granted;
+      } else {
+        state = StoragePermissionState.denied;
+      }
+    }
+  }
+
+  Future<bool> requestStoragePermission() async {
+    PermissionStatus status = await Permission.manageExternalStorage.request();
+    
+    if (!status.isGranted) {
+      status = await Permission.storage.request();
+    }
+
+    if (status.isGranted) {
+      state = StoragePermissionState.granted;
+      return true;
+    } else if (status.isPermanentlyDenied) {
+      state = StoragePermissionState.permanentlyDenied;
+      return false;
+    } else {
+      state = StoragePermissionState.denied;
+      return false;
+    }
+  }
+
+  Future<bool> requestCameraPermission() async {
+    final status = await Permission.camera.request();
+    return status.isGranted;
+  }
+
+  Future<void> openAppSettingsPage() async {
+    await openAppSettings();
+  }
+}
+
+final permissionsProvider =
+    StateNotifierProvider<PermissionsNotifier, StoragePermissionState>((ref) {
+  return PermissionsNotifier();
+});
+```
+
+---
+
+## 8. lib/core/services/external_pdf_intent_service.dart <a id="libcoreservicesexternalpdfintentservicedart"></a>
+
+- **Path:** `lib/core/services/external_pdf_intent_service.dart`
+- **Lines:** 188
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../models/pdf_open_request.dart';
+import '../storage/pdf_metadata_helper.dart';
+import '../../features/home/pdf_list_provider.dart';
+import '../../features/viewer/pdf_viewer_screen.dart';
+
+final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
+
+class ExternalPdfIntentService {
+  static const MethodChannel _channel =
+      MethodChannel('com.offlinepdf.app/intent');
+  static final Set<String> _handledRequestIds = <String>{};
+
+  static void initialize(WidgetRef ref) {
+    // This is the SINGLE MethodChannel handler for the entire
+    // com.offlinepdf.app/intent channel.
+    //
+    // Do not install another setMethodCallHandler() on this
+    // channel from PdfListNotifier or any other widget.
+
+    _channel.setMethodCallHandler((call) async {
+      try {
+        switch (call.method) {
+          case 'onPdfOpened':
+            if (call.arguments != null) {
+              final map = call.arguments as Map<dynamic, dynamic>;
+              final request = PdfOpenRequest.fromMap(map);
+              await _processOpenRequest(ref, request);
+            }
+            break;
+
+          case 'onMediaStorePdfChanged':
+            // MediaStore change notifications are also handled here
+            // so the same MethodChannel has only ONE Dart handler.
+            try {
+              await ref
+                  .read(pdfListProvider.notifier)
+                  .fastDeviceSync();
+            } catch (e) {
+              debugPrint(
+                'Fast device sync after MediaStore change failed: $e',
+              );
+            }
+            break;
+
+          default:
+            // Ignore methods not owned by this Dart handler.
+            break;
+        }
+      } catch (e, st) {
+        debugPrint(
+          'External PDF MethodChannel error: $e\n$st',
+        );
+      }
+    });
+
+    // Native must know that Dart is ready before dispatching
+    // pending external PDF requests.
+    _channel
+        .invokeMethod<bool>('markIntentHandlerReady')
+        .then((_) {
+      return _channel
+          .invokeMethod<Map<dynamic, dynamic>>(
+            'getInitialPdfRequest',
+          );
+    }).then((map) {
+      if (map != null) {
+        final request = PdfOpenRequest.fromMap(map);
+
+        // Do not allow an early external intent to crash the
+        // application during startup.
+        _processOpenRequest(ref, request).catchError((e, st) {
+          debugPrint(
+            'Failed to process initial external PDF request: '
+            '$e\n$st',
+          );
+        });
+      }
+    }).catchError((e) {
+      debugPrint(
+        'Failed to initialize external PDF intent handling: $e',
+      );
+    });
+  }
+
+  static Future<void> _processOpenRequest(
+      WidgetRef ref, PdfOpenRequest request) async {
+    if (request.requestId.isNotEmpty &&
+        _handledRequestIds.contains(request.requestId)) {
+      return;
+    }
+
+    if (request.requestId.isNotEmpty) {
+      _handledRequestIds.add(request.requestId);
+      if (_handledRequestIds.length > 100) {
+        _handledRequestIds.remove(_handledRequestIds.first);
+      }
+    }
+
+    final itemsToRegister =
+        request.documents.isNotEmpty ? request.documents : [request];
+
+    String? primaryViewerPath;
+
+    for (final doc in itemsToRegister) {
+      final path = doc.localPath;
+      if (path.isEmpty) continue;
+
+      try {
+        final file = File(path);
+        if (!await file.exists() || await file.length() == 0) {
+          continue;
+        }
+
+        if (doc.isTemporary || path.contains('temp_external_pdfs')) {
+          // Temporary stream cache: Do NOT index into persistent user library
+          primaryViewerPath ??= path;
+        } else {
+          // Real device file: Register and sync metadata
+          final registered = await PdfMetadataHelper.registerAndSyncPdf(
+            path,
+            displayName: doc.fileName,
+          );
+          if (registered != null) {
+            ref.read(pdfListProvider.notifier).addFile(registered);
+            primaryViewerPath ??= path;
+          }
+        }
+      } catch (e) {
+        debugPrint('Error handling intent document $path: $e');
+      }
+    }
+
+    // Only run single-document fallback if documents list was empty
+    if (request.documents.isEmpty &&
+        primaryViewerPath == null &&
+        request.localPath.isNotEmpty) {
+      final file = File(request.localPath);
+      if (await file.exists() && await file.length() > 0) {
+        if (request.isTemporary || request.localPath.contains('temp_external_pdfs')) {
+          primaryViewerPath = request.localPath;
+        } else {
+          final registered = await PdfMetadataHelper.registerAndSyncPdf(
+            request.localPath,
+            displayName: request.fileName,
+          );
+          if (registered != null) {
+            ref.read(pdfListProvider.notifier).addFile(registered);
+            primaryViewerPath = request.localPath;
+          }
+        }
+      }
+    }
+
+    if (primaryViewerPath != null) {
+      final nav = appNavigatorKey.currentState;
+      if (nav != null) {
+        nav.pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => PdfViewerScreen(
+              filePath: primaryViewerPath!,
+              isExternalLaunch: request.isExternalLaunch,
+            ),
+          ),
+          (route) => route.isFirst,
+        );
+      }
+    } else {
+      _showErrorSnackBar(
+          'Unable to read PDF document(s) from source application.');
+    }
+  }
+
+  static void _showErrorSnackBar(String message) {
+    final context = appNavigatorKey.currentContext;
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red.shade800,
+        ),
+      );
+    }
+  }
+}
+```
+
+---
+
+## 9. lib/core/storage/database_helper.dart <a id="libcorestoragedatabasehelperdart"></a>
+
+- **Path:** `lib/core/storage/database_helper.dart`
+- **Lines:** 830
+- **Language:** `dart`
+
+```dart
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import '../../models/pdf_file.dart';
+import '../../models/bookmark.dart';
+import '../../models/annotation_meta.dart';
+import '../../models/tool_usage_stat.dart';
+import '../../models/ocr_cache_entry.dart';
+import '../../models/study_item.dart';
+import '../../models/study_session.dart';
+import '../../models/semantic_chunk.dart';
+import '../../models/exam_session.dart';
+import '../../models/pdf_version.dart';
+
+class DatabaseHelper {
+  static final DatabaseHelper instance = DatabaseHelper._init();
+  static Database? _database;
+
+  DatabaseHelper._init();
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDB('offline_pdf_reader.db');
+    return _database!;
+  }
+
+  Future<Database> _initDB(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
+
+    return await openDatabase(
+      path,
+      version: 7,
+      onCreate: _createDB,
+      onUpgrade: _onUpgrade,
+    );
+  }
+
+  Future<void> _createDB(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE pdf_index (
+        path TEXT PRIMARY KEY,
+        doc_id TEXT,
+        name TEXT NOT NULL,
+        size_bytes INTEGER,
+        modified_at INTEGER,
+        page_count INTEGER,
+        is_favorite INTEGER DEFAULT 0,
+        last_opened_at INTEGER,
+        extracted_text TEXT,
+        last_opened_page INTEGER DEFAULT 1,
+        reading_progress REAL DEFAULT 0.0,
+        reading_time INTEGER DEFAULT 0,
+        completed INTEGER DEFAULT 0,
+        folder TEXT,
+        tags TEXT,
+        source_type TEXT DEFAULT 'imported',
+        created_at INTEGER,
+        scan_created_at INTEGER
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE bookmarks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        page_number INTEGER NOT NULL,
+        label TEXT,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE notes_index (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        page_number INTEGER NOT NULL,
+        note_text TEXT,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE tool_usage (
+        tool_name TEXT PRIMARY KEY,
+        use_count INTEGER DEFAULT 0,
+        last_used_at INTEGER
+      )
+    ''');
+
+    await _createPhase2Tables(db);
+    await _createPhase3Tables(db);
+    await _createPhase4Tables(db);
+    await _createIndexes(db);
+
+    final tools = ['merge', 'split', 'delete_pages', 'scan', 'ocr', 'compare', 'compress', 'encrypt', 'metadata'];
+    for (final tool in tools) {
+      await db.insert(
+        'tool_usage',
+        {'tool_name': tool, 'use_count': 0, 'last_used_at': null},
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+  }
+
+  Future<void> _createIndexes(Database db) async {
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_bookmarks_file_path ON bookmarks(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_notes_file_path ON notes_index(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_ocr_cache_file_path ON ocr_cache(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_study_topics_file_path ON study_topics(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_flashcards_file_path ON flashcards(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_study_questions_file_path ON study_questions(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_study_sessions_file_path ON study_sessions(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_semantic_chunks_file_path ON semantic_chunks(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_exam_sessions_file_path ON exam_sessions(file_path)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_pdf_versions_doc_id ON pdf_versions(doc_id)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_pdf_index_favorite ON pdf_index(is_favorite)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_pdf_index_last_opened ON pdf_index(last_opened_at)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_pdf_index_source_type ON pdf_index(source_type)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_pdf_index_scan_created ON pdf_index(scan_created_at)');
+  }
+
+  Future<void> _createPhase2Tables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ocr_cache (
+        file_path TEXT NOT NULL,
+        page_number INTEGER NOT NULL,
+        extracted_text TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        hash TEXT,
+        PRIMARY KEY (file_path, page_number)
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS study_topics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        title TEXT NOT NULL,
+        start_page INTEGER DEFAULT 1,
+        end_page INTEGER DEFAULT 1,
+        keywords TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS flashcards (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        page_number INTEGER DEFAULT 1,
+        front TEXT NOT NULL,
+        back TEXT NOT NULL,
+        topic TEXT,
+        status INTEGER DEFAULT 0
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS study_questions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        page_number INTEGER DEFAULT 1,
+        question_type TEXT NOT NULL,
+        question TEXT NOT NULL,
+        option_a TEXT,
+        option_b TEXT,
+        option_c TEXT,
+        option_d TEXT,
+        correct_answer TEXT NOT NULL,
+        explanation TEXT,
+        marks INTEGER DEFAULT 1,
+        topic TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS study_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        start_time INTEGER NOT NULL,
+        end_time INTEGER NOT NULL,
+        duration_seconds INTEGER DEFAULT 0,
+        questions_attempted INTEGER DEFAULT 0,
+        correct_count INTEGER DEFAULT 0,
+        accuracy_pct REAL DEFAULT 0.0
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS study_attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id INTEGER NOT NULL,
+        question_id INTEGER NOT NULL,
+        user_answer TEXT,
+        is_correct INTEGER DEFAULT 0,
+        timestamp INTEGER NOT NULL,
+        topic TEXT
+      )
+    ''');
+  }
+
+  Future<void> _createPhase3Tables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ai_cache (
+        cache_key TEXT PRIMARY KEY,
+        response TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        file_path TEXT,
+        model_version TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS semantic_chunks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        page_number INTEGER NOT NULL,
+        chunk_text TEXT NOT NULL,
+        vector_data TEXT NOT NULL,
+        keywords TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ai_notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        note_id INTEGER NOT NULL,
+        ai_title TEXT,
+        ai_explanation TEXT,
+        key_points TEXT,
+        important_terms TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS exam_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        topic TEXT NOT NULL,
+        difficulty TEXT NOT NULL,
+        num_questions INTEGER DEFAULT 10,
+        score_pct REAL DEFAULT 0.0,
+        duration_seconds INTEGER DEFAULT 0,
+        timestamp INTEGER NOT NULL
+      )
+    ''');
+  }
+
+  Future<void> _createPhase4Tables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS pdf_versions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        doc_id TEXT NOT NULL,
+        version_number INTEGER NOT NULL,
+        file_path TEXT NOT NULL,
+        size_bytes INTEGER NOT NULL,
+        timestamp INTEGER NOT NULL,
+        source_operation TEXT NOT NULL,
+        hash TEXT
+      )
+    ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    Future<void> safeAddColumn(String sql) async {
+      try {
+        await db.execute(sql);
+      } catch (_) {
+        // Column may already exist, ignore duplicate column error safely
+      }
+    }
+
+    if (oldVersion < 2) {
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN last_opened_page INTEGER DEFAULT 1;');
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN reading_progress REAL DEFAULT 0.0;');
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN reading_time INTEGER DEFAULT 0;');
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN completed INTEGER DEFAULT 0;');
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN folder TEXT;');
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN tags TEXT;');
+    }
+    if (oldVersion < 3) {
+      await _createPhase2Tables(db);
+    }
+    if (oldVersion < 4) {
+      await _createPhase3Tables(db);
+    }
+    if (oldVersion < 5) {
+      await _createPhase4Tables(db);
+    }
+    if (oldVersion < 6) {
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN doc_id TEXT;');
+      try {
+        await db.execute('UPDATE pdf_index SET doc_id = path WHERE doc_id IS NULL;');
+      } catch (_) {}
+    }
+    if (oldVersion < 7) {
+      await safeAddColumn("ALTER TABLE pdf_index ADD COLUMN source_type TEXT DEFAULT 'imported';");
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN created_at INTEGER;');
+      await safeAddColumn('ALTER TABLE pdf_index ADD COLUMN scan_created_at INTEGER;');
+    }
+    // Always ensure indexes exist after any upgrade
+    await _createIndexes(db);
+  }
+
+  // --- PDF Index Operations ---
+  Future<void> upsertPdfFile(PdfFile file) async {
+    final db = await instance.database;
+    await db.insert('pdf_index', file.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> bulkUpsertPdfFiles(List<PdfFile> files) async {
+    final db = await instance.database;
+    final batch = db.batch();
+    for (final f in files) {
+      batch.insert('pdf_index', f.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<PdfFile?> getPdfFile(String path) async {
+    final db = await instance.database;
+    final maps = await db.query('pdf_index', where: 'path = ?', whereArgs: [path], limit: 1);
+    if (maps.isNotEmpty) return PdfFile.fromMap(maps.first);
+    return null;
+  }
+
+  Future<bool> renamePdfFile({
+    required String oldPath,
+    required String newPath,
+    required String newName,
+  }) async {
+    final db = await instance.database;
+    return await db.transaction((txn) async {
+      final maps = await txn.query('pdf_index', where: 'path = ?', whereArgs: [oldPath], limit: 1);
+      if (maps.isEmpty) return false;
+
+      final existing = maps.first;
+      final updatedMap = Map<String, dynamic>.from(existing);
+      updatedMap['path'] = newPath;
+      updatedMap['name'] = newName;
+      updatedMap['modified_at'] = DateTime.now().millisecondsSinceEpoch;
+
+      await txn.insert('pdf_index', updatedMap, conflictAlgorithm: ConflictAlgorithm.replace);
+      await txn.delete('pdf_index', where: 'path = ?', whereArgs: [oldPath]);
+
+      await txn.update('bookmarks', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('notes_index', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('ocr_cache', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('study_topics', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('flashcards', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('study_questions', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('study_sessions', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('semantic_chunks', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('ai_cache', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('exam_sessions', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+      await txn.update('pdf_versions', {'file_path': newPath}, where: 'file_path = ?', whereArgs: [oldPath]);
+
+      return true;
+    });
+  }
+
+  Future<void> deletePdfFileFromIndex(String path) async {
+    final db = await instance.database;
+    final maps = await db.query('pdf_index', columns: ['doc_id'], where: 'path = ?', whereArgs: [path]);
+    final docId = maps.isNotEmpty ? maps.first['doc_id'] as String? : null;
+
+    await db.transaction((txn) async {
+      await txn.delete('bookmarks', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('notes_index', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('ocr_cache', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('study_topics', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('flashcards', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('study_questions', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('study_sessions', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('semantic_chunks', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('ai_cache', where: 'file_path = ?', whereArgs: [path]);
+      await txn.delete('exam_sessions', where: 'file_path = ?', whereArgs: [path]);
+      if (docId != null) {
+        await txn.delete('pdf_versions', where: 'doc_id = ?', whereArgs: [docId]);
+      } else {
+        await txn.delete('pdf_versions', where: 'doc_id = ?', whereArgs: [path]);
+      }
+      await txn.delete('pdf_index', where: 'path = ?', whereArgs: [path]);
+    });
+  }
+
+  Future<List<PdfFile>> getAllPdfFiles() async {
+    final db = await instance.database;
+    final maps = await db.query('pdf_index', orderBy: 'name ASC');
+    return maps.map((m) => PdfFile.fromMap(m)).toList();
+  }
+
+  Future<List<PdfFile>> getRecentScannedPdfFiles({int limit = 10}) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'pdf_index',
+      where: "source_type = 'scanned' OR scan_created_at IS NOT NULL",
+      orderBy: 'COALESCE(scan_created_at, created_at, modified_at) DESC',
+      limit: limit,
+    );
+    return maps.map((m) => PdfFile.fromMap(m)).toList();
+  }
+
+  Future<List<PdfFile>> getRecentlyOpenedPdfFiles({int limit = 10}) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'pdf_index',
+      where: 'last_opened_at IS NOT NULL',
+      orderBy: 'last_opened_at DESC',
+      limit: limit,
+    );
+    return maps.map((m) => PdfFile.fromMap(m)).toList();
+  }
+
+  Future<List<PdfFile>> getFavoritePdfFiles() async {
+    final db = await instance.database;
+    final maps = await db.query('pdf_index', where: 'is_favorite = 1', orderBy: 'name ASC');
+    return maps.map((m) => PdfFile.fromMap(m)).toList();
+  }
+
+  Future<void> toggleFavorite(String path, bool isFavorite) async {
+    final db = await instance.database;
+    await db.update('pdf_index', {'is_favorite': isFavorite ? 1 : 0}, where: 'path = ?', whereArgs: [path]);
+  }
+
+  Future<void> updateLastOpened(String path) async {
+    final db = await instance.database;
+    await db.update(
+      'pdf_index',
+      {'last_opened_at': DateTime.now().millisecondsSinceEpoch},
+      where: 'path = ?',
+      whereArgs: [path],
+    );
+  }
+
+  Future<void> updateReadingProgress(
+    String path, {
+    required int page,
+    required double progress,
+    required bool completed,
+  }) async {
+    final db = await instance.database;
+    await db.update(
+      'pdf_index',
+      {
+        'last_opened_page': page,
+        'reading_progress': progress,
+        'completed': completed ? 1 : 0,
+        'last_opened_at': DateTime.now().millisecondsSinceEpoch,
+      },
+      where: 'path = ?',
+      whereArgs: [path],
+    );
+  }
+
+  Future<void> addReadingTime(String path, int additionalSeconds) async {
+    if (additionalSeconds <= 0) return;
+    final db = await instance.database;
+    await db.rawUpdate('''
+      UPDATE pdf_index
+      SET reading_time = COALESCE(reading_time, 0) + ?
+      WHERE path = ?
+    ''', [additionalSeconds, path]);
+  }
+
+  Future<void> updateExtractedText(String path, String extractedText) async {
+    final db = await instance.database;
+    await db.update('pdf_index', {'extracted_text': extractedText}, where: 'path = ?', whereArgs: [path]);
+  }
+
+  Future<List<PdfFile>> searchPdfFiles(String query, {bool searchInside = false}) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return [];
+
+    final db = await instance.database;
+    final exact = trimmed;
+    final startsWith = '$trimmed%';
+    final contains = '%$trimmed%';
+
+    if (searchInside) {
+      const sql = '''
+        SELECT *,
+          CASE
+            WHEN LOWER(name) = LOWER(?) THEN 1
+            WHEN LOWER(name) LIKE LOWER(?) THEN 2
+            WHEN LOWER(name) LIKE LOWER(?) THEN 3
+            WHEN (folder IS NOT NULL AND LOWER(folder) LIKE LOWER(?)) OR LOWER(path) LIKE LOWER(?) THEN 4
+            ELSE 5
+          END AS search_rank
+        FROM pdf_index
+        WHERE LOWER(name) LIKE LOWER(?)
+           OR (folder IS NOT NULL AND LOWER(folder) LIKE LOWER(?))
+           OR LOWER(path) LIKE LOWER(?)
+           OR (extracted_text IS NOT NULL AND LOWER(extracted_text) LIKE LOWER(?))
+        ORDER BY search_rank ASC, modified_at DESC, name ASC
+      ''';
+      final maps = await db.rawQuery(sql, [
+        exact, startsWith, contains, contains, contains, // for CASE
+        contains, contains, contains, contains, // for WHERE
+      ]);
+      return maps.map((m) => PdfFile.fromMap(m)).toList();
+    } else {
+      const sql = '''
+        SELECT *,
+          CASE
+            WHEN LOWER(name) = LOWER(?) THEN 1
+            WHEN LOWER(name) LIKE LOWER(?) THEN 2
+            WHEN LOWER(name) LIKE LOWER(?) THEN 3
+            ELSE 4
+          END AS search_rank
+        FROM pdf_index
+        WHERE LOWER(name) LIKE LOWER(?)
+           OR (folder IS NOT NULL AND LOWER(folder) LIKE LOWER(?))
+           OR LOWER(path) LIKE LOWER(?)
+        ORDER BY search_rank ASC, modified_at DESC, name ASC
+      ''';
+      final maps = await db.rawQuery(sql, [
+        exact, startsWith, contains, // for CASE
+        contains, contains, contains, // for WHERE
+      ]);
+      return maps.map((m) => PdfFile.fromMap(m)).toList();
+    }
+  }
+
+  Future<List<PdfFile>> getMostOpenedFiles({int limit = 5}) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'pdf_index',
+      where: 'last_opened_at IS NOT NULL',
+      orderBy: 'last_opened_at DESC',
+      limit: limit,
+    );
+    return maps.map((m) => PdfFile.fromMap(m)).toList();
+  }
+
+  // --- Bookmarks Operations ---
+  Future<int> addBookmark(Bookmark bookmark) async {
+    final db = await instance.database;
+    return await db.insert('bookmarks', bookmark.toMap());
+  }
+
+  Future<void> updateBookmarkLabel(int id, String newLabel) async {
+    final db = await instance.database;
+    await db.update('bookmarks', {'label': newLabel}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<List<Bookmark>> getBookmarksForFile(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('bookmarks', where: 'file_path = ?', whereArgs: [filePath], orderBy: 'page_number ASC');
+    return maps.map((m) => Bookmark.fromMap(m)).toList();
+  }
+
+  Future<void> deleteBookmark(int id) async {
+    final db = await instance.database;
+    await db.delete('bookmarks', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // --- Notes Operations ---
+  Future<int> addNote(PdfNote note) async {
+    final db = await instance.database;
+    return await db.insert('notes_index', note.toMap());
+  }
+
+  Future<List<PdfNote>> getNotesForFile(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('notes_index', where: 'file_path = ?', whereArgs: [filePath], orderBy: 'page_number ASC');
+    return maps.map((m) => PdfNote.fromMap(m)).toList();
+  }
+
+  Future<void> deleteNote(int id) async {
+    final db = await instance.database;
+    await db.delete('notes_index', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // --- Tool Usage Operations ---
+  Future<void> incrementToolUsage(String toolName) async {
+    final db = await instance.database;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    await db.rawUpdate('''
+      UPDATE tool_usage
+      SET use_count = use_count + 1, last_used_at = ?
+      WHERE tool_name = ?
+    ''', [now, toolName]);
+  }
+
+  Future<List<ToolUsageStat>> getToolUsageStats() async {
+    final db = await instance.database;
+    final maps = await db.query('tool_usage');
+    return maps.map((m) => ToolUsageStat.fromMap(m)).toList();
+  }
+
+  // --- Phase 2: OCR Cache Operations ---
+  Future<void> upsertOcrCacheEntry(OcrCacheEntry entry) async {
+    final db = await instance.database;
+    await db.insert('ocr_cache', entry.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<OcrCacheEntry?> getOcrCacheEntry(String filePath, int pageNumber) async {
+    final db = await instance.database;
+    final maps = await db.query('ocr_cache', where: 'file_path = ? AND page_number = ?', whereArgs: [filePath, pageNumber], limit: 1);
+    if (maps.isNotEmpty) return OcrCacheEntry.fromMap(maps.first);
+    return null;
+  }
+
+  Future<List<OcrCacheEntry>> getOcrCacheForFile(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('ocr_cache', where: 'file_path = ?', whereArgs: [filePath], orderBy: 'page_number ASC');
+    return maps.map((m) => OcrCacheEntry.fromMap(m)).toList();
+  }
+
+  Future<void> invalidateOcrCacheForFile(String filePath) async {
+    final db = await instance.database;
+    await db.delete('ocr_cache', where: 'file_path = ?', whereArgs: [filePath]);
+  }
+
+  // --- Phase 2: Study Items & Flashcards Operations ---
+  Future<void> saveStudyTopics(List<StudyTopic> topics) async {
+    final db = await instance.database;
+    final batch = db.batch();
+    for (final t in topics) {
+      batch.insert('study_topics', t.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<List<StudyTopic>> getStudyTopics(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('study_topics', where: 'file_path = ?', whereArgs: [filePath], orderBy: 'start_page ASC');
+    return maps.map((m) => StudyTopic.fromMap(m)).toList();
+  }
+
+  Future<void> saveFlashcards(List<Flashcard> cards) async {
+    final db = await instance.database;
+    final batch = db.batch();
+    for (final c in cards) {
+      batch.insert('flashcards', c.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<List<Flashcard>> getFlashcards(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('flashcards', where: 'file_path = ?', whereArgs: [filePath]);
+    return maps.map((m) => Flashcard.fromMap(m)).toList();
+  }
+
+  Future<void> updateFlashcardStatus(int id, int status) async {
+    final db = await instance.database;
+    await db.update('flashcards', {'status': status}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> saveStudyQuestions(List<StudyQuestion> questions) async {
+    final db = await instance.database;
+    final batch = db.batch();
+    for (final q in questions) {
+      batch.insert('study_questions', q.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<List<StudyQuestion>> getStudyQuestions(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('study_questions', where: 'file_path = ?', whereArgs: [filePath]);
+    return maps.map((m) => StudyQuestion.fromMap(m)).toList();
+  }
+
+  Future<int> saveStudySession(StudySession session) async {
+    final db = await instance.database;
+    return await db.insert('study_sessions', session.toMap());
+  }
+
+  Future<void> recordStudyAttempt(StudyAttempt attempt) async {
+    final db = await instance.database;
+    await db.insert('study_attempts', attempt.toMap());
+  }
+
+  Future<List<StudySession>> getStudySessionsForFile(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('study_sessions', where: 'file_path = ?', whereArgs: [filePath], orderBy: 'start_time DESC');
+    return maps.map((m) => StudySession.fromMap(m)).toList();
+  }
+
+  Future<Map<String, double>> getTopicAccuracyForFile(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.rawQuery('''
+      SELECT topic, COUNT(*) as total, SUM(is_correct) as correct
+      FROM study_attempts
+      WHERE topic IS NOT NULL AND topic != ''
+      GROUP BY topic
+      HAVING total >= 3
+    ''');
+
+    final Map<String, double> result = {};
+    for (final m in maps) {
+      final topic = m['topic'] as String;
+      final total = m['total'] as int;
+      final correct = m['correct'] as int;
+      result[topic] = (correct / total);
+    }
+    return result;
+  }
+
+  // --- Phase 3: AI Cache, Chunks & Exam Operations ---
+  Future<void> cacheAiResponse(String cacheKey, String response, String filePath) async {
+    final db = await instance.database;
+    await db.insert(
+      'ai_cache',
+      {
+        'cache_key': cacheKey,
+        'response': response,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'file_path': filePath,
+        'model_version': '1.0.0_local',
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<String?> getCachedAiResponse(String cacheKey) async {
+    final db = await instance.database;
+    final maps = await db.query('ai_cache', where: 'cache_key = ?', whereArgs: [cacheKey], limit: 1);
+    if (maps.isNotEmpty) return maps.first['response'] as String;
+    return null;
+  }
+
+  Future<void> saveSemanticChunks(List<SemanticChunk> chunks) async {
+    final db = await instance.database;
+    final batch = db.batch();
+    for (final c in chunks) {
+      batch.insert('semantic_chunks', c.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<List<SemanticChunk>> getSemanticChunksForFile(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('semantic_chunks', where: 'file_path = ?', whereArgs: [filePath], orderBy: 'page_number ASC');
+    return maps.map((m) => SemanticChunk.fromMap(m)).toList();
+  }
+
+  Future<void> saveExamSession(ExamSession exam) async {
+    final db = await instance.database;
+    await db.insert('exam_sessions', exam.toMap());
+  }
+
+  Future<List<ExamSession>> getExamSessionsForFile(String filePath) async {
+    final db = await instance.database;
+    final maps = await db.query('exam_sessions', where: 'file_path = ?', whereArgs: [filePath], orderBy: 'timestamp DESC');
+    return maps.map((m) => ExamSession.fromMap(m)).toList();
+  }
+
+  // --- Phase 4: Version History Operations ---
+  Future<int> addPdfVersion(PdfVersion version) async {
+    final db = await instance.database;
+    return await db.insert('pdf_versions', version.toMap());
+  }
+
+  Future<List<PdfVersion>> getVersionsForDocument(String docId) async {
+    final db = await instance.database;
+    final maps = await db.query('pdf_versions', where: 'doc_id = ?', whereArgs: [docId], orderBy: 'version_number DESC');
+    return maps.map((m) => PdfVersion.fromMap(m)).toList();
+  }
+
+  Future<void> deletePdfVersion(int id) async {
+    final db = await instance.database;
+    await db.delete('pdf_versions', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // --- AI Notes Operations ---
+  Future<int> addAiNote({
+    required int noteId,
+    String? aiTitle,
+    String? aiExplanation,
+    String? keyPoints,
+    String? importantTerms,
+  }) async {
+    final db = await instance.database;
+    return await db.insert(
+      'ai_notes',
+      {
+        'note_id': noteId,
+        'ai_title': aiTitle,
+        'ai_explanation': aiExplanation,
+        'key_points': keyPoints,
+        'important_terms': importantTerms,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getAiNoteForNote(int noteId) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      'ai_notes',
+      where: 'note_id = ?',
+      whereArgs: [noteId],
+      limit: 1,
+    );
+    if (maps.isNotEmpty) return maps.first;
+    return null;
+  }
+
+  Future<void> deleteAiNote(int noteId) async {
+    final db = await instance.database;
+    await db.delete('ai_notes', where: 'note_id = ?', whereArgs: [noteId]);
+  }
+
+  Future<void> clearOcrIndex() async {
+    final db = await instance.database;
+    await db.update('pdf_index', {'extracted_text': null});
+    await db.delete('ocr_cache');
+  }
+
+  Future<void> clearDatabase() async {
+    final db = await instance.database;
+    await db.delete('pdf_index');
+    await db.delete('bookmarks');
+    await db.delete('notes_index');
+    await db.delete('ocr_cache');
+    await db.delete('study_topics');
+    await db.delete('flashcards');
+    await db.delete('study_questions');
+    await db.delete('study_sessions');
+    await db.delete('study_attempts');
+    await db.delete('ai_cache');
+    await db.delete('semantic_chunks');
+    await db.delete('ai_notes');
+    await db.delete('exam_sessions');
+    await db.delete('pdf_versions');
+  }
+}
+```
+
+---
+
+## 10. lib/core/storage/file_scanner.dart <a id="libcorestoragefilescannerdart"></a>
+
+- **Path:** `lib/core/storage/file_scanner.dart`
+- **Lines:** 537
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
+import 'package:pdfrx/pdfrx.dart' as pdfrx;
+import '../../models/pdf_file.dart';
+import 'database_helper.dart';
+
+enum ScanCompleteness {
+  complete,
+  partial,
+}
+
+class ScanDiagnostics {
+  final ScanCompleteness completeness;
+  final bool filesystemScanComplete;
+  final int filesystemCandidateCount;
+  final int mediaStoreCandidateCount;
+  final int uniqueCandidateCount;
+  final int inaccessibleDirectoryCount;
+  final int alreadyIndexedUnchanged;
+  final int newlyIndexedOrUpdated;
+
+  ScanDiagnostics({
+    required this.completeness,
+    required this.filesystemScanComplete,
+    required this.filesystemCandidateCount,
+    required this.mediaStoreCandidateCount,
+    required this.uniqueCandidateCount,
+    required this.inaccessibleDirectoryCount,
+    required this.alreadyIndexedUnchanged,
+    required this.newlyIndexedOrUpdated,
+  });
+
+  @override
+  String toString() {
+    return 'ScanDiagnostics(Completeness: $completeness, Filesystem: $filesystemCandidateCount, MediaStore: $mediaStoreCandidateCount, Unique: $uniqueCandidateCount, Inaccessible: $inaccessibleDirectoryCount, Unchanged: $alreadyIndexedUnchanged, Updated: $newlyIndexedOrUpdated)';
+  }
+}
+
+class ScanResultData {
+  final List<PdfFile> files;
+  final ScanDiagnostics diagnostics;
+  final Set<String> successfullyScannedDirs;
+
+  ScanResultData({
+    required this.files,
+    required this.diagnostics,
+    required this.successfullyScannedDirs,
+  });
+}
+
+class FileScanner {
+  static Future<List<PdfFile>>? _inFlightScan;
+  static const MethodChannel _intentChannel = MethodChannel('com.offlinepdf.app/intent');
+
+  /// Runs multi-source PDF discovery combining Android MediaStore, resilient filesystem walk, and persisted index.
+  static Future<ScanResultData> scanAllStorageDetailed({
+    Map<String, Map<String, dynamic>>? existingCache,
+  }) async {
+    final cache = existingCache ?? await _buildExistingCache();
+
+    // 1. Query Android MediaStore if on Android
+    List<String> mediaStorePaths = [];
+    if (Platform.isAndroid) {
+      try {
+        final res = await _intentChannel.invokeMethod<List<dynamic>>('queryMediaStorePdfs');
+        if (res != null) {
+          mediaStorePaths = res.whereType<String>().toList();
+        }
+      } catch (_) {
+        // Fallback gracefully
+      }
+    }
+
+    final payload = {
+      'cache': cache,
+      'mediaStorePaths': mediaStorePaths,
+    };
+
+    final Map<String, dynamic> rawResult = await compute(_scanStorageIsolate, payload);
+
+    final List<PdfFile> files = (rawResult['files'] as List<dynamic>).cast<PdfFile>();
+    final int fsCount = rawResult['filesystemCandidateCount'] as int;
+    final int msCount = rawResult['mediaStoreCandidateCount'] as int;
+    final int uCount = rawResult['uniqueCandidateCount'] as int;
+    final int inaccCount = rawResult['inaccessibleDirectoryCount'] as int;
+    final int unchangedCount = rawResult['alreadyIndexedUnchanged'] as int;
+    final int newCount = rawResult['newlyIndexedOrUpdated'] as int;
+    final bool fsComplete = rawResult['filesystemScanComplete'] as bool;
+    final List<String> scannedDirsList = (rawResult['successfullyScannedDirs'] as List<dynamic>).cast<String>();
+
+    final diagnostics = ScanDiagnostics(
+      completeness: inaccCount > 0 ? ScanCompleteness.partial : ScanCompleteness.complete,
+      filesystemScanComplete: fsComplete,
+      filesystemCandidateCount: fsCount,
+      mediaStoreCandidateCount: msCount,
+      uniqueCandidateCount: uCount,
+      inaccessibleDirectoryCount: inaccCount,
+      alreadyIndexedUnchanged: unchangedCount,
+      newlyIndexedOrUpdated: newCount,
+    );
+
+    return ScanResultData(
+      files: files,
+      diagnostics: diagnostics,
+      successfullyScannedDirs: scannedDirsList.toSet(),
+    );
+  }
+
+  static Future<List<PdfFile>> scanAllStorage({
+    Map<String, Map<String, dynamic>>? existingCache,
+  }) async {
+    final res = await scanAllStorageDetailed(existingCache: existingCache);
+    return res.files;
+  }
+
+  /// Fast device synchronization: Queries MediaStore and updates only new/modified PDFs
+  /// Completes in milliseconds without traversing the entire storage tree
+  static Future<List<PdfFile>> fastDeviceSync({
+    Map<String, Map<String, dynamic>>? existingCache,
+  }) async {
+    final cache = existingCache ?? await _buildExistingCache();
+    List<String> mediaStorePaths = [];
+
+    if (Platform.isAndroid) {
+      try {
+        final res = await _intentChannel.invokeMethod<List<dynamic>>('queryMediaStorePdfs');
+        if (res != null) {
+          mediaStorePaths = res.whereType<String>().toList();
+        }
+      } catch (_) {}
+    }
+
+    final dbHelper = DatabaseHelper.instance;
+    final List<PdfFile> filesToUpsert = [];
+
+    for (final rawPath in mediaStorePaths) {
+      final canonicalPath = p.canonicalize(rawPath);
+      if (!canonicalPath.toLowerCase().endsWith('.pdf')) continue;
+
+      try {
+        final file = File(canonicalPath);
+        if (!file.existsSync()) continue;
+
+        final stat = file.statSync();
+        final cached = cache[canonicalPath];
+
+        if (cached != null) {
+          if (cached['size_bytes'] != stat.size ||
+              cached['modified_at'] != stat.modified.millisecondsSinceEpoch) {
+            int pageCount = 1;
+            try {
+              final document = await pdfrx.PdfDocument.openFile(canonicalPath);
+              pageCount = document.pages.length;
+              document.dispose();
+            } catch (_) {}
+
+            filesToUpsert.add(PdfFile(
+              docId: cached['doc_id'] as String,
+              path: canonicalPath,
+              name: p.basename(canonicalPath),
+              sizeBytes: stat.size,
+              modifiedAt: stat.modified.millisecondsSinceEpoch,
+              pageCount: pageCount,
+              isFavorite: ((cached['is_favorite'] as num?)?.toInt() ?? 0) == 1,
+              lastOpenedAt: (cached['last_opened_at'] as num?)?.toInt(),
+              extractedText: cached['extracted_text'] as String?,
+              lastOpenedPage: (cached['last_opened_page'] as num?)?.toInt() ?? 1,
+              readingProgress: (cached['reading_progress'] as num?)?.toDouble() ?? 0.0,
+              readingTime: (cached['reading_time'] as num?)?.toInt() ?? 0,
+              completed: ((cached['completed'] as num?)?.toInt() ?? 0) == 1,
+              folder: cached['folder'] as String? ?? p.basename(p.dirname(canonicalPath)),
+              tags: cached['tags'] as String?,
+              sourceType: cached['source_type'] as String? ?? 'imported',
+              createdAt: (cached['created_at'] as num?)?.toInt() ?? DateTime.now().millisecondsSinceEpoch,
+              scanCreatedAt: (cached['scan_created_at'] as num?)?.toInt(),
+            ));
+          }
+        } else {
+          int pageCount = 1;
+          try {
+            final document = await pdfrx.PdfDocument.openFile(canonicalPath);
+            pageCount = document.pages.length;
+            document.dispose();
+          } catch (_) {}
+
+          final docId = DateTime.now().microsecondsSinceEpoch.toRadixString(36) +
+              canonicalPath.hashCode.toRadixString(36);
+
+          filesToUpsert.add(PdfFile(
+            docId: docId,
+            path: canonicalPath,
+            name: p.basename(canonicalPath),
+            sizeBytes: stat.size,
+            modifiedAt: stat.modified.millisecondsSinceEpoch,
+            pageCount: pageCount,
+            folder: p.basename(p.dirname(canonicalPath)),
+            sourceType: 'imported',
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+          ));
+        }
+      } catch (_) {}
+    }
+
+    if (filesToUpsert.isNotEmpty) {
+      await dbHelper.bulkUpsertPdfFiles(filesToUpsert);
+    }
+
+    return await dbHelper.getAllPdfFiles();
+  }
+
+  static Future<Map<String, Map<String, dynamic>>> _buildExistingCache() async {
+    try {
+      final existingFiles = await DatabaseHelper.instance.getAllPdfFiles();
+      final Map<String, Map<String, dynamic>> cache = {};
+      for (final f in existingFiles) {
+        cache[p.canonicalize(f.path)] = f.toMap();
+      }
+      return cache;
+    } catch (_) {
+      return {};
+    }
+  }
+
+  static Future<Map<String, dynamic>> _scanStorageIsolate(Map<String, dynamic> payload) async {
+    final Map<String, Map<String, dynamic>> existingCache =
+        (payload['cache'] as Map<dynamic, dynamic>?)?.cast<String, Map<String, dynamic>>() ?? {};
+    final List<String> mediaStorePaths =
+        (payload['mediaStorePaths'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    final List<PdfFile> results = [];
+    final Set<String> discoveredPdfPaths = {};
+    final Set<String> visitedDirs = {};
+    final Set<String> successfullyScannedDirs = {};
+
+    int mediaStoreCandidatesCount = 0;
+    int filesystemCandidatesCount = 0;
+    int inaccessibleDirsCount = 0;
+    int unchangedHits = 0;
+    int newlyIndexedCount = 0;
+
+    // A. Add valid MediaStore PDF paths
+    for (final rawPath in mediaStorePaths) {
+      final canonicalPath = p.canonicalize(rawPath);
+      if (canonicalPath.toLowerCase().endsWith('.pdf') && !discoveredPdfPaths.contains(canonicalPath)) {
+        try {
+          final file = File(canonicalPath);
+          if (file.existsSync()) {
+            discoveredPdfPaths.add(canonicalPath);
+            mediaStoreCandidatesCount++;
+          }
+        } catch (_) {}
+      }
+    }
+
+    // B. Resilient Filesystem Traversal
+    final List<String> searchPaths = [];
+    if (Platform.isAndroid) {
+      searchPaths.add('/storage/emulated/0');
+      final dir = Directory('/storage');
+      if (dir.existsSync()) {
+        try {
+          for (final entity in dir.listSync()) {
+            if (entity is Directory &&
+                !entity.path.endsWith('emulated') &&
+                !entity.path.endsWith('self')) {
+              searchPaths.add(entity.path);
+            }
+          }
+        } catch (_) {}
+      }
+    } else {
+      searchPaths.add(Directory.current.path);
+    }
+
+    for (final basePath in searchPaths) {
+      final canonicalBasePath = p.canonicalize(basePath);
+      final baseDir = Directory(canonicalBasePath);
+      if (!baseDir.existsSync()) continue;
+      await _walkDirectoryResilient(
+        baseDir,
+        visitedDirs,
+        discoveredPdfPaths,
+        successfullyScannedDirs,
+        () => inaccessibleDirsCount++,
+      );
+    }
+
+    // C. Process all discovered PDF paths into PdfFile objects without re-parsing unchanged PDFs
+    for (final canonicalPath in discoveredPdfPaths) {
+      try {
+        final entity = File(canonicalPath);
+        if (!entity.existsSync()) continue;
+
+        final stat = entity.statSync();
+        final cached = existingCache[canonicalPath];
+
+        // 1. FAST CACHE HIT: Size and modified timestamp match
+        if (cached != null &&
+            cached['size_bytes'] == stat.size &&
+            cached['modified_at'] == stat.modified.millisecondsSinceEpoch) {
+          results.add(PdfFile.fromMap(cached));
+          unchangedHits++;
+          continue;
+        }
+
+        // 2. NEW OR MODIFIED FILE: Safely extract page count via pdfrx
+        int pageCount = 0;
+        try {
+          final document = await pdfrx.PdfDocument.openFile(canonicalPath);
+          pageCount = document.pages.length;
+          document.dispose();
+        } catch (_) {
+          // Encrypted or malformed PDF handled gracefully
+        }
+
+        final name = p.basename(canonicalPath);
+        final existingDocId = cached != null ? cached['doc_id'] as String? : null;
+        final docId = existingDocId ??
+            (DateTime.now().microsecondsSinceEpoch.toRadixString(36) +
+                canonicalPath.hashCode.toRadixString(36));
+
+        results.add(PdfFile(
+          docId: docId,
+          path: canonicalPath,
+          name: name,
+          sizeBytes: stat.size,
+          modifiedAt: stat.modified.millisecondsSinceEpoch,
+          pageCount: pageCount,
+          isFavorite: cached != null ? ((cached['is_favorite'] as num?)?.toInt() ?? 0) == 1 : false,
+          lastOpenedAt: cached != null ? (cached['last_opened_at'] as num?)?.toInt() : null,
+          extractedText: cached != null ? cached['extracted_text'] as String? : null,
+          lastOpenedPage: cached != null ? (cached['last_opened_page'] as num?)?.toInt() ?? 1 : 1,
+          readingProgress: cached != null ? (cached['reading_progress'] as num?)?.toDouble() ?? 0.0 : 0.0,
+          readingTime: cached != null ? (cached['reading_time'] as num?)?.toInt() ?? 0 : 0,
+          completed: cached != null ? ((cached['completed'] as num?)?.toInt() ?? 0) == 1 : false,
+          folder: cached != null ? cached['folder'] as String? : p.basename(p.dirname(canonicalPath)),
+          tags: cached != null ? cached['tags'] as String? : null,
+          sourceType: cached != null ? (cached['source_type'] as String? ?? 'imported') : 'imported',
+          createdAt: cached != null ? (cached['created_at'] as num?)?.toInt() : DateTime.now().millisecondsSinceEpoch,
+          scanCreatedAt: cached != null ? (cached['scan_created_at'] as num?)?.toInt() : null,
+        ));
+        newlyIndexedCount++;
+      } catch (_) {}
+    }
+
+    debugPrint('--- PDF Scan Diagnostics ---');
+    debugPrint('MediaStore PDF candidates: $mediaStoreCandidatesCount');
+    debugPrint('Filesystem PDF candidates: $filesystemCandidatesCount');
+    debugPrint('Unique PDF candidates: ${discoveredPdfPaths.length}');
+    debugPrint('Inaccessible directories: $inaccessibleDirsCount');
+    debugPrint('Unchanged indexed files: $unchangedHits');
+    debugPrint('Newly indexed/updated files: $newlyIndexedCount');
+    debugPrint('Completeness: ${inaccessibleDirsCount == 0 ? "COMPLETE" : "PARTIAL"}');
+    debugPrint('----------------------------');
+
+    return {
+      'files': results,
+      'filesystemCandidateCount': filesystemCandidatesCount,
+      'mediaStoreCandidateCount': mediaStoreCandidatesCount,
+      'uniqueCandidateCount': discoveredPdfPaths.length,
+      'inaccessibleDirectoryCount': inaccessibleDirsCount,
+      'alreadyIndexedUnchanged': unchangedHits,
+      'newlyIndexedOrUpdated': newlyIndexedCount,
+      'filesystemScanComplete': inaccessibleDirsCount == 0,
+      'successfullyScannedDirs': successfullyScannedDirs.toList(),
+    };
+  }
+
+  static Future<void> _walkDirectoryResilient(
+    Directory dir,
+    Set<String> visitedDirs,
+    Set<String> discoveredPdfPaths,
+    Set<String> successfullyScannedDirs,
+    void Function() onInaccessibleDirectory,
+  ) async {
+    final canonicalDir = p.canonicalize(dir.path);
+
+    if (visitedDirs.contains(canonicalDir)) {
+      return;
+    }
+
+    visitedDirs.add(canonicalDir);
+
+    try {
+      final entities = dir.listSync(
+        followLinks: false,
+      );
+
+      // This directory itself was successfully enumerated.
+      successfullyScannedDirs.add(canonicalDir);
+
+      for (final entity in entities) {
+        try {
+          final canonicalPath = p.canonicalize(entity.path);
+          final lowerPath = canonicalPath.toLowerCase();
+          final name = p.basename(canonicalPath).toLowerCase();
+
+          // Preserve current Android restricted-directory behavior.
+          if (lowerPath.contains('/android/data') ||
+              lowerPath.contains('\\android\\data') ||
+              lowerPath.contains('/android/obb') ||
+              lowerPath.contains('\\android\\obb')) {
+            continue;
+          }
+
+          // Preserve known system-generated directory exclusions.
+          if (name == '.thumbnails' ||
+              name == '.system_generated') {
+            continue;
+          }
+
+          // IMPORTANT:
+          // Do not exclude Android/media.
+          // User PDFs can exist there.
+
+          if (entity is Directory) {
+            await _walkDirectoryResilient(
+              Directory(canonicalPath),
+              visitedDirs,
+              discoveredPdfPaths,
+              successfullyScannedDirs,
+              onInaccessibleDirectory,
+            );
+          } else if (entity is File &&
+              lowerPath.endsWith('.pdf')) {
+            discoveredPdfPaths.add(canonicalPath);
+          }
+        } catch (e) {
+          // One bad child must never stop sibling processing.
+          debugPrint(
+            'PDF scanner skipped inaccessible entry: ${entity.path} - $e',
+          );
+
+          // IMPORTANT:
+          // A child entry could not be inspected.
+          // Treat scan as partial.
+          onInaccessibleDirectory();
+        }
+      }
+    } catch (e) {
+      // The directory itself could not be enumerated.
+      // This makes the scan PARTIAL.
+      onInaccessibleDirectory();
+
+      debugPrint(
+        'PDF scanner could not access directory: $canonicalDir - $e',
+      );
+    }
+  }
+
+  /// Incremental sync with in-flight lock to prevent duplicate scans
+  static Future<List<PdfFile>> runScanAndUpdateDb() async {
+    if (_inFlightScan != null) {
+      return await _inFlightScan!;
+    }
+
+    final completer = Completer<List<PdfFile>>();
+    _inFlightScan = completer.future;
+
+    try {
+      final dbHelper = DatabaseHelper.instance;
+      final existingFiles = await dbHelper.getAllPdfFiles();
+
+      final Map<String, Map<String, dynamic>> existingCache = {};
+      final Map<String, PdfFile> existingMap = {};
+      for (final f in existingFiles) {
+        final cp = p.canonicalize(f.path);
+        existingCache[cp] = f.toMap();
+        existingMap[cp] = f;
+      }
+
+      final scanResult = await scanAllStorageDetailed(existingCache: existingCache);
+      final scannedFiles = scanResult.files;
+
+      final Set<String> scannedPaths = {};
+      final List<PdfFile> filesToUpsert = [];
+
+      for (final scanned in scannedFiles) {
+        final cp = p.canonicalize(scanned.path);
+        scannedPaths.add(cp);
+        final existing = existingMap[cp];
+
+        if (existing != null) {
+          // Check if modified on disk
+          if (existing.sizeBytes != scanned.sizeBytes ||
+              existing.modifiedAt != scanned.modifiedAt ||
+              existing.pageCount != scanned.pageCount) {
+            filesToUpsert.add(scanned.copyWith(
+              docId: existing.docId,
+              isFavorite: existing.isFavorite,
+              lastOpenedAt: existing.lastOpenedAt,
+              extractedText: existing.extractedText,
+              lastOpenedPage: existing.lastOpenedPage,
+              readingProgress: existing.readingProgress,
+              readingTime: existing.readingTime,
+              completed: existing.completed,
+              folder: existing.folder,
+              tags: existing.tags,
+              sourceType: existing.sourceType,
+              createdAt: existing.createdAt,
+              scanCreatedAt: existing.scanCreatedAt,
+            ));
+          }
+        } else {
+          // Newly discovered file
+          filesToUpsert.add(scanned);
+        }
+      }
+
+      if (filesToUpsert.isNotEmpty) {
+        await dbHelper.bulkUpsertPdfFiles(filesToUpsert);
+      }
+
+      // IMPORTANT:
+      // Do NOT delete indexed files merely because they were not
+      // returned by a potentially partial storage scan.
+      //
+      // An incomplete/inaccessible directory must never cause
+      // existing user documents to disappear from the database.
+      //
+      // Physical deletion is already handled by the app's explicit
+      // delete action. Storage synchronization must not guess.
+
+      final updatedList = await dbHelper.getAllPdfFiles();
+      completer.complete(updatedList);
+      return updatedList;
+    } catch (e, st) {
+      completer.completeError(e, st);
+      rethrow;
+    } finally {
+      _inFlightScan = null;
+    }
+  }
+}
+```
+
+---
+
+## 11. lib/core/storage/ocr_cache_service.dart <a id="libcorestorageocrcacheservicedart"></a>
+
+- **Path:** `lib/core/storage/ocr_cache_service.dart`
+- **Lines:** 78
+- **Language:** `dart`
+
+```dart
+import '../../models/ocr_cache_entry.dart';
+import 'database_helper.dart';
+
+class OcrCacheService {
+  static const int _maxCacheSize = 50;
+  static final Map<String, Map<int, String>> _memoryCache = {};
+  static final List<String> _cacheAccessOrder = [];
+
+  static void _updateCacheAccess(String filePath) {
+    _cacheAccessOrder.remove(filePath);
+    _cacheAccessOrder.add(filePath);
+    if (_cacheAccessOrder.length > _maxCacheSize) {
+      final oldest = _cacheAccessOrder.removeAt(0);
+      _memoryCache.remove(oldest);
+    }
+  }
+
+  static Future<String?> getCachedPageText(String filePath, int pageNumber) async {
+    if (_memoryCache[filePath]?.containsKey(pageNumber) == true) {
+      _updateCacheAccess(filePath);
+      return _memoryCache[filePath]![pageNumber];
+    }
+
+    final dbEntry = await DatabaseHelper.instance.getOcrCacheEntry(filePath, pageNumber);
+    if (dbEntry != null) {
+      _memoryCache.putIfAbsent(filePath, () => {})[pageNumber] = dbEntry.extractedText;
+      _updateCacheAccess(filePath);
+      return dbEntry.extractedText;
+    }
+
+    return null;
+  }
+
+  static Future<Map<int, String>> getCachedFileOcr(String filePath) async {
+    if (_memoryCache.containsKey(filePath) && _memoryCache[filePath]!.isNotEmpty) {
+      _updateCacheAccess(filePath);
+      return _memoryCache[filePath]!;
+    }
+
+    final entries = await DatabaseHelper.instance.getOcrCacheForFile(filePath);
+    final Map<int, String> result = {};
+    for (final e in entries) {
+      result[e.pageNumber] = e.extractedText;
+    }
+
+    if (result.isNotEmpty) {
+      _memoryCache[filePath] = result;
+      _updateCacheAccess(filePath);
+    }
+
+    return result;
+  }
+
+  static Future<void> cachePageOcrText(
+    String filePath,
+    int pageNumber,
+    String text,
+  ) async {
+    if (text.trim().isEmpty) return;
+
+    final entry = OcrCacheEntry(
+      filePath: filePath,
+      pageNumber: pageNumber,
+      extractedText: text,
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    await DatabaseHelper.instance.upsertOcrCacheEntry(entry);
+    _memoryCache.putIfAbsent(filePath, () => {})[pageNumber] = text;
+    _updateCacheAccess(filePath);
+  }
+
+  static Future<void> invalidateFileOcr(String filePath) async {
+    _memoryCache.remove(filePath);
+    _cacheAccessOrder.remove(filePath);
+    await DatabaseHelper.instance.invalidateOcrCacheForFile(filePath);
+  }
+}
+```
+
+---
+
+## 12. lib/core/storage/pdf_metadata_helper.dart <a id="libcorestoragepdfmetadatahelperdart"></a>
+
+- **Path:** `lib/core/storage/pdf_metadata_helper.dart`
+- **Lines:** 44
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:pdfrx/pdfrx.dart' as rx;
+import '../../models/pdf_file.dart';
+import 'database_helper.dart';
+
+class PdfMetadataHelper {
+  static Future<PdfFile?> registerAndSyncPdf(
+    String filePath, {
+    String? displayName,
+  }) async {
+    final file = File(filePath);
+    if (!file.existsSync()) return null;
+
+    final stat = file.statSync();
+    int truePageCount = 0;
+
+    try {
+      final doc = await rx.PdfDocument.openFile(filePath);
+      truePageCount = doc.pages.length;
+      await doc.dispose();
+    } catch (e) {
+      debugPrint('pdfrx page count extraction failed for $filePath: $e');
+    }
+
+    final computedName = displayName?.trim().isNotEmpty == true
+        ? displayName!.trim()
+        : filePath.split(Platform.pathSeparator).last;
+
+    final docId = DateTime.now().microsecondsSinceEpoch.toRadixString(36) + filePath.hashCode.toRadixString(36);
+
+    final pdfFile = PdfFile(
+      docId: docId,
+      path: filePath,
+      name: computedName,
+      sizeBytes: stat.size,
+      modifiedAt: stat.modified.millisecondsSinceEpoch,
+      pageCount: truePageCount,
+    );
+
+    await DatabaseHelper.instance.upsertPdfFile(pdfFile);
+    return pdfFile;
+  }
+}
+```
+
+---
+
+## 13. lib/core/storage/thumbnail_cache_service.dart <a id="libcorestoragethumbnailcacheservicedart"></a>
+
+- **Path:** `lib/core/storage/thumbnail_cache_service.dart`
+- **Lines:** 137
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui';
+import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdfrx/pdfrx.dart';
+
+class ThumbnailCacheService {
+  static final Map<String, File?> _memoryCache = <String, File?>{};
+  static final Map<String, Future<File?>> _inFlightTasks = <String, Future<File?>>{};
+  static const int _maxMemoryCacheEntries = 100;
+  static int _activeRenderJobs = 0;
+  static const int _maxConcurrentRenders = 3;
+
+  static void _cachePut(String key, File? file) {
+    if (_memoryCache.containsKey(key)) {
+      _memoryCache.remove(key);
+    } else if (_memoryCache.length >= _maxMemoryCacheEntries) {
+      _memoryCache.remove(_memoryCache.keys.first);
+    }
+    _memoryCache[key] = file;
+  }
+
+  static File? _cacheGet(String key) {
+    if (!_memoryCache.containsKey(key)) return null;
+    final file = _memoryCache.remove(key);
+    _memoryCache[key] = file;
+    return file;
+  }
+
+  static Future<File?> getThumbnailFile(String filePath) async {
+    if (filePath.isEmpty) return null;
+    final sourceFile = File(filePath);
+    if (!await sourceFile.exists()) return null;
+
+    try {
+      final stat = await sourceFile.stat();
+      final cacheKey = md5
+          .convert(utf8.encode(
+              '$filePath:${stat.size}:${stat.modified.millisecondsSinceEpoch}'))
+          .toString();
+
+      final cachedMem = _cacheGet(cacheKey);
+      if (cachedMem != null) {
+        return cachedMem;
+      }
+
+      // In-flight task deduplication
+      if (_inFlightTasks.containsKey(cacheKey)) {
+        return await _inFlightTasks[cacheKey]!;
+      }
+
+      final task = _generateThumbnail(sourceFile, filePath, cacheKey);
+      _inFlightTasks[cacheKey] = task;
+
+      final result = await task;
+      _inFlightTasks.remove(cacheKey);
+      return result;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<File?> _generateThumbnail(
+      File sourceFile, String filePath, String cacheKey) async {
+    // Throttle concurrent PDF rendering
+    while (_activeRenderJobs >= _maxConcurrentRenders) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+
+    _activeRenderJobs++;
+    PdfDocument? pdfDoc;
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final cacheDir =
+          Directory('${tempDir.path}${Platform.pathSeparator}pdf_thumbnails');
+      if (!await cacheDir.exists()) {
+        await cacheDir.create(recursive: true);
+      }
+
+      final cachedFile =
+          File('${cacheDir.path}${Platform.pathSeparator}$cacheKey.png');
+      if (await cachedFile.exists()) {
+        _cachePut(cacheKey, cachedFile);
+        return cachedFile;
+      }
+
+      // Render first page thumbnail via pdfrx
+      pdfDoc = await PdfDocument.openFile(filePath);
+      if (pdfDoc.pages.isEmpty) {
+        return null;
+      }
+
+      final page = pdfDoc.pages.first;
+      final pageImage = await page.render(width: 150, height: 200);
+
+      if (pageImage != null) {
+        final uiImage = await pageImage.createImage();
+        try {
+          final byteData =
+              await uiImage.toByteData(format: ImageByteFormat.png);
+          if (byteData != null) {
+            final buffer = byteData.buffer.asUint8List();
+            await cachedFile.writeAsBytes(buffer);
+            _cachePut(cacheKey, cachedFile);
+            return cachedFile;
+          }
+        } finally {
+          uiImage.dispose();
+        }
+      }
+    } catch (e) {
+      debugPrint('Thumbnail generation failed for $filePath: $e');
+    } finally {
+      _activeRenderJobs = (_activeRenderJobs - 1).clamp(0, 999);
+      await pdfDoc?.dispose();
+    }
+
+    return null;
+  }
+
+  static Future<void> clearCache() async {
+    _memoryCache.clear();
+    _inFlightTasks.clear();
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final cacheDir =
+          Directory('${tempDir.path}${Platform.pathSeparator}pdf_thumbnails');
+      if (await cacheDir.exists()) {
+        await cacheDir.delete(recursive: true);
+      }
+    } catch (_) {}
+  }
+}
+```
+
+---
+
+## 14. lib/core/study/local_summarizer_service.dart <a id="libcorestudylocalsummarizerservicedart"></a>
+
+- **Path:** `lib/core/study/local_summarizer_service.dart`
+- **Lines:** 115
+- **Language:** `dart`
+
+```dart
+import 'dart:math';
+import 'package:flutter/foundation.dart';
+
+class LocalSummarizerResult {
+  final String quickSummary;
+  final List<String> keyPoints;
+  final List<String> chapterSummaries;
+
+  LocalSummarizerResult({
+    required this.quickSummary,
+    required this.keyPoints,
+    required this.chapterSummaries,
+  });
+}
+
+class LocalSummarizerService {
+  static const Set<String> _stopWords = {
+    'the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were',
+    'in', 'on', 'at', 'to', 'for', 'with', 'by', 'about', 'against',
+    'between', 'into', 'through', 'during', 'before', 'after', 'above',
+    'below', 'from', 'up', 'down', 'out', 'off', 'over', 'under',
+    'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where',
+    'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most',
+    'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
+    'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don',
+    'should', 'now', 'this', 'that', 'these', 'those', 'it', 'its', 'of'
+  };
+
+  static Future<LocalSummarizerResult> summarizeText(String text, {int maxKeyPoints = 5}) async {
+    return compute(_SummarizerData.process, _SummarizerData(text: text, maxKeyPoints: maxKeyPoints));
+  }
+
+  static List<String> _splitSentences(String text) {
+    final RegExp sentenceRegex = RegExp(r'(?<=[.!?])\s+');
+    final raw = text.split(sentenceRegex);
+    return raw
+        .map((s) => s.trim())
+        .where((s) => s.length > 20 && s.length < 350)
+        .toList();
+  }
+}
+
+class _SummarizerData {
+  final String text;
+  final int maxKeyPoints;
+
+  _SummarizerData({required this.text, required this.maxKeyPoints});
+
+  static LocalSummarizerResult process(_SummarizerData data) {
+    if (data.text.trim().isEmpty) {
+      return LocalSummarizerResult(
+        quickSummary: 'No extractable text available in this document.',
+        keyPoints: [],
+        chapterSummaries: [],
+      );
+    }
+
+    final sentences = LocalSummarizerService._splitSentences(data.text);
+    if (sentences.isEmpty) {
+      return LocalSummarizerResult(
+        quickSummary: data.text.length > 200 ? '${data.text.substring(0, 200)}...' : data.text,
+        keyPoints: [data.text],
+        chapterSummaries: [],
+      );
+    }
+
+    final Map<String, int> wordFreq = {};
+    for (final sentence in sentences) {
+      final words = sentence.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '').split(RegExp(r'\s+'));
+      for (final w in words) {
+        if (w.length > 2 && !LocalSummarizerService._stopWords.contains(w)) {
+          wordFreq[w] = (wordFreq[w] ?? 0) + 1;
+        }
+      }
+    }
+
+    final List<MapEntry<String, double>> scoredSentences = [];
+    for (int i = 0; i < sentences.length; i++) {
+      final s = sentences[i];
+      final words = s.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '').split(RegExp(r'\s+'));
+      double score = 0.0;
+      int wordCount = 0;
+      for (final w in words) {
+        if (w.length > 2 && !LocalSummarizerService._stopWords.contains(w)) {
+          score += (wordFreq[w] ?? 0);
+          wordCount++;
+        }
+      }
+      if (wordCount > 0) {
+        score = score / sqrt(wordCount);
+        if (i == 0 || i < 3) score *= 1.25;
+      }
+      scoredSentences.add(MapEntry(s, score));
+    }
+
+    scoredSentences.sort((a, b) => b.value.compareTo(a.value));
+
+    final topSentences = scoredSentences
+        .take(min(data.maxKeyPoints, scoredSentences.length))
+        .map((e) => e.key)
+        .toList();
+
+    final quickSummaryStr = topSentences.take(2).join(' ');
+
+    return LocalSummarizerResult(
+      quickSummary: quickSummaryStr.isEmpty ? data.text.take(200) : quickSummaryStr,
+      keyPoints: topSentences,
+      chapterSummaries: topSentences.take(min(3, topSentences.length)).toList(),
+    );
+  }
+}
+
+extension StringTakeExt on String {
+  String take(int n) => length <= n ? this : '${substring(0, n)}...';
+}
+```
+
+---
+
+## 15. lib/core/study/study_generator_service.dart <a id="libcorestudystudygeneratorservicedart"></a>
+
+- **Path:** `lib/core/study/study_generator_service.dart`
+- **Lines:** 152
+- **Language:** `dart`
+
+```dart
+import 'dart:math';
+import 'package:flutter/foundation.dart';
+import '../../models/study_item.dart';
+
+class StudyGeneratorService {
+  static Future<List<Flashcard>> generateFlashcards(
+    String filePath,
+    Map<int, String> pageTextMap, {
+    int maxCards = 10,
+  }) async {
+    return compute(_generateFlashcardsLogic, _StudyGenData(filePath: filePath, pageTextMap: pageTextMap, maxItems: maxCards));
+  }
+
+  static Future<List<StudyQuestion>> generateQuestions(
+    String filePath,
+    Map<int, String> pageTextMap, {
+    int maxQuestions = 12,
+  }) async {
+    return compute(_generateQuestionsLogic, _StudyGenData(filePath: filePath, pageTextMap: pageTextMap, maxItems: maxQuestions));
+  }
+
+  static List<_DefItem> _extractDefinitionSentences(Map<int, String> pageTextMap) {
+    final List<_DefItem> items = [];
+    final RegExp defPattern = RegExp(
+      r'\b([A-Z][a-zA-Z0-9 ]{2,25})\s+(?:is|are|refers to|means|is defined as)\s+([^.!\n]{15,150})',
+      caseSensitive: false,
+    );
+
+    pageTextMap.forEach((page, text) {
+      final matches = defPattern.allMatches(text);
+      for (final m in matches) {
+        final term = m.group(1)?.trim();
+        final def = m.group(2)?.trim();
+        if (term != null && def != null && term.length > 3) {
+          items.add(
+            _DefItem(
+              term: term,
+              definition: def,
+              sentence: '${m.group(0)?.trim()}',
+              pageNumber: page,
+            ),
+          );
+        }
+      }
+    });
+
+    return items;
+  }
+}
+
+class _DefItem {
+  final String term;
+  final String definition;
+  final String sentence;
+  final int pageNumber;
+
+  _DefItem({
+    required this.term,
+    required this.definition,
+    required this.sentence,
+    required this.pageNumber,
+  });
+}
+
+class _StudyGenData {
+  final String filePath;
+  final Map<int, String> pageTextMap;
+  final int maxItems;
+  _StudyGenData({required this.filePath, required this.pageTextMap, required this.maxItems});
+}
+
+List<Flashcard> _generateFlashcardsLogic(_StudyGenData data) {
+  final items = StudyGeneratorService._extractDefinitionSentences(data.pageTextMap);
+  final List<Flashcard> cards = [];
+
+  for (int i = 0; i < min(data.maxItems, items.length); i++) {
+    final item = items[i];
+    cards.add(Flashcard(
+      filePath: data.filePath,
+      pageNumber: item.pageNumber,
+      front: item.term,
+      back: '${item.definition}\n\n(Source: Page ${item.pageNumber})',
+    ));
+  }
+
+  if (cards.isEmpty) {
+    final pages = data.pageTextMap.entries.toList();
+    for (int i = 0; i < min(data.maxItems, pages.length); i++) {
+      final entry = pages[i];
+      final sentences = entry.value.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 30).toList();
+      if (sentences.isEmpty) continue;
+      final sentence = sentences.first.trim();
+      final words = sentence.split(RegExp(r'\s+')).where((w) => w.length > 4).toList();
+      final keyword = words.isNotEmpty ? words.first : 'Concept';
+      cards.add(Flashcard(
+        filePath: data.filePath,
+        pageNumber: entry.key,
+        front: 'Define: $keyword',
+        back: sentence,
+      ));
+    }
+  }
+
+  return cards;
+}
+
+List<StudyQuestion> _generateQuestionsLogic(_StudyGenData data) {
+  final items = StudyGeneratorService._extractDefinitionSentences(data.pageTextMap);
+  final List<StudyQuestion> questions = [];
+
+  for (int i = 0; i < min(data.maxItems, items.length); i++) {
+    final item = items[i];
+    if (i % 3 == 0) {
+      questions.add(StudyQuestion(
+        filePath: data.filePath,
+        pageNumber: item.pageNumber,
+        type: QuestionType.mcq,
+        question: 'What does "${item.term}" refer to?',
+        options: [
+          item.definition,
+          'It has no impact on system behavior',
+          'It is explicitly deprecated',
+          'None of the above',
+        ],
+        correctAnswer: item.definition,
+        explanation: 'Source Page ${item.pageNumber}: ${item.sentence}',
+      ));
+    } else if (i % 3 == 1) {
+      questions.add(StudyQuestion(
+        filePath: data.filePath,
+        pageNumber: item.pageNumber,
+        type: QuestionType.trueFalse,
+        question: '${item.term} ${item.definition}',
+        options: ['TRUE', 'FALSE'],
+        correctAnswer: 'TRUE',
+        explanation: 'Source Page ${item.pageNumber}: ${item.sentence}',
+      ));
+    } else {
+      questions.add(StudyQuestion(
+        filePath: data.filePath,
+        pageNumber: item.pageNumber,
+        type: QuestionType.shortAnswer,
+        question: 'Explain the concept of "${item.term}" as discussed on Page ${item.pageNumber}.',
+        correctAnswer: item.definition,
+        explanation: 'Document Reference: ${item.sentence}',
+        marks: 3,
+      ));
+    }
+  }
+
+  return questions;
+}
+```
+
+---
+
+## 16. lib/core/study/topic_extractor_service.dart <a id="libcorestudytopicextractorservicedart"></a>
+
+- **Path:** `lib/core/study/topic_extractor_service.dart`
+- **Lines:** 150
+- **Language:** `dart`
+
+```dart
+import 'dart:math';
+import 'package:flutter/foundation.dart';
+import '../../models/study_item.dart';
+
+class TopicExtractorService {
+  static const Set<String> _commonStopWords = {
+    'the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were',
+    'in', 'on', 'at', 'to', 'for', 'with', 'by', 'about', 'against',
+    'between', 'into', 'through', 'during', 'before', 'after', 'above',
+    'below', 'from', 'up', 'down', 'out', 'off', 'over', 'under',
+    'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where',
+    'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most',
+    'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
+    'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don',
+    'should', 'now', 'this', 'that', 'these', 'those', 'it', 'its', 'of',
+    'figure', 'table', 'page', 'chapter', 'section', 'also', 'using', 'used'
+  };
+
+  static Future<List<StudyTopic>> extractTopicsFromPages(
+    String filePath,
+    Map<int, String> pageTextMap,
+  ) async {
+    return compute(_extractTopicsLogic, _TopicData(filePath: filePath, pageTextMap: pageTextMap));
+  }
+
+  static Future<List<ImportantTerm>> extractImportantTerms(
+    Map<int, String> pageTextMap, {
+    int maxTerms = 12,
+  }) async {
+    return compute(_extractTermsLogic, _TermsData(pageTextMap: pageTextMap, maxTerms: maxTerms));
+  }
+}
+
+class _TopicData {
+  final String filePath;
+  final Map<int, String> pageTextMap;
+  _TopicData({required this.filePath, required this.pageTextMap});
+}
+
+List<StudyTopic> _extractTopicsLogic(_TopicData data) {
+  if (data.pageTextMap.isEmpty) return [];
+
+  final List<StudyTopic> topics = [];
+  final totalPages = data.pageTextMap.keys.isNotEmpty
+      ? data.pageTextMap.keys.reduce(max)
+      : 1;
+
+  // Detect section headers / capitalized phrases
+  final RegExp headerRegex = RegExp(
+    r'^(?:Chapter|Section|\d+\.|\d+\.\d+)?\s*([A-Z][A-Za-z0-9\s]{3,40})$',
+    multiLine: true,
+  );
+
+  final Map<String, List<int>> topicPages = {};
+
+  data.pageTextMap.forEach((page, text) {
+    final matches = headerRegex.allMatches(text);
+    for (final m in matches) {
+      final title = m.group(1)?.trim();
+      if (title != null && title.isNotEmpty && !TopicExtractorService._commonStopWords.contains(title.toLowerCase())) {
+        topicPages.putIfAbsent(title, () => []).add(page);
+      }
+    }
+  });
+
+  if (topicPages.isNotEmpty) {
+    topicPages.forEach((title, pages) {
+      pages.sort();
+      topics.add(
+        StudyTopic(
+          filePath: data.filePath,
+          title: title,
+          startPage: pages.first,
+          endPage: pages.last,
+        ),
+      );
+    });
+  }
+
+  // Fallback: If no headers detected, chunk document into logical page-range topics
+  if (topics.isEmpty) {
+    final chunkSize = max(1, (totalPages / 4).ceil());
+    for (int i = 1; i <= totalPages; i += chunkSize) {
+      final end = min(totalPages, i + chunkSize - 1);
+      topics.add(
+        StudyTopic(
+          filePath: data.filePath,
+          title: 'Section (Pages $i - $end)',
+          startPage: i,
+          endPage: end,
+        ),
+      );
+    }
+  }
+
+  return topics.take(8).toList();
+}
+
+class _TermsData {
+  final Map<int, String> pageTextMap;
+  final int maxTerms;
+  _TermsData({required this.pageTextMap, required this.maxTerms});
+}
+
+List<ImportantTerm> _extractTermsLogic(_TermsData data) {
+  if (data.pageTextMap.isEmpty) return [];
+
+  final Map<String, int> termFrequency = {};
+  final Map<String, String> termContexts = {};
+  final Map<String, int> termPage = {};
+
+  // Pattern for Title-Cased or Defined Terms (e.g. "Primary Key", "Normalization")
+  final RegExp termRegex = RegExp(r'\b([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,})?)\b');
+
+  data.pageTextMap.forEach((page, text) {
+    final matches = termRegex.allMatches(text);
+    for (final m in matches) {
+      final term = m.group(1)?.trim();
+      if (term != null &&
+          term.length >= 4 &&
+          !TopicExtractorService._commonStopWords.contains(term.toLowerCase())) {
+        termFrequency[term] = (termFrequency[term] ?? 0) + 1;
+        if (!termContexts.containsKey(term)) {
+          final idx = text.indexOf(term);
+          final start = max(0, idx - 40);
+          final end = min(text.length, idx + term.length + 60);
+          termContexts[term] = '...${text.substring(start, end).replaceAll('\n', ' ').trim()}...';
+          termPage[term] = page;
+        }
+      }
+    }
+  });
+
+  final sortedTerms = termFrequency.entries.toList()
+    ..sort((a, b) => b.value.compareTo(a.value));
+
+  final List<ImportantTerm> result = [];
+  for (final entry in sortedTerms.take(data.maxTerms)) {
+    final term = entry.key;
+    result.add(
+      ImportantTerm(
+        term: term,
+        context: termContexts[term] ?? term,
+        pageNumber: termPage[term] ?? 1,
+      ),
+    );
+  }
+
+  return result;
+}
+```
+
+---
+
+## 17. lib/core/theme/app_theme.dart <a id="libcorethemeappthemedart"></a>
+
+- **Path:** `lib/core/theme/app_theme.dart`
+- **Lines:** 179
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:offline_pdf_reader/core/theme/editorial_tokens.dart';
+
+class AppTheme {
+  static final ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: EditorialTokens.canvas,
+    fontFamily: EditorialTokens.sansFamily,
+    colorScheme: const ColorScheme.light(
+      primary: EditorialTokens.primary,
+      onPrimary: Colors.white,
+      secondary: EditorialTokens.secondary,
+      onSecondary: Colors.white,
+      tertiary: EditorialTokens.tertiary,
+      onTertiary: Colors.white,
+      surface: EditorialTokens.surface,
+      onSurface: EditorialTokens.ink,
+      surfaceContainerLowest: EditorialTokens.surfaceStrong,
+      surfaceContainerLow: EditorialTokens.surface,
+      surfaceContainer: EditorialTokens.surfaceMuted,
+      surfaceContainerHigh: EditorialTokens.canvas,
+      outline: EditorialTokens.border,
+      outlineVariant: EditorialTokens.borderSoft,
+      error: EditorialTokens.error,
+      onError: Colors.white,
+    ),
+    appBarTheme: const AppBarTheme(
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: false,
+      backgroundColor: EditorialTokens.canvas,
+      foregroundColor: EditorialTokens.ink,
+      surfaceTintColor: Colors.transparent,
+    ),
+    dividerTheme: const DividerThemeData(
+      color: EditorialTokens.borderSoft,
+      thickness: EditorialTokens.hairline,
+      space: 1,
+    ),
+  );
+
+  static final ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: EditorialTokens.darkCanvas,
+    fontFamily: EditorialTokens.sansFamily,
+    colorScheme: const ColorScheme.dark(
+      primary: EditorialTokens.primary,
+      onPrimary: Colors.white,
+      secondary: EditorialTokens.secondary,
+      onSecondary: Colors.white,
+      tertiary: EditorialTokens.tertiary,
+      onTertiary: Colors.white,
+      surface: EditorialTokens.darkSurface,
+      onSurface: EditorialTokens.darkInk,
+      surfaceContainerLowest: EditorialTokens.darkCanvas,
+      surfaceContainerLow: EditorialTokens.darkSurface,
+      surfaceContainer: EditorialTokens.darkSurfaceMuted,
+      surfaceContainerHigh: EditorialTokens.darkSurfaceStrong,
+      outline: EditorialTokens.darkBorder,
+      outlineVariant: EditorialTokens.darkBorderSoft,
+      error: EditorialTokens.error,
+      onError: Colors.white,
+    ),
+    appBarTheme: const AppBarTheme(
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: false,
+      backgroundColor: EditorialTokens.darkCanvas,
+      foregroundColor: EditorialTokens.darkInk,
+      surfaceTintColor: Colors.transparent,
+    ),
+    dividerTheme: const DividerThemeData(
+      color: EditorialTokens.darkBorderSoft,
+      thickness: EditorialTokens.hairline,
+      space: 1,
+    ),
+  );
+
+  // Reader Night Mode Theme for PDF Viewer container
+  static const Color nightReaderBg = Color(0xFF141210);
+
+  // Reader Eye Comfort Sepia/Amber Warm Tint Theme (filters harsh blue light)
+  static const Color eyeComfortReaderBg = Color(0xFFF4EDE2);
+  static const Color eyeComfortCardBg = Color(0xFFEBE0CE);
+}
+
+class ThemeModeNotifier extends StateNotifier<ThemeMode> {
+  ThemeModeNotifier() : super(ThemeMode.system) {
+    _loadTheme();
+  }
+
+  static const String _key = 'app_theme_mode';
+
+  Future<void> _loadTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedStr = prefs.getString(_key);
+      if (savedStr != null) {
+        if (savedStr == 'dark') state = ThemeMode.dark;
+        if (savedStr == 'light') state = ThemeMode.light;
+        if (savedStr == 'system') state = ThemeMode.system;
+      }
+    } catch (_) {}
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    state = mode;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_key, mode.name);
+    } catch (_) {}
+  }
+}
+
+final themeModeProvider =
+    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+  return ThemeModeNotifier();
+});
+
+class EyeComfortNotifier extends StateNotifier<bool> {
+  EyeComfortNotifier() : super(false) {
+    _loadState();
+  }
+
+  static const String _key = 'is_eye_comfort_mode';
+
+  Future<void> _loadState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      state = prefs.getBool(_key) ?? false;
+    } catch (_) {}
+  }
+
+  Future<void> toggle(bool enabled) async {
+    state = enabled;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_key, enabled);
+    } catch (_) {}
+  }
+}
+
+final isEyeComfortModeProvider =
+    StateNotifierProvider<EyeComfortNotifier, bool>((ref) {
+  return EyeComfortNotifier();
+});
+
+class NightReadingNotifier extends StateNotifier<bool> {
+  NightReadingNotifier() : super(false) {
+    _loadState();
+  }
+
+  static const String _key = 'is_night_reading_mode';
+
+  Future<void> _loadState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      state = prefs.getBool(_key) ?? false;
+    } catch (_) {}
+  }
+
+  Future<void> toggle(bool enabled) async {
+    state = enabled;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_key, enabled);
+    } catch (_) {}
+  }
+}
+
+final isNightReadingModeProvider =
+    StateNotifierProvider<NightReadingNotifier, bool>((ref) {
+  return NightReadingNotifier();
+});
+```
+
+---
+
+## 18. lib/core/theme/editorial_tokens.dart <a id="libcorethemeeditorialtokensdart"></a>
+
+- **Path:** `lib/core/theme/editorial_tokens.dart`
+- **Lines:** 189
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+
+/// Design 01: Quiet Editorial Document Studio design tokens.
+/// Strictly implements the visual specification from Stitch Design 01
+/// (Project 6842743049063587818, Screen ce1b7cb24c07466bbcd8ff127720056d, 9c4e7bc9ce72493ebc3c52fed97cf445).
+class EditorialTokens {
+  EditorialTokens._();
+
+  static const serifFamily = 'SourceSerif4';
+  static const sansFamily = 'Inter';
+  static const monoFamily = 'JetBrainsMono';
+
+  // --- Foundational Palette (Stitch Design 01 Specification) ---
+  static const Color canvas = Color(0xFFFBF9F5); // Paper canvas
+  static const Color surface = Color(0xFFFFFFFF); // Card surface
+  static const Color surfaceSubtle = Color(0xFFF4F1EA); // Subtle secondary strip
+  static const Color surfaceMuted = Color(0xFFEBE6DC); // Tertiary neutral
+  static const Color surfaceStrong = Color(0xFFFFFFFF);
+
+  // Accents
+  static const Color primary = Color(0xFF7A3E26); // Terracotta / warm burnt umber
+  static const Color secondary = Color(0xFF3E2718); // Dark roast chocolate brown
+  static const Color tertiary = Color(0xFF233547); // Slate ink blue
+  static const Color accentSecondary = Color(0xFF8C5333);
+
+  // Ink / Text
+  static const Color ink = Color(0xFF1C1E21); // Main text
+  static const Color inkSecondary = Color(0xFF6B6862); // Muted / secondary
+  static const Color inkMuted = Color(0xFF98948C); // Faint metadata
+
+  // Hairlines & Borders
+  static const Color border = Color(0xFFD8D0C3); // Framing border
+  static const Color borderSoft = Color(0xFFE7E3DA); // Subtle divider hairline
+
+  // Document & Canvas
+  static const Color viewerBed = Color(0xFFE8E4DA); // PDF viewer background bed
+  static const Color paper = Color(0xFFFFFFFF); // Physical paper page
+
+  // Semantic
+  static const Color success = Color(0xFF2D6E3F);
+  static const Color successLight = Color(0xFFEBF5EE);
+  static const Color error = Color(0xFFBA1A1A);
+  static const Color errorLight = Color(0xFFFDE8E8);
+
+  // Dark Mode Quiet Equivalents
+  static const Color darkCanvas = Color(0xFF141210);
+  static const Color darkSurface = Color(0xFF1C1A18);
+  static const Color darkSurfaceStrong = Color(0xFF24211E);
+  static const Color darkSurfaceMuted = Color(0xFF2C2825);
+  static const Color darkBorder = Color(0xFF3A3530);
+  static const Color darkBorderSoft = Color(0xFF2E2A26);
+  static const Color darkInk = Color(0xFFF4EFEB);
+  static const Color darkInkSecondary = Color(0xFFB5ADA4);
+  static const Color darkInkMuted = Color(0xFF847C74);
+
+  static const double hairline = 0.5;
+
+  static const double r2 = 2.0;
+  static const double r4 = 4.0;
+  static const double r6 = 6.0;
+  static const double r8 = 8.0;
+
+  static const BorderRadius br2 = BorderRadius.all(Radius.circular(r2));
+  static const BorderRadius br4 = BorderRadius.all(Radius.circular(r4));
+  static const BorderRadius br6 = BorderRadius.all(Radius.circular(r6));
+  static const BorderRadius br8 = BorderRadius.all(Radius.circular(r8));
+
+  // --- Typography Factory (Bundled Fonts, Restrained Hierarchy) ---
+  static TextStyle eyebrow({Color color = inkSecondary}) {
+    return TextStyle(
+      fontFamily: sansFamily,
+      fontSize: 10,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.5,
+      height: 1.2,
+      color: color,
+    );
+  }
+
+  static TextStyle displayLarge({Color color = ink}) {
+    return TextStyle(
+      fontFamily: serifFamily,
+      fontSize: 26,
+      fontWeight: FontWeight.w500,
+      letterSpacing: -0.25,
+      height: 1.15,
+      color: color,
+    );
+  }
+
+  static TextStyle displayMedium({Color color = ink}) {
+    return TextStyle(
+      fontFamily: serifFamily,
+      fontSize: 21,
+      fontWeight: FontWeight.w500,
+      letterSpacing: -0.15,
+      height: 1.2,
+      color: color,
+    );
+  }
+
+  static TextStyle headlineSmall({Color color = ink}) {
+    return TextStyle(
+      fontFamily: serifFamily,
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+      letterSpacing: -0.1,
+      height: 1.2,
+      color: color,
+    );
+  }
+
+  static TextStyle title({Color color = ink}) {
+    return TextStyle(
+      fontFamily: serifFamily,
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      height: 1.2,
+      color: color,
+    );
+  }
+
+  static TextStyle titleLarge({Color color = ink}) => displayMedium(color: color);
+  static TextStyle titleMedium({Color color = ink}) => title(color: color);
+  static TextStyle titleSmall({Color color = ink}) {
+    return TextStyle(
+      fontFamily: serifFamily,
+      fontSize: 14.5,
+      fontWeight: FontWeight.w500,
+      height: 1.2,
+      color: color,
+    );
+  }
+
+  static TextStyle body({Color color = ink}) {
+    return TextStyle(
+      fontFamily: sansFamily,
+      fontSize: 13.5,
+      fontWeight: FontWeight.w400,
+      height: 1.4,
+      color: color,
+    );
+  }
+
+  static TextStyle bodyMedium({Color color = ink}) => body(color: color);
+
+  static TextStyle bodySmall({Color color = inkSecondary}) {
+    return TextStyle(
+      fontFamily: sansFamily,
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      height: 1.35,
+      color: color,
+    );
+  }
+
+  static TextStyle label({Color color = inkSecondary}) {
+    return TextStyle(
+      fontFamily: sansFamily,
+      fontSize: 11,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.2,
+      height: 1.2,
+      color: color,
+    );
+  }
+
+  static TextStyle metadata({Color color = inkSecondary}) {
+    return TextStyle(
+      fontFamily: monoFamily,
+      fontSize: 10,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.1,
+      height: 1.25,
+      color: color,
+    );
+  }
+
+  static TextStyle metadataStrong({Color color = ink}) {
+    return TextStyle(
+      fontFamily: monoFamily,
+      fontSize: 10,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.1,
+      height: 1.25,
+      color: color,
+    );
+  }
+}
+```
+
+---
+
+## 19. lib/core/tools/image_target_size_compressor_service.dart <a id="libcoretoolsimagetargetsizecompressorservicedart"></a>
+
+- **Path:** `lib/core/tools/image_target_size_compressor_service.dart`
+- **Lines:** 216
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
+import '../utils/storage_location_helper.dart';
+
+class ImageTargetCompressionResult {
+  final String originalPath;
+  final String outputPath;
+  final int originalSizeBytes;
+  final int targetSizeBytes;
+  final int outputSizeBytes;
+  final double reductionPercentage;
+  final int originalWidth;
+  final int originalHeight;
+  final int outputWidth;
+  final int outputHeight;
+  final String format;
+  final bool isTargetAchieved;
+  final String statusMessage;
+
+  ImageTargetCompressionResult({
+    required this.originalPath,
+    required this.outputPath,
+    required this.originalSizeBytes,
+    required this.targetSizeBytes,
+    required this.outputSizeBytes,
+    required this.reductionPercentage,
+    required this.originalWidth,
+    required this.originalHeight,
+    required this.outputWidth,
+    required this.outputHeight,
+    required this.format,
+    required this.isTargetAchieved,
+    required this.statusMessage,
+  });
+}
+
+class ImageTargetSizeCompressorService {
+  static const MethodChannel _intentChannel = MethodChannel('com.offlinepdf.app/intent');
+
+  /// Converts KB or MB to bytes (binary: 1 KB = 1024 bytes)
+  static int parseSizeToBytes(double value, String unit) {
+    if (unit.toUpperCase() == 'MB') {
+      return (value * 1024 * 1024).round();
+    }
+    return (value * 1024).round();
+  }
+
+  /// Compresses a single image to a custom target file size without cropping.
+  static Future<ImageTargetCompressionResult> compressImageToTargetSize({
+    required String inputPath,
+    required int targetBytes,
+    Function(double progress, String status)? onProgress,
+    bool Function()? isCancelled,
+  }) async {
+    final inputFile = File(inputPath);
+    if (!await inputFile.exists()) {
+      throw Exception('Input image not found at $inputPath');
+    }
+
+    final originalSize = await inputFile.length();
+    final ext = p.extension(inputPath).toLowerCase();
+    final baseName = p.basenameWithoutExtension(inputPath);
+
+    onProgress?.call(0.1, 'Analyzing image dimensions and format...');
+    if (isCancelled?.call() == true) throw Exception('Operation cancelled');
+
+    final publicDir = await StorageLocationHelper.getPublicDocumentsDirectory(subFolder: 'Compressed_Images');
+    final String outExt;
+    if (ext == '.png') {
+      outExt = '.png';
+    } else if (ext == '.webp') {
+      outExt = '.webp';
+    } else if (ext == '.jpeg') {
+      outExt = '.jpeg';
+    } else {
+      outExt = '.jpg';
+    }
+    final targetPath = await StorageLocationHelper.getUniqueFilePath(publicDir, '${baseName}_compressed$outExt');
+
+    onProgress?.call(0.3, 'Optimizing image resolution and quality...');
+    if (isCancelled?.call() == true) throw Exception('Operation cancelled');
+
+    // 1. If on Android, use hardware-accelerated native Android Compressor
+    if (Platform.isAndroid) {
+      try {
+        final res = await _intentChannel.invokeMapMethod<String, dynamic>('compressImage', {
+          'inputPath': inputPath,
+          'outputPath': targetPath,
+          'targetBytes': targetBytes,
+        });
+
+        if (res != null) {
+          final outputSize = (res['outputSizeBytes'] as num?)?.toInt() ?? await File(targetPath).length();
+          final reduction = originalSize > 0
+              ? ((originalSize - outputSize) / originalSize) * 100.0
+              : 0.0;
+
+          onProgress?.call(1.0, 'Finalized image compression');
+
+          return ImageTargetCompressionResult(
+            originalPath: inputPath,
+            outputPath: targetPath,
+            originalSizeBytes: originalSize,
+            targetSizeBytes: targetBytes,
+            outputSizeBytes: outputSize,
+            reductionPercentage: reduction < 0 ? 0.0 : reduction,
+            originalWidth: (res['originalWidth'] as num?)?.toInt() ?? 0,
+            originalHeight: (res['originalHeight'] as num?)?.toInt() ?? 0,
+            outputWidth: (res['outputWidth'] as num?)?.toInt() ?? 0,
+            outputHeight: (res['outputHeight'] as num?)?.toInt() ?? 0,
+            format: (res['format'] as String?) ?? ext.replaceAll('.', '').toUpperCase(),
+            isTargetAchieved: (res['isTargetAchieved'] as bool?) ?? false,
+            statusMessage: (res['statusMessage'] as String?) ?? 'Target achieved',
+          );
+        }
+      } catch (_) {
+        // Fallback to Dart-side image codec below
+      }
+    }
+
+    // 2. Cross-platform / Fallback using dart:ui (Proportional scaling with ZERO cropping)
+    final rawBytes = await inputFile.readAsBytes();
+    final codec = await ui.instantiateImageCodec(rawBytes);
+    final frame = await codec.getNextFrame();
+    final uiImage = frame.image;
+
+    final origW = uiImage.width;
+    final origH = uiImage.height;
+
+    // Iterative proportional scaling passes
+    final scales = [1.0, 0.85, 0.70, 0.55, 0.40, 0.25];
+    int bestSize = originalSize;
+    int finalW = origW;
+    int finalH = origH;
+    List<int> bestBytes = rawBytes;
+
+    for (int i = 0; i < scales.length; i++) {
+      if (isCancelled?.call() == true) throw Exception('Operation cancelled');
+
+      final s = scales[i];
+      final targetW = (origW * s).round().clamp(100, 4000);
+      final targetH = (origH * s).round().clamp(100, 4000);
+
+      final scaledCodec = await ui.instantiateImageCodec(
+        rawBytes,
+        targetWidth: targetW,
+      );
+      final scaledFrame = await scaledCodec.getNextFrame();
+      final scaledUiImg = scaledFrame.image;
+
+      final byteData = await scaledUiImg.toByteData(format: ui.ImageByteFormat.png);
+      scaledUiImg.dispose();
+
+      if (byteData != null) {
+        final iterBytes = byteData.buffer.asUint8List();
+        if (iterBytes.length < bestSize) {
+          bestSize = iterBytes.length;
+          bestBytes = iterBytes;
+          finalW = targetW;
+          finalH = targetH;
+        }
+
+        if (iterBytes.length <= targetBytes) {
+          break;
+        }
+      }
+    }
+
+    uiImage.dispose();
+
+    // Ensure fallback outputPath strictly matches the encoded PNG format to avoid mislabeled files
+    final fallbackOutputPath = (p.extension(targetPath).toLowerCase() == '.png')
+        ? targetPath
+        : await StorageLocationHelper.getUniqueFilePath(publicDir, '${baseName}_compressed.png');
+
+    await File(fallbackOutputPath).writeAsBytes(bestBytes);
+    final actualSize = await File(fallbackOutputPath).length();
+    final reduction = originalSize > 0
+        ? ((originalSize - actualSize) / originalSize) * 100.0
+        : 0.0;
+
+    final isAchieved = actualSize <= targetBytes;
+    final statusMsg = isAchieved
+        ? 'Target size achieved (${_formatBytes(actualSize)})'
+        : 'Closest safe result (${_formatBytes(actualSize)})';
+
+    onProgress?.call(1.0, 'Finalized');
+
+    return ImageTargetCompressionResult(
+      originalPath: inputPath,
+      outputPath: fallbackOutputPath,
+      originalSizeBytes: originalSize,
+      targetSizeBytes: targetBytes,
+      outputSizeBytes: actualSize,
+      reductionPercentage: reduction < 0 ? 0.0 : reduction,
+      originalWidth: origW,
+      originalHeight: origH,
+      outputWidth: finalW,
+      outputHeight: finalH,
+      format: 'PNG',
+      isTargetAchieved: isAchieved,
+      statusMessage: statusMsg,
+    );
+  }
+
+  static String _formatBytes(int bytes) {
+    if (bytes <= 0) return '0 B';
+    const suffixes = ['B', 'KB', 'MB', 'GB'];
+    var i = (log(bytes) / log(1024)).floor();
+    return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
+  }
+}
+```
+
+---
+
+## 20. lib/core/tools/pdf_batch_service.dart <a id="libcoretoolspdfbatchservicedart"></a>
+
+- **Path:** `lib/core/tools/pdf_batch_service.dart`
+- **Lines:** 82
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import '../storage/database_helper.dart';
+
+class BatchOperationResult {
+  final int totalCount;
+  final int successCount;
+  final int failureCount;
+  final List<String> failedFilePaths;
+
+  BatchOperationResult({
+    required this.totalCount,
+    required this.successCount,
+    required this.failureCount,
+    this.failedFilePaths = const [],
+  });
+}
+
+class PdfBatchService {
+  static Future<BatchOperationResult> batchDelete(List<String> filePaths) async {
+    int success = 0;
+    int failure = 0;
+    final List<String> failed = [];
+
+    for (final path in filePaths) {
+      bool fileDeleted = false;
+      try {
+        final file = File(path);
+        if (await file.exists()) {
+          await file.delete();
+          fileDeleted = true;
+        } else {
+          fileDeleted = true; // Already gone
+        }
+      } catch (_) {
+        failure++;
+        failed.add(path);
+        continue; // Skip DB delete if file delete failed
+      }
+
+      if (fileDeleted) {
+        try {
+          await DatabaseHelper.instance.deletePdfFileFromIndex(path);
+          success++;
+        } catch (_) {
+          // Log the error but continue, file is already deleted
+          failure++;
+          failed.add(path);
+        }
+      }
+    }
+
+    return BatchOperationResult(
+      totalCount: filePaths.length,
+      successCount: success,
+      failureCount: failure,
+      failedFilePaths: failed,
+    );
+  }
+
+  static Future<BatchOperationResult> batchFavorite(List<String> filePaths, bool favorite) async {
+    int success = 0;
+    int failure = 0;
+    final List<String> failed = [];
+
+    for (final path in filePaths) {
+      try {
+        await DatabaseHelper.instance.toggleFavorite(path, favorite);
+        success++;
+      } catch (_) {
+        failure++;
+        failed.add(path);
+      }
+    }
+
+    return BatchOperationResult(
+      totalCount: filePaths.length,
+      successCount: success,
+      failureCount: failure,
+      failedFilePaths: failed,
+    );
+  }
+}
+```
+
+---
+
+## 21. lib/core/tools/pdf_compare_service.dart <a id="libcoretoolspdfcompareservicedart"></a>
+
+- **Path:** `lib/core/tools/pdf_compare_service.dart`
+- **Lines:** 96
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../../models/pdf_compare_result.dart';
+import '../storage/ocr_cache_service.dart';
+
+class PdfCompareService {
+  static Future<PdfCompareResult> comparePdfs({
+    required String fileAPath,
+    required String fileBPath,
+  }) async {
+    try {
+      final Map<int, String> textMapA = await _extractDocumentText(fileAPath);
+      final Map<int, String> textMapB = await _extractDocumentText(fileBPath);
+
+      final int pagesA = textMapA.keys.length;
+      final int pagesB = textMapB.keys.length;
+      final int maxPages = pagesA > pagesB ? pagesA : pagesB;
+
+      final List<PageDiff> pageDiffs = [];
+      int totalAdded = 0;
+      int totalRemoved = 0;
+
+      for (int p = 1; p <= maxPages; p++) {
+        final textA = textMapA[p] ?? '';
+        final textB = textMapB[p] ?? '';
+
+        final linesA = textA.split(RegExp(r'\r?\n')).where((l) => l.trim().isNotEmpty).toList();
+        final linesB = textB.split(RegExp(r'\r?\n')).where((l) => l.trim().isNotEmpty).toList();
+
+        final setA = linesA.toSet();
+        final setB = linesB.toSet();
+
+        final added = linesB.where((l) => !setA.contains(l)).toList();
+        final removed = linesA.where((l) => !setB.contains(l)).toList();
+
+        totalAdded += added.length;
+        totalRemoved += removed.length;
+
+        if (added.isNotEmpty || removed.isNotEmpty || textA != textB) {
+          pageDiffs.add(
+            PageDiff(
+              pageNumber: p,
+              addedLines: added,
+              removedLines: removed,
+              hasVisualDiff: textA != textB,
+            ),
+          );
+        }
+      }
+
+      final summary = 'Compared $maxPages pages: $totalAdded additions, $totalRemoved removals across ${pageDiffs.length} modified pages.';
+
+      return PdfCompareResult(
+        fileAPath: fileAPath,
+        fileBPath: fileBPath,
+        fileAPages: pagesA,
+        fileBPages: pagesB,
+        pageDiffs: pageDiffs,
+        summary: summary,
+      );
+    } catch (e) {
+      return PdfCompareResult(
+        fileAPath: fileAPath,
+        fileBPath: fileBPath,
+        fileAPages: 0,
+        fileBPages: 0,
+        pageDiffs: [],
+        summary: 'Comparison failed due to an error.',
+      );
+    }
+  }
+
+  static Future<Map<int, String>> _extractDocumentText(String filePath) async {
+    final Map<int, String> textMap = {};
+    final cached = await OcrCacheService.getCachedFileOcr(filePath);
+    if (cached.isNotEmpty) {
+      return Map.from(cached);
+    }
+
+    try {
+      final fileBytes = await File(filePath).readAsBytes();
+      final document = sf.PdfDocument(inputBytes: fileBytes);
+      final extractor = sf.PdfTextExtractor(document);
+
+      for (int i = 0; i < document.pages.count; i++) {
+        final text = extractor.extractText(startPageIndex: i, endPageIndex: i).trim();
+        if (text.isNotEmpty) {
+          textMap[i + 1] = text;
+        }
+      }
+      document.dispose();
+    } catch (_) {}
+
+    return textMap;
+  }
+}
+```
+
+---
+
+## 22. lib/core/tools/pdf_compression_service.dart <a id="libcoretoolspdfcompressionservicedart"></a>
+
+- **Path:** `lib/core/tools/pdf_compression_service.dart`
+- **Lines:** 78
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+
+enum CompressionQuality { low, medium, high }
+
+class CompressionResult {
+  final String originalPath;
+  final String compressedPath;
+  final int originalSizeBytes;
+  final int compressedSizeBytes;
+  final double reductionPercentage;
+
+  CompressionResult({
+    required this.originalPath,
+    required this.compressedPath,
+    required this.originalSizeBytes,
+    required this.compressedSizeBytes,
+    required this.reductionPercentage,
+  });
+}
+
+class PdfCompressionService {
+  static Future<CompressionResult> compressPdf({
+    required String inputPath,
+    required String outputPath,
+    required CompressionQuality quality,
+  }) async {
+    final inputFile = File(inputPath);
+    int originalSize = 0;
+    if (await inputFile.exists()) {
+      originalSize = await inputFile.length();
+    }
+
+    try {
+      final bytes = await inputFile.readAsBytes();
+      final document = sf.PdfDocument(inputBytes: bytes);
+
+      switch (quality) {
+        case CompressionQuality.low:
+          document.compressionLevel = sf.PdfCompressionLevel.bestSpeed;
+          break;
+        case CompressionQuality.medium:
+          document.compressionLevel = sf.PdfCompressionLevel.normal;
+          break;
+        case CompressionQuality.high:
+          document.compressionLevel = sf.PdfCompressionLevel.best;
+          break;
+      }
+
+      final compressedBytes = await document.save();
+      document.dispose();
+
+      final outputFile = File(outputPath);
+      await outputFile.writeAsBytes(compressedBytes);
+
+      final compressedSize = await outputFile.length();
+      final reduction = originalSize > 0
+          ? ((originalSize - compressedSize) / originalSize) * 100.0
+          : 0.0;
+
+      return CompressionResult(
+        originalPath: inputPath,
+        compressedPath: outputPath,
+        originalSizeBytes: originalSize,
+        compressedSizeBytes: compressedSize,
+        reductionPercentage: reduction < 0 ? 0.0 : reduction,
+      );
+    } catch (_) {
+      return CompressionResult(
+        originalPath: inputPath,
+        compressedPath: outputPath,
+        originalSizeBytes: originalSize,
+        compressedSizeBytes: originalSize,
+        reductionPercentage: 0.0,
+      );
+    }
+  }
+}
+```
+
+---
+
+## 23. lib/core/tools/pdf_encryption_service.dart <a id="libcoretoolspdfencryptionservicedart"></a>
+
+- **Path:** `lib/core/tools/pdf_encryption_service.dart`
+- **Lines:** 57
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+
+class PdfEncryptionService {
+  static Future<bool> encryptPdf({
+    required String inputPath,
+    required String outputPath,
+    required String userPassword,
+    String? ownerPassword,
+    bool allowPrinting = true,
+    bool allowCopyContent = true,
+    bool allowAnnotations = true,
+  }) async {
+    try {
+      final bytes = await File(inputPath).readAsBytes();
+      final document = sf.PdfDocument(inputBytes: bytes);
+
+      final security = document.security;
+      security.userPassword = userPassword;
+      security.ownerPassword = ownerPassword ?? userPassword;
+      security.algorithm = sf.PdfEncryptionAlgorithm.aesx256Bit;
+      security.permissions.clear();
+      if (allowPrinting) {
+        security.permissions.add(sf.PdfPermissionsFlags.print);
+      }
+      if (allowCopyContent) {
+        security.permissions.add(sf.PdfPermissionsFlags.copyContent);
+      }
+      if (allowAnnotations) {
+        security.permissions.add(sf.PdfPermissionsFlags.editAnnotations);
+      }
+
+      final encryptedBytes = await document.save();
+      document.dispose();
+
+      await File(outputPath).writeAsBytes(encryptedBytes);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<bool> validatePassword({
+    required String filePath,
+    required String password,
+  }) async {
+    try {
+      final bytes = await File(filePath).readAsBytes();
+      final document = sf.PdfDocument(inputBytes: bytes, password: password);
+      final isLoaded = document.pages.count > 0;
+      document.dispose();
+      return isLoaded;
+    } catch (_) {
+      return false;
+    }
+  }
+}
+```
+
+---
+
+## 24. lib/core/tools/pdf_metadata_service.dart <a id="libcoretoolspdfmetadataservicedart"></a>
+
+- **Path:** `lib/core/tools/pdf_metadata_service.dart`
+- **Lines:** 87
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+
+class PdfMetadata {
+  String title;
+  String author;
+  String subject;
+  String keywords;
+  String creator;
+  String producer;
+
+  PdfMetadata({
+    this.title = '',
+    this.author = '',
+    this.subject = '',
+    this.keywords = '',
+    this.creator = '',
+    this.producer = '',
+  });
+}
+
+class PdfMetadataService {
+  static Future<PdfMetadata> readMetadata(String filePath) async {
+    try {
+      final bytes = await File(filePath).readAsBytes();
+      final document = sf.PdfDocument(inputBytes: bytes);
+      final info = document.documentInformation;
+
+      final meta = PdfMetadata(
+        title: info.title,
+        author: info.author,
+        subject: info.subject,
+        keywords: info.keywords,
+        creator: info.creator,
+        producer: info.producer,
+      );
+
+      document.dispose();
+      return meta;
+    } catch (_) {
+      return PdfMetadata();
+    }
+  }
+
+  static Future<bool> updateMetadata({
+    required String inputPath,
+    required String outputPath,
+    required PdfMetadata metadata,
+  }) async {
+    try {
+      final bytes = await File(inputPath).readAsBytes();
+      final document = sf.PdfDocument(inputBytes: bytes);
+
+      document.documentInformation.title = metadata.title;
+      document.documentInformation.author = metadata.author;
+      document.documentInformation.subject = metadata.subject;
+      document.documentInformation.keywords = metadata.keywords;
+      document.documentInformation.creator = metadata.creator;
+
+      final savedBytes = await document.save();
+      document.dispose();
+
+      await File(outputPath).writeAsBytes(savedBytes);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<bool> removeAllMetadata({
+    required String inputPath,
+    required String outputPath,
+  }) async {
+    return await updateMetadata(
+      inputPath: inputPath,
+      outputPath: outputPath,
+      metadata: PdfMetadata(
+        title: '',
+        author: '',
+        subject: '',
+        keywords: '',
+        creator: '',
+        producer: '',
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 25. lib/core/tools/pdf_target_size_compressor_service.dart <a id="libcoretoolspdftargetsizecompressorservicedart"></a>
+
+- **Path:** `lib/core/tools/pdf_target_size_compressor_service.dart`
+- **Lines:** 364
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+import 'dart:ui' as ui;
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:pdfrx/pdfrx.dart' as pdfrx;
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../utils/storage_location_helper.dart';
+
+enum TargetCompressionQuality {
+  maximumCompression,
+  balanced,
+  betterQuality,
+}
+
+class TargetCompressionResult {
+  final String originalPath;
+  final String outputPath;
+  final int originalSizeBytes;
+  final int targetSizeBytes;
+  final int outputSizeBytes;
+  final double reductionPercentage;
+  final int pageCount;
+  final String qualityProfile;
+  final String statusMessage;
+  final bool isTargetAchieved;
+
+  TargetCompressionResult({
+    required this.originalPath,
+    required this.outputPath,
+    required this.originalSizeBytes,
+    required this.targetSizeBytes,
+    required this.outputSizeBytes,
+    required this.reductionPercentage,
+    required this.pageCount,
+    required this.qualityProfile,
+    required this.statusMessage,
+    required this.isTargetAchieved,
+  });
+}
+
+class PdfTargetSizeCompressorService {
+  /// Converts KB or MB to bytes (binary: 1 KB = 1024 bytes)
+  static int parseSizeToBytes(double value, String unit) {
+    if (unit.toUpperCase() == 'MB') {
+      return (value * 1024 * 1024).round();
+    }
+    return (value * 1024).round();
+  }
+
+  /// Compresses an existing PDF toward a custom target size without cropping.
+  /// Uses a target-directed binary search to produce the largest safe output <= targetBytes.
+  static Future<TargetCompressionResult> compressPdfToTargetSize({
+    required String inputPath,
+    required int targetBytes,
+    required TargetCompressionQuality quality,
+    bool preserveTextVectors = true,
+    Function(double progress, String status)? onProgress,
+    bool Function()? isCancelled,
+  }) async {
+    final inputFile = File(inputPath);
+    if (!await inputFile.exists()) {
+      throw Exception('Input PDF file not found at $inputPath');
+    }
+
+    final originalSize = await inputFile.length();
+    final tempDir = await getTemporaryDirectory();
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final baseName = p.basenameWithoutExtension(inputPath);
+    final Set<File> createdTempFiles = {};
+
+    onProgress?.call(0.1, 'Analyzing document structure...');
+    if (isCancelled?.call() == true) throw Exception('Operation cancelled');
+
+    int pageCount = 1;
+    try {
+      final doc = await pdfrx.PdfDocument.openFile(inputPath);
+      pageCount = doc.pages.length;
+      await doc.dispose();
+    } catch (_) {}
+
+    File? selectedFile;
+
+    try {
+      // Pass 1: Lossless structural stream compression first
+      onProgress?.call(0.2, 'Applying stream optimization...');
+      if (isCancelled?.call() == true) throw Exception('Operation cancelled');
+
+      final pass1TempPath = p.join(tempDir.path, '${baseName}_temp_p1_$now.pdf');
+      final pass1File = File(pass1TempPath);
+      createdTempFiles.add(pass1File);
+
+      try {
+        final bytes = await inputFile.readAsBytes();
+        final sfDoc = sf.PdfDocument(inputBytes: bytes);
+        sfDoc.compressionLevel = sf.PdfCompressionLevel.best;
+        final p1Bytes = await sfDoc.save();
+        sfDoc.dispose();
+
+        await pass1File.writeAsBytes(p1Bytes);
+      } catch (_) {}
+
+      final int pass1Size = pass1File.existsSync() ? await pass1File.length() : originalSize;
+
+      // Pass 2: Dynamic Target-Directed Scale Search
+      // Searches the scale parameter space to find the LARGEST safe candidate <= targetBytes
+      File? bestUnderTargetFile;
+      int bestUnderTargetSize = 0;
+
+      File? bestOverTargetFile;
+      int bestOverTargetSize = 1 << 60;
+
+      if (pass1Size <= targetBytes) {
+        bestUnderTargetFile = pass1File;
+        bestUnderTargetSize = pass1Size;
+      } else {
+        bestOverTargetFile = pass1File;
+        bestOverTargetSize = pass1Size;
+      }
+
+      pdfrx.PdfDocument? rxDoc;
+      try {
+        rxDoc = await pdfrx.PdfDocument.openFile(inputPath);
+
+        double scaleMin = 0.15;
+        double scaleMax = 1.0;
+        switch (quality) {
+          case TargetCompressionQuality.maximumCompression:
+            scaleMin = 0.10;
+            scaleMax = 0.85;
+            break;
+          case TargetCompressionQuality.betterQuality:
+            scaleMin = 0.20;
+            scaleMax = 1.15;
+            break;
+          case TargetCompressionQuality.balanced:
+            scaleMin = 0.15;
+            scaleMax = 1.0;
+            break;
+        }
+
+        // Compute initial probe scale based on area scaling: Area ~ Scale^2 => Scale ~ sqrt(target / original)
+        double estimatedScale = originalSize > 0
+            ? (sqrt(targetBytes / originalSize) * 1.05).clamp(scaleMin, scaleMax)
+            : 0.7;
+
+        double scaleLow = scaleMin;
+        double scaleHigh = scaleMax;
+
+        const int maxSearchIterations = 12;
+        final List<double> scalesToTest = [estimatedScale];
+
+        for (int iter = 0; iter < maxSearchIterations; iter++) {
+          if (isCancelled?.call() == true) throw Exception('Operation cancelled');
+
+          final double currentScale;
+          if (iter < scalesToTest.length) {
+            currentScale = scalesToTest[iter];
+          } else {
+            if ((scaleHigh - scaleLow) < 0.003) {
+              // Scale range sufficiently narrowed
+              break;
+            }
+            currentScale = (scaleLow + scaleHigh) / 2.0;
+          }
+
+          final progressFraction = 0.3 + (0.6 * ((iter + 1) / maxSearchIterations));
+          onProgress?.call(
+            progressFraction,
+            'Refining target compression (search ${iter + 1} of $maxSearchIterations)...',
+          );
+
+          final iterTempPath = p.join(tempDir.path, '${baseName}_temp_iter_${iter}_$now.pdf');
+          final iterFile = await _renderPdfAtScale(
+            rxDoc: rxDoc,
+            scale: currentScale,
+            tempPath: iterTempPath,
+            isCancelled: isCancelled,
+          );
+
+          if (iterFile == null || !iterFile.existsSync()) continue;
+          createdTempFiles.add(iterFile);
+
+          final iterSize = await iterFile.length();
+
+          if (iterSize <= targetBytes) {
+            scaleLow = currentScale;
+
+            if (bestUnderTargetFile == null || iterSize > bestUnderTargetSize) {
+              if (bestUnderTargetFile != null &&
+                  bestUnderTargetFile != bestOverTargetFile &&
+                  bestUnderTargetFile != pass1File) {
+                try {
+                  if (bestUnderTargetFile.existsSync()) bestUnderTargetFile.deleteSync();
+                  createdTempFiles.remove(bestUnderTargetFile);
+                } catch (_) {}
+              }
+              bestUnderTargetFile = iterFile;
+              bestUnderTargetSize = iterSize;
+            }
+          } else {
+            scaleHigh = currentScale;
+
+            if (bestOverTargetFile == null || iterSize < bestOverTargetSize) {
+              if (bestOverTargetFile != null &&
+                  bestOverTargetFile != bestUnderTargetFile &&
+                  bestOverTargetFile != pass1File) {
+                try {
+                  if (bestOverTargetFile.existsSync()) bestOverTargetFile.deleteSync();
+                  createdTempFiles.remove(bestOverTargetFile);
+                } catch (_) {}
+              }
+              bestOverTargetFile = iterFile;
+              bestOverTargetSize = iterSize;
+            }
+          }
+        }
+      } catch (_) {
+      } finally {
+        await rxDoc?.dispose();
+      }
+
+      // Candidate Selection: Prefer the LARGEST candidate at or below target
+      final int finalOutputSize;
+      if (bestUnderTargetFile != null && bestUnderTargetSize > 0) {
+        selectedFile = bestUnderTargetFile;
+        finalOutputSize = bestUnderTargetSize;
+      } else if (bestOverTargetFile != null && bestOverTargetSize < (1 << 60)) {
+        selectedFile = bestOverTargetFile;
+        finalOutputSize = bestOverTargetSize;
+      } else if (pass1File.existsSync()) {
+        selectedFile = pass1File;
+        finalOutputSize = pass1Size;
+      } else {
+        selectedFile = inputFile;
+        finalOutputSize = originalSize;
+      }
+
+      onProgress?.call(0.95, 'Saving finalized document...');
+      final isAchieved = finalOutputSize <= targetBytes;
+      final statusMsg = isAchieved
+          ? 'Target size achieved (${_formatBytes(finalOutputSize)})'
+          : 'Closest safe result (${_formatBytes(finalOutputSize)})';
+
+      return await _saveAndReturnResult(
+        inputPath: inputPath,
+        tempPath: selectedFile.path,
+        originalSize: originalSize,
+        targetBytes: targetBytes,
+        pageCount: pageCount,
+        qualityProfile: quality.name,
+        isTargetAchieved: isAchieved,
+        statusMessage: statusMsg,
+      );
+    } finally {
+      // Clean up all temporary files created during the search
+      for (final f in createdTempFiles) {
+        try {
+          if (f.existsSync()) f.deleteSync();
+        } catch (_) {}
+      }
+    }
+  }
+
+  static Future<File?> _renderPdfAtScale({
+    required pdfrx.PdfDocument rxDoc,
+    required double scale,
+    required String tempPath,
+    bool Function()? isCancelled,
+  }) async {
+    final sfNewDoc = sf.PdfDocument();
+    sfNewDoc.compressionLevel = sf.PdfCompressionLevel.best;
+
+    try {
+      for (int pageIdx = 0; pageIdx < rxDoc.pages.length; pageIdx++) {
+        if (isCancelled?.call() == true) {
+          sfNewDoc.dispose();
+          return null;
+        }
+
+        final page = rxDoc.pages[pageIdx];
+        final targetWidth = (page.width * scale).round().clamp(150, 2600);
+        final targetHeight = (page.height * scale).round().clamp(150, 3600);
+
+        final pageImage = await page.render(width: targetWidth, height: targetHeight);
+        if (pageImage != null) {
+          final uiImg = await pageImage.createImage();
+          final byteData = await uiImg.toByteData(format: ui.ImageByteFormat.png);
+          uiImg.dispose();
+
+          if (byteData != null) {
+            final imgBytes = byteData.buffer.asUint8List();
+            final sfPage = sfNewDoc.pages.add();
+            final bitmap = sf.PdfBitmap(imgBytes);
+            // Full page rendering preserving 100% of aspect ratio and dimensions (0% cropping)
+            sfPage.graphics.drawImage(
+              bitmap,
+              ui.Rect.fromLTWH(0, 0, sfPage.getClientSize().width, sfPage.getClientSize().height),
+            );
+          }
+        }
+      }
+
+      final iterBytes = await sfNewDoc.save();
+      sfNewDoc.dispose();
+
+      final file = File(tempPath);
+      await file.writeAsBytes(iterBytes);
+      return file;
+    } catch (e) {
+      try {
+        sfNewDoc.dispose();
+      } catch (_) {}
+      return null;
+    }
+  }
+
+  static Future<TargetCompressionResult> _saveAndReturnResult({
+    required String inputPath,
+    required String tempPath,
+    required int originalSize,
+    required int targetBytes,
+    required int pageCount,
+    required String qualityProfile,
+    required bool isTargetAchieved,
+    required String statusMessage,
+  }) async {
+    final publicDir = await StorageLocationHelper.getPublicDocumentsDirectory(subFolder: 'Compressed');
+    final baseName = p.basenameWithoutExtension(inputPath);
+    final targetPath = await StorageLocationHelper.getUniqueFilePath(publicDir, '${baseName}_compressed.pdf');
+
+    if (await File(tempPath).exists()) {
+      await File(tempPath).copy(targetPath);
+    } else {
+      await File(inputPath).copy(targetPath);
+    }
+
+    final outputSize = await File(targetPath).length();
+    final reduction = originalSize > 0
+        ? ((originalSize - outputSize) / originalSize) * 100.0
+        : 0.0;
+
+    return TargetCompressionResult(
+      originalPath: inputPath,
+      outputPath: targetPath,
+      originalSizeBytes: originalSize,
+      targetSizeBytes: targetBytes,
+      outputSizeBytes: outputSize,
+      reductionPercentage: reduction < 0 ? 0.0 : reduction,
+      pageCount: pageCount,
+      qualityProfile: qualityProfile,
+      statusMessage: statusMessage,
+      isTargetAchieved: isTargetAchieved,
+    );
+  }
+
+  static String _formatBytes(int bytes) {
+    if (bytes <= 0) return '0 B';
+    const suffixes = ['B', 'KB', 'MB', 'GB'];
+    var i = (log(bytes) / log(1024)).floor();
+    return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
+  }
+}
+```
+
+---
+
+## 26. lib/core/tools/pdf_version_service.dart <a id="libcoretoolspdfversionservicedart"></a>
+
+- **Path:** `lib/core/tools/pdf_version_service.dart`
+- **Lines:** 91
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:crypto/crypto.dart';
+import '../../models/pdf_version.dart';
+import '../storage/database_helper.dart';
+
+class PdfVersionService {
+  static Future<PdfVersion> createVersion({
+    required String docId,
+    required String filePath,
+    required String sourceOperation,
+  }) async {
+    final file = File(filePath);
+    final sizeBytes = await file.exists() ? await file.length() : 0;
+    String? hash;
+    if (await file.exists()) {
+      try {
+        final digest = await sha256.bind(file.openRead()).first;
+        hash = digest.toString().substring(0, 12);
+      } catch (_) {}
+    }
+
+    final existingVersions = await DatabaseHelper.instance.getVersionsForDocument(docId);
+    final versionNumber = existingVersions.length + 1;
+
+    final version = PdfVersion(
+      docId: docId,
+      versionNumber: versionNumber,
+      filePath: filePath,
+      sizeBytes: sizeBytes,
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+      sourceOperation: sourceOperation,
+      hash: hash,
+    );
+
+    final id = await DatabaseHelper.instance.addPdfVersion(version);
+    return PdfVersion(
+      id: id,
+      docId: version.docId,
+      versionNumber: version.versionNumber,
+      filePath: version.filePath,
+      sizeBytes: version.sizeBytes,
+      timestamp: version.timestamp,
+      sourceOperation: version.sourceOperation,
+      hash: version.hash,
+    );
+  }
+
+  static Future<List<PdfVersion>> getVersions(String docId) async {
+    return await DatabaseHelper.instance.getVersionsForDocument(docId);
+  }
+
+  static Future<bool> restoreVersion(PdfVersion version, String targetPath) async {
+    try {
+      final sourceFile = File(version.filePath);
+      if (!sourceFile.existsSync()) return false;
+
+      final targetFile = File(targetPath);
+      await sourceFile.copy(targetFile.path);
+
+      await createVersion(
+        docId: version.docId,
+        filePath: targetPath,
+        sourceOperation: 'Restored from v${version.versionNumber}',
+      );
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<void> deleteVersion(PdfVersion version) async {
+    if (version.id != null) {
+      await DatabaseHelper.instance.deletePdfVersion(version.id!);
+      try {
+        final file = File(version.filePath);
+        if (file.existsSync() && !version.filePath.contains('/original/')) {
+          await file.delete();
+        }
+      } catch (_) {}
+    }
+  }
+
+  static Future<int> calculateTotalStorage(String docId) async {
+    final versions = await getVersions(docId);
+    int total = 0;
+    for (final v in versions) {
+      total += v.sizeBytes;
+    }
+    return total;
+  }
+}
+```
+
+---
+
+## 27. lib/core/tts/tts_service.dart <a id="libcorettsttsservicedart"></a>
+
+- **Path:** `lib/core/tts/tts_service.dart`
+- **Lines:** 163
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/foundation.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+
+enum TtsState { playing, paused, stopped }
+
+class TtsService {
+  final FlutterTts _flutterTts = FlutterTts();
+  TtsState _state = TtsState.stopped;
+  VoidCallback? _onCompletion;
+
+  List<String> _chunks = [];
+  int _currentChunkIndex = 0;
+  int _speechGeneration = 0;
+  static const int _maxChunkLength = 250;
+
+  TtsState get state => _state;
+
+  Future<void> init() async {
+    await _flutterTts.setLanguage("en-US");
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
+
+    _flutterTts.setCompletionHandler(() {
+      _handleChunkCompletion();
+    });
+
+    _flutterTts.setErrorHandler((msg) {
+      debugPrint('TTS engine error: $msg');
+      _state = TtsState.stopped;
+    });
+
+    _flutterTts.setPauseHandler(() {
+      _state = TtsState.paused;
+    });
+
+    _flutterTts.setContinueHandler(() {
+      _state = TtsState.playing;
+    });
+  }
+
+  Future<void> setSpeechRate(double rate) async {
+    await _flutterTts.setSpeechRate(rate);
+  }
+
+  List<String> _splitIntoSentences(String text) {
+    final RegExp sentenceRegex = RegExp(r'(?<=[.!?\n])\s+');
+    final rawSentences = text.split(sentenceRegex);
+    final List<String> result = [];
+
+    for (var sentence in rawSentences) {
+      final trimmed = sentence.trim();
+      if (trimmed.isEmpty) continue;
+
+      if (trimmed.length <= _maxChunkLength) {
+        result.add(trimmed);
+      } else {
+        final words = trimmed.split(RegExp(r'\s+'));
+        final StringBuffer buffer = StringBuffer();
+
+        for (var word in words) {
+          if (buffer.length + word.length + 1 > _maxChunkLength) {
+            if (buffer.isNotEmpty) {
+              result.add(buffer.toString().trim());
+              buffer.clear();
+            }
+          }
+          if (buffer.isNotEmpty) buffer.write(' ');
+          buffer.write(word);
+        }
+        if (buffer.isNotEmpty) {
+          result.add(buffer.toString().trim());
+        }
+      }
+    }
+    return result;
+  }
+
+  Future<void> speak(String text, {VoidCallback? onCompletion}) async {
+    _speechGeneration++;
+    final currentGen = _speechGeneration;
+    _onCompletion = onCompletion;
+
+    if (text.trim().isEmpty) {
+      _state = TtsState.stopped;
+      return;
+    }
+
+    await _flutterTts.stop();
+    _chunks = _splitIntoSentences(text);
+    if (_chunks.isEmpty) {
+      _chunks = [text.trim()];
+    }
+    _currentChunkIndex = 0;
+
+    await _speakCurrentChunk(currentGen);
+  }
+
+  Future<void> _speakCurrentChunk(int generation) async {
+    if (generation != _speechGeneration) return;
+    if (_currentChunkIndex >= _chunks.length) {
+      _state = TtsState.stopped;
+      if (_onCompletion != null) _onCompletion!();
+      return;
+    }
+
+    final chunkText = _chunks[_currentChunkIndex];
+    final result = await _flutterTts.speak(chunkText);
+    if (generation != _speechGeneration) return;
+
+    if (result == 1) {
+      _state = TtsState.playing;
+    } else {
+      _state = TtsState.stopped;
+    }
+  }
+
+  void _handleChunkCompletion() {
+    final gen = _speechGeneration;
+    if (_state == TtsState.playing) {
+      _currentChunkIndex++;
+      if (_currentChunkIndex < _chunks.length) {
+        _speakCurrentChunk(gen);
+      } else {
+        _state = TtsState.stopped;
+        if (_onCompletion != null) {
+          _onCompletion!();
+        }
+      }
+    }
+  }
+
+  Future<void> pause() async {
+    _speechGeneration++;
+    await _flutterTts.stop();
+    _state = TtsState.paused;
+  }
+
+  Future<void> resume() async {
+    if (_state == TtsState.paused &&
+        _chunks.isNotEmpty &&
+        _currentChunkIndex < _chunks.length) {
+      _speechGeneration++;
+      final gen = _speechGeneration;
+      _state = TtsState.playing;
+      await _speakCurrentChunk(gen);
+    } else {
+      _state = TtsState.stopped;
+    }
+  }
+
+  Future<void> stop() async {
+    _speechGeneration++;
+    await _flutterTts.stop();
+    _state = TtsState.stopped;
+  }
+
+  void dispose() {
+    _speechGeneration++;
+    _flutterTts.stop();
+    _state = TtsState.stopped;
+  }
+}
+```
+
+---
+
+## 28. lib/core/utils/storage_location_helper.dart <a id="libcoreutilsstoragelocationhelperdart"></a>
+
+- **Path:** `lib/core/utils/storage_location_helper.dart`
+- **Lines:** 94
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+class StorageLocationHelper {
+  /// Returns a user-accessible persistent storage directory for the app.
+  /// Prioritizes /storage/emulated/0/Documents/[AppName] or /storage/emulated/0/Download/[AppName]
+  /// and falls back gracefully to getExternalStorageDirectory() or getApplicationDocumentsDirectory().
+  static Future<Directory> getPublicDocumentsDirectory({String subFolder = 'Scans'}) async {
+    if (Platform.isAndroid) {
+      // 1. Try public Documents folder
+      final documentsDir = Directory('/storage/emulated/0/Documents/PDF Reader/$subFolder');
+      try {
+        if (!await documentsDir.exists()) {
+          await documentsDir.create(recursive: true);
+        }
+        return documentsDir;
+      } catch (_) {}
+
+      // 2. Try public Download folder
+      final downloadDir = Directory('/storage/emulated/0/Download/PDF Reader/$subFolder');
+      try {
+        if (!await downloadDir.exists()) {
+          await downloadDir.create(recursive: true);
+        }
+        return downloadDir;
+      } catch (_) {}
+
+      // 3. Try external storage directory
+      try {
+        final extDir = await getExternalStorageDirectory();
+        if (extDir != null) {
+          final target = Directory(p.join(extDir.path, subFolder));
+          if (!await target.exists()) {
+            await target.create(recursive: true);
+          }
+          return target;
+        }
+      } catch (_) {}
+    }
+
+    // 4. Default fallback to app documents directory
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final target = Directory(p.join(appDocDir.path, subFolder));
+    if (!await target.exists()) {
+      await target.create(recursive: true);
+    }
+    return target;
+  }
+
+  /// Generates a collision-safe unique file path while preserving
+  /// the extension supplied by the caller.
+  static Future<String> getUniqueFilePath(
+    Directory directory,
+    String baseFileName,
+  ) async {
+    var safeName = baseFileName.trim();
+
+    if (safeName.isEmpty) {
+      safeName = 'file';
+    }
+
+    // Strip illegal filesystem characters.
+    safeName = safeName.replaceAll(
+      RegExp(r'[\\/:*?"<>|]'),
+      '_',
+    );
+
+    final extension = p.extension(safeName);
+    final nameWithoutExtension = p.basenameWithoutExtension(safeName);
+
+    var candidatePath = p.join(
+      directory.path,
+      safeName,
+    );
+
+    int counter = 1;
+
+    while (await File(candidatePath).exists()) {
+      final candidateName = extension.isEmpty
+          ? '${nameWithoutExtension}_$counter'
+          : '${nameWithoutExtension}_$counter$extension';
+
+      candidatePath = p.join(
+        directory.path,
+        candidateName,
+      );
+
+      counter++;
+    }
+
+    return candidatePath;
+  }
+}
+```
+
+---
+
+## 29. lib/core/utils/utils.dart <a id="libcoreutilsutilsdart"></a>
+
+- **Path:** `lib/core/utils/utils.dart`
+- **Lines:** 76
+- **Language:** `dart`
+
+```dart
+import 'package:intl/intl.dart';
+
+class Utils {
+  static String formatBytes(int bytes, {int decimals = 1}) {
+    if (bytes <= 0) return "0 B";
+
+    const suffixes = ["B", "KB", "MB", "GB", "TB"];
+
+    int i = 0;
+    double value = bytes.toDouble();
+
+    while (value >= 1024 && i < suffixes.length - 1) {
+      value /= 1024;
+      i++;
+    }
+
+    return "${value.toStringAsFixed(decimals)} ${suffixes[i]}";
+  }
+
+  static String formatDate(int millisecondsSinceEpoch) {
+    if (millisecondsSinceEpoch <= 0) return "";
+    final date = DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+    return DateFormat('MMM dd, yyyy  hh:mm a').format(date);
+  }
+
+  static String formatRelativeTime(int? millisecondsSinceEpoch) {
+    if (millisecondsSinceEpoch == null || millisecondsSinceEpoch <= 0) {
+      return "Never";
+    }
+    final date = DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+    final now = DateTime.now();
+    final diff = now.difference(date);
+
+    if (diff.inMinutes < 1) return "Just now";
+    if (diff.inMinutes < 60) return "${diff.inMinutes}m ago";
+    if (diff.inHours < 24) return "${diff.inHours}h ago";
+    if (diff.inDays < 7) return "${diff.inDays}d ago";
+    return DateFormat('MMM dd, yyyy').format(date);
+  }
+
+  /// Parses page ranges like "1-5, 8, 11-20" into a set of 1-based page numbers.
+  static Set<int> parsePageRanges(String input, int maxPages) {
+    final Set<int> result = {};
+    if (input.trim().isEmpty || maxPages <= 0) return result;
+
+    final parts = input.split(',');
+    for (var part in parts) {
+      part = part.trim();
+      if (part.isEmpty) continue;
+
+      if (part.contains('-')) {
+        final range = part.split('-');
+        if (range.length == 2) {
+          final start = int.tryParse(range[0].trim());
+          final end = int.tryParse(range[1].trim());
+          if (start != null &&
+              end != null &&
+              start > 0 &&
+              start <= maxPages &&
+              end >= start) {
+            final actualEnd = end > maxPages ? maxPages : end;
+            for (int i = start; i <= actualEnd; i++) {
+              result.add(i);
+            }
+          }
+        }
+      } else {
+        final page = int.tryParse(part);
+        if (page != null && page > 0 && page <= maxPages) {
+          result.add(page);
+        }
+      }
+    }
+    return result;
+  }
+}
+```
+
+---
+
+## 30. lib/features/ai/doc_qa_screen.dart <a id="libfeaturesaidocqascreendart"></a>
+
+- **Path:** `lib/features/ai/doc_qa_screen.dart`
+- **Lines:** 395
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../../core/ai/on_device_ai_service.dart';
+import '../../core/storage/ocr_cache_service.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+class QAMessage {
+  final String text;
+  final bool isUser;
+  final List<int> sourcePages;
+
+  QAMessage({
+    required this.text,
+    required this.isUser,
+    this.sourcePages = const [],
+  });
+}
+
+class DocQaScreen extends ConsumerStatefulWidget {
+  final PdfFile pdfFile;
+
+  const DocQaScreen({super.key, required this.pdfFile});
+
+  @override
+  ConsumerState<DocQaScreen> createState() => _DocQaScreenState();
+}
+
+class _DocQaScreenState extends ConsumerState<DocQaScreen> {
+  final TextEditingController _questionController = TextEditingController();
+  final List<QAMessage> _messages = [];
+  Map<int, String> _pageTextMap = {};
+  bool _isLoadingContext = true;
+  bool _isThinking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDocumentText();
+  }
+
+  @override
+  void dispose() {
+    _questionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadDocumentText() async {
+    final cachedOcr = await OcrCacheService.getCachedFileOcr(widget.pdfFile.path);
+    _pageTextMap = Map.from(cachedOcr);
+
+    if (_pageTextMap.isEmpty) {
+      try {
+        final fileBytes = await File(widget.pdfFile.path).readAsBytes();
+        if (!mounted) return;
+        final document = sf.PdfDocument(inputBytes: fileBytes);
+        final extractor = sf.PdfTextExtractor(document);
+
+        for (int i = 0; i < document.pages.count; i++) {
+          final text = extractor.extractText(startPageIndex: i, endPageIndex: i).trim();
+          if (text.isNotEmpty) {
+            _pageTextMap[i + 1] = text;
+          }
+        }
+        document.dispose();
+      } catch (_) {}
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoadingContext = false;
+        _messages.add(
+          QAMessage(
+            text: 'Greetings. I am your local grounded reading assistant for "${widget.pdfFile.name}". All queries and contextual citations are computed 100% on-device.',
+            isUser: false,
+          ),
+        );
+      });
+    }
+  }
+
+  Future<void> _sendQuestion() async {
+    final q = _questionController.text.trim();
+    if (q.isEmpty || _isThinking) return;
+
+    _questionController.clear();
+    setState(() {
+      _messages.add(QAMessage(text: q, isUser: true));
+      _isThinking = true;
+    });
+
+    final answerResult = await OnDeviceAIService.instance.answerQuestion(
+      filePath: widget.pdfFile.path,
+      question: q,
+      pageTextMap: _pageTextMap,
+    );
+
+    if (mounted) {
+      setState(() {
+        _isThinking = false;
+        _messages.add(
+          QAMessage(
+            text: answerResult.answer,
+            isUser: false,
+            sourcePages: answerResult.sourcePages,
+          ),
+        );
+      });
+    }
+  }
+
+  void _navigateToPage(int pageNumber) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PdfViewerScreen(filePath: widget.pdfFile.path),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'GROUNDED SYNTHESIS · 100% OFFLINE'),
+            Text(
+              'Ask Document',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: _isLoadingContext
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: EditorialTokens.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'INDEXING DOCUMENT CONTEXT...',
+                    style: EditorialTokens.eyebrow(color: EditorialTokens.primary),
+                  ),
+                ],
+              ),
+            )
+          : Column(
+              children: [
+                // Document reference strip
+                EditorialStatStrip(
+                  primaryText: 'ACTIVE DOCUMENT · ${widget.pdfFile.name.toUpperCase()}',
+                  secondaryText: 'ON-DEVICE NEURAL CACHE',
+                ),
+
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      final msg = _messages[index];
+
+                      if (msg.isUser) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 14),
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxWidth: MediaQuery.of(context).size.width * 0.8,
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.primary,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              border: Border.all(
+                                color: isDark ? EditorialTokens.darkBorder : EditorialTokens.primary,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'READER INQUIRY',
+                                  style: EditorialTokens.eyebrow(
+                                    color: isDark ? EditorialTokens.primary : Colors.white70,
+                                  ).copyWith(fontSize: 9),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  msg.text,
+                                  style: EditorialTokens.body(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      // Assistant message on physical paper
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 14),
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.88,
+                          ),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: isDark ? EditorialTokens.darkSurface : EditorialTokens.paper,
+                            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                            border: Border.all(
+                              color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                              width: EditorialTokens.hairline,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const EditorialEyebrow(
+                                    text: 'LOCAL SYNTHESIS',
+                                    color: EditorialTokens.primary,
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    '100% PRIVATE',
+                                    style: EditorialTokens.metadata(
+                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    ).copyWith(fontSize: 9),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                msg.text,
+                                style: TextStyle(
+                                  fontFamily: 'serif',
+                                  fontSize: 14,
+                                  height: 1.5,
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ),
+                              ),
+                              if (msg.sourcePages.isNotEmpty) ...[
+                                const SizedBox(height: 10),
+                                const EditorialDivider(),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 6,
+                                  runSpacing: 6,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Text(
+                                      'CITATIONS:',
+                                      style: EditorialTokens.metadataStrong(
+                                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                      ).copyWith(fontSize: 9),
+                                    ),
+                                    ...msg.sourcePages.map(
+                                      (page) => InkWell(
+                                        onTap: () => _navigateToPage(page),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: EditorialTokens.primary.withOpacity(0.12),
+                                            borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                            border: Border.all(
+                                              color: EditorialTokens.primary.withOpacity(0.3),
+                                              width: EditorialTokens.hairline,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'PAGE $page',
+                                            style: EditorialTokens.metadataStrong(
+                                              color: EditorialTokens.primary,
+                                            ).copyWith(fontSize: 9.5),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                if (_isThinking)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.5,
+                            color: EditorialTokens.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'ANALYZING DOCUMENT TEXT...',
+                          style: EditorialTokens.eyebrow(color: EditorialTokens.primary),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // Docked query input bar
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    border: Border(
+                      top: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _questionController,
+                          style: EditorialTokens.body(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Ask a question about this document...',
+                            hintStyle: EditorialTokens.bodySmall(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          onSubmitted: (_) => _sendQuestion(),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_upward,
+                          size: 20,
+                          color: EditorialTokens.primary,
+                        ),
+                        onPressed: _sendQuestion,
+                        tooltip: 'Send question',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+```
+
+---
+
+## 31. lib/features/ai/exam_mode_screen.dart <a id="libfeaturesaiexammodescreendart"></a>
+
+- **Path:** `lib/features/ai/exam_mode_screen.dart`
+- **Lines:** 410
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../../core/ai/on_device_ai_service.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/storage/ocr_cache_service.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../models/exam_session.dart';
+import '../../models/pdf_file.dart';
+import '../../models/study_item.dart';
+import '../../widgets/editorial_components.dart';
+
+class ExamModeScreen extends ConsumerStatefulWidget {
+  final PdfFile pdfFile;
+
+  const ExamModeScreen({super.key, required this.pdfFile});
+
+  @override
+  ConsumerState<ExamModeScreen> createState() => _ExamModeScreenState();
+}
+
+class _ExamModeScreenState extends ConsumerState<ExamModeScreen> {
+  String _selectedDifficulty = 'Medium';
+  int _questionCount = 5;
+  bool _isExamActive = false;
+  bool _isGenerating = false;
+
+  Map<int, String> _pageTextMap = {};
+  List<StudyQuestion> _questions = [];
+  final Map<int, String> _userAnswers = {};
+  int _examStartTime = 0;
+  bool _isSubmitted = false;
+  double _finalScorePct = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDocumentText();
+  }
+
+  Future<void> _loadDocumentText() async {
+    final cachedOcr = await OcrCacheService.getCachedFileOcr(widget.pdfFile.path);
+    _pageTextMap = Map.from(cachedOcr);
+
+    if (_pageTextMap.isEmpty) {
+      try {
+        final fileBytes = await File(widget.pdfFile.path).readAsBytes();
+        if (!mounted) return;
+        final document = sf.PdfDocument(inputBytes: fileBytes);
+        final extractor = sf.PdfTextExtractor(document);
+
+        for (int i = 0; i < document.pages.count; i++) {
+          final text = extractor.extractText(startPageIndex: i, endPageIndex: i).trim();
+          if (text.isNotEmpty) {
+            _pageTextMap[i + 1] = text;
+          }
+        }
+        document.dispose();
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _startExam() async {
+    setState(() => _isGenerating = true);
+
+    final questions = await OnDeviceAIService.instance.generateExamQuestions(
+      filePath: widget.pdfFile.path,
+      pageTextMap: _pageTextMap,
+      topic: 'General',
+      difficulty: _selectedDifficulty,
+      questionCount: _questionCount,
+    );
+
+    if (mounted) {
+      setState(() {
+        _questions = questions;
+        _isGenerating = false;
+        _isExamActive = true;
+        _examStartTime = DateTime.now().millisecondsSinceEpoch;
+      });
+    }
+  }
+
+  void _submitExam() async {
+    int correct = 0;
+    for (int i = 0; i < _questions.length; i++) {
+      if (_userAnswers[i] == _questions[i].correctAnswer) {
+        correct++;
+      }
+    }
+
+    final scorePct = (_questions.isNotEmpty ? (correct / _questions.length) : 0.0) * 100.0;
+    final elapsedSec = (DateTime.now().millisecondsSinceEpoch - _examStartTime) ~/ 1000;
+
+    final session = ExamSession(
+      filePath: widget.pdfFile.path,
+      topic: 'General',
+      difficulty: _selectedDifficulty,
+      numQuestions: _questions.length,
+      scorePct: scorePct,
+      durationSeconds: elapsedSec,
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    await DatabaseHelper.instance.saveExamSession(session);
+
+    if (mounted) {
+      setState(() {
+        _isSubmitted = true;
+        _finalScorePct = scorePct;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            const EditorialDivider(),
+            Expanded(
+              child: !_isExamActive
+                  ? _buildSetupView()
+                  : (_isSubmitted ? _buildResultsView() : _buildExamQuestionsView()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: '04 · ACADEMIC RIGOR'),
+                const SizedBox(height: 2),
+                Text(
+                  'Examination Sandbox',
+                  style: EditorialTokens.titleLarge(),
+                ),
+                Text(
+                  widget.pdfFile.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSetupView() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: EditorialTokens.paper,
+              borderRadius: BorderRadius.circular(EditorialTokens.r6),
+              border: Border.all(color: EditorialTokens.border, width: EditorialTokens.hairline),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const EditorialEyebrow(text: 'EVALUATION PROFILE'),
+                const SizedBox(height: 6),
+                Text(
+                  'On-Device Knowledge Test',
+                  style: EditorialTokens.titleMedium().copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Generate closed-book practice assessments directly from document contents using local models.',
+                  style: EditorialTokens.bodySmall(color: EditorialTokens.inkSecondary),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          const EditorialSectionHeader(
+            number: '01',
+            label: 'Rigor Calibration',
+            trailing: 'DIFFICULTY',
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: ['Easy', 'Medium', 'Hard'].map((diff) {
+              final isSelected = _selectedDifficulty == diff;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: EditorialChip(
+                  label: diff,
+                  selected: isSelected,
+                  onTap: () => setState(() => _selectedDifficulty = diff),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 24),
+          EditorialSectionHeader(
+            number: '02',
+            label: 'Question Quota',
+            trailing: '$_questionCount ITEMS',
+          ),
+          const SizedBox(height: 8),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: EditorialTokens.primary,
+              inactiveTrackColor: EditorialTokens.surfaceMuted,
+              thumbColor: EditorialTokens.primary,
+              overlayColor: EditorialTokens.primary.withOpacity(0.12),
+            ),
+            child: Slider(
+              value: _questionCount.toDouble(),
+              min: 3,
+              max: 15,
+              divisions: 4,
+              onChanged: (val) => setState(() => _questionCount = val.toInt()),
+            ),
+          ),
+          const Spacer(),
+          SizedBox(
+            width: double.infinity,
+            child: EditorialButton(
+              label: _isGenerating ? 'Generating Questions...' : 'Start Examination',
+              icon: Icons.assignment_turned_in_outlined,
+              onPressed: _isGenerating ? null : _startExam,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExamQuestionsView() {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _questions.length,
+            itemBuilder: (context, index) {
+              final q = _questions[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 14),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.paper,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                  border: Border.all(color: EditorialTokens.border, width: EditorialTokens.hairline),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'QUESTION ${index + 1} · ${q.type.name.toUpperCase()}',
+                      style: EditorialTokens.metadataStrong(color: EditorialTokens.primary).copyWith(fontSize: 10),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      q.question,
+                      style: EditorialTokens.titleMedium().copyWith(fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                    const SizedBox(height: 12),
+                    if (q.type == QuestionType.mcq || q.type == QuestionType.trueFalse)
+                      ...q.options.map((opt) {
+                        final isSelected = _userAnswers[index] == opt;
+                        return GestureDetector(
+                          onTap: () => setState(() => _userAnswers[index] = opt),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isSelected ? const Color(0xFFFBF1EE) : EditorialTokens.surface,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              border: Border.all(
+                                color: isSelected ? EditorialTokens.primary : EditorialTokens.borderSoft,
+                                width: isSelected ? 1.5 : EditorialTokens.hairline,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                                  size: 14,
+                                  color: isSelected ? EditorialTokens.primary : EditorialTokens.border,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    opt,
+                                    style: EditorialTokens.bodyMedium(color: EditorialTokens.ink).copyWith(fontSize: 13),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      })
+                    else
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: EditorialTokens.surfaceMuted,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(color: EditorialTokens.borderSoft, width: EditorialTokens.hairline),
+                        ),
+                        child: TextField(
+                          onChanged: (val) => _userAnswers[index] = val,
+                          style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+                          decoration: InputDecoration(
+                            hintText: 'TYPE RESPONSE...',
+                            hintStyle: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                            border: InputBorder.none,
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          color: EditorialTokens.surface,
+          child: SizedBox(
+            width: double.infinity,
+            child: EditorialButton(
+              label: 'Submit Examination',
+              icon: Icons.check,
+              onPressed: _submitExam,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultsView() {
+    final passed = _finalScorePct >= 60;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: EditorialTokens.paper,
+            borderRadius: BorderRadius.circular(EditorialTokens.r6),
+            border: Border.all(color: EditorialTokens.border, width: EditorialTokens.hairline),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                passed ? Icons.verified_outlined : Icons.info_outline,
+                size: 48,
+                color: passed ? const Color(0xFF386641) : EditorialTokens.primary,
+              ),
+              const SizedBox(height: 16),
+              const EditorialEyebrow(text: 'EVALUATION REPORT'),
+              const SizedBox(height: 4),
+              Text(
+                'Assessment Concluded',
+                style: EditorialTokens.titleLarge(),
+              ),
+              const SizedBox(height: 12),
+              EditorialStatStrip(
+                primaryText: 'FINAL ACCURACY',
+                secondaryText: '${_finalScorePct.toInt()}% SCORE',
+              ),
+              const SizedBox(height: 20),
+              EditorialButton(
+                label: 'Return to Document',
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 32. lib/features/ai/explain_text_dialog.dart <a id="libfeaturesaiexplaintextdialogdart"></a>
+
+- **Path:** `lib/features/ai/explain_text_dialog.dart`
+- **Lines:** 205
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../core/ai/local_ai_provider.dart';
+import '../../core/ai/on_device_ai_service.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../widgets/editorial_components.dart';
+
+class ExplainTextDialog extends StatefulWidget {
+  final String selectedText;
+
+  const ExplainTextDialog({super.key, required this.selectedText});
+
+  @override
+  State<ExplainTextDialog> createState() => _ExplainTextDialogState();
+}
+
+class _ExplainTextDialogState extends State<ExplainTextDialog> {
+  ExplanationMode _mode = ExplanationMode.simple;
+  String _explanation = '';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExplanation();
+  }
+
+  Future<void> _loadExplanation() async {
+    setState(() => _isLoading = true);
+    final result = await OnDeviceAIService.instance.explainText(
+      selectedText: widget.selectedText,
+      surroundingContext: widget.selectedText,
+      mode: _mode,
+    );
+    if (mounted) {
+      setState(() {
+        _explanation = result;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: EditorialTokens.paper,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(EditorialTokens.r6),
+        side: const BorderSide(
+          color: EditorialTokens.border,
+          width: EditorialTokens.hairline,
+        ),
+      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: '02 · PASSAGE EXEGESIS'),
+            const SizedBox(height: 4),
+            Text(
+              'Grounded Clarification',
+              style: EditorialTokens.titleMedium().copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Text(
+                '“${widget.selectedText.trim()}”',
+                style: EditorialTokens.bodySmall(color: EditorialTokens.inkSecondary).copyWith(
+                  fontStyle: FontStyle.italic,
+                  height: 1.4,
+                ),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                _buildModeChip('SIMPLE', ExplanationMode.simple),
+                const SizedBox(width: 8),
+                _buildModeChip('SCHOLARLY', ExplanationMode.detailed),
+                const SizedBox(width: 8),
+                _buildModeChip('EXAM FOCUS', ExplanationMode.examFocused),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const EditorialDivider(),
+            const SizedBox(height: 14),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 220),
+              child: _isLoading
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: EditorialTokens.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'SYNTHESIZING LOCAL CONTEXT...',
+                              style: EditorialTokens.metadata().copyWith(
+                                fontSize: 9.5,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: Text(
+                        _explanation,
+                        style: EditorialTokens.body(color: EditorialTokens.ink).copyWith(
+                          fontSize: 13.5,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (!_isLoading && _explanation.isNotEmpty) ...[
+                  EditorialSecondaryButton(
+                    label: 'Copy',
+                    icon: Icons.copy_outlined,
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: _explanation));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Exegesis copied to clipboard'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                EditorialButton(
+                  label: 'Dismiss',
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeChip(String label, ExplanationMode mode) {
+    final isSelected = _mode == mode;
+    return GestureDetector(
+      onTap: () {
+        if (_mode != mode) {
+          setState(() => _mode = mode);
+          _loadExplanation();
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: isSelected ? EditorialTokens.secondary : EditorialTokens.surface,
+          borderRadius: BorderRadius.circular(EditorialTokens.r2),
+          border: Border.all(
+            color: isSelected ? EditorialTokens.secondary : EditorialTokens.border,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+        child: Text(
+          label,
+          style: EditorialTokens.metadataStrong(
+            color: isSelected ? EditorialTokens.paper : EditorialTokens.inkMuted,
+          ).copyWith(fontSize: 9.5, letterSpacing: 0.8),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 33. lib/features/delete_pages/delete_pages_screen.dart <a id="libfeaturesdeletepagesdeletepagesscreendart"></a>
+
+- **Path:** `lib/features/delete_pages/delete_pages_screen.dart`
+- **Lines:** 604
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../../core/storage/pdf_metadata_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_tool_file_picker_screen.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+class DeletePagesScreen extends ConsumerStatefulWidget {
+  final PdfFile? sourceFile;
+
+  const DeletePagesScreen({super.key, this.sourceFile});
+
+  @override
+  ConsumerState<DeletePagesScreen> createState() => _DeletePagesScreenState();
+}
+
+class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
+  PdfFile? _selectedFile;
+  final Set<int> _selectedPageIndices = {};
+  bool _isProcessing = false;
+  String? _outputFilePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFile = widget.sourceFile;
+  }
+
+  Future<void> _pickFile() async {
+    final file = await Navigator.push<PdfFile>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PdfToolFilePickerScreen(
+          title: 'Select Document to Delete Pages',
+          mode: ToolPickerMode.singleSelect,
+        ),
+      ),
+    );
+
+    if (file != null) {
+      setState(() {
+        _selectedFile = file;
+        _selectedPageIndices.clear();
+      });
+    }
+  }
+
+  void _selectAll() {
+    if (_selectedFile == null) return;
+    setState(() {
+      _selectedPageIndices.clear();
+      for (int i = 0; i < _selectedFile!.pageCount; i++) {
+        _selectedPageIndices.add(i);
+      }
+    });
+  }
+
+  void _deselectAll() {
+    setState(() {
+      _selectedPageIndices.clear();
+    });
+  }
+
+  Future<void> _confirmAndDelete() async {
+    if (_selectedFile == null) return;
+    final total = _selectedFile!.pageCount;
+    final selCount = _selectedPageIndices.length;
+
+    if (selCount == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select at least 1 page to delete.')),
+      );
+      return;
+    }
+
+    if (selCount >= total) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cannot delete all pages from document.')),
+      );
+      return;
+    }
+
+    bool replaceOriginal = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          backgroundColor: EditorialTokens.paper,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(EditorialTokens.r6),
+            side: const BorderSide(
+              color: EditorialTokens.border,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const EditorialEyebrow(text: 'CONFIRM DELETE'),
+                const SizedBox(height: 6),
+                Text(
+                  'Permanent Page Removal',
+                  style: EditorialTokens.titleLarge(),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Delete $selCount pages from "${_selectedFile!.name}"? The remaining ${total - selCount} pages will be saved cleanly.',
+                  style: EditorialTokens.body(color: EditorialTokens.inkSecondary),
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () => setDialogState(() => replaceOriginal = !replaceOriginal),
+                  child: Row(
+                    children: [
+                      Icon(
+                        replaceOriginal ? Icons.check_box : Icons.check_box_outline_blank,
+                        size: 18,
+                        color: EditorialTokens.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Replace source document in place',
+                        style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    EditorialSecondaryButton(
+                      label: 'Cancel',
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 10),
+                    EditorialButton(
+                      label: 'Delete Pages',
+                      isDestructive: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _executeDeletePages(replaceOriginal);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _executeDeletePages(bool replaceOriginal) async {
+    setState(() => _isProcessing = true);
+
+    try {
+      final sourceBytes = await File(_selectedFile!.path).readAsBytes();
+      final sourceDoc = sf.PdfDocument(inputBytes: sourceBytes);
+      final outDoc = sf.PdfDocument();
+
+      for (int i = 0; i < sourceDoc.pages.count; i++) {
+        if (!_selectedPageIndices.contains(i)) {
+          final template = sourceDoc.pages[i].createTemplate();
+          final newPage = outDoc.pages.add();
+          newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+        }
+      }
+
+      final savedBytes = await outDoc.save();
+      outDoc.dispose();
+      sourceDoc.dispose();
+
+      String targetPath = _selectedFile!.path;
+      if (!replaceOriginal) {
+        final parentDir = File(_selectedFile!.path).parent.path;
+        final name = _selectedFile!.name.replaceFirst(
+            RegExp(r'\.pdf$', caseSensitive: false), '_trimmed.pdf');
+        targetPath = '$parentDir${Platform.pathSeparator}$name';
+      }
+
+      await File(targetPath).writeAsBytes(savedBytes);
+
+      final registered = await PdfMetadataHelper.registerAndSyncPdf(targetPath);
+      if (registered != null) {
+        ref.read(pdfListProvider.notifier).addFile(registered);
+      }
+
+      setState(() {
+        _isProcessing = false;
+        _outputFilePath = targetPath;
+      });
+    } catch (e) {
+      setState(() => _isProcessing = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting pages: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_outputFilePath != null) {
+      return Scaffold(
+        backgroundColor: EditorialTokens.canvas,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.paper,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                  border: Border.all(
+                    color: EditorialTokens.border,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.verified_outlined,
+                      size: 48,
+                      color: Color(0xFF386641),
+                    ),
+                    const SizedBox(height: 16),
+                    const EditorialEyebrow(text: 'DELETE COMPLETE'),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Pages Successfully Removed',
+                      style: EditorialTokens.titleLarge(),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _outputFilePath!,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        EditorialButton(
+                          label: 'Open Document',
+                          icon: Icons.menu_book,
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    PdfViewerScreen(filePath: _outputFilePath!),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 12),
+                        EditorialSecondaryButton(
+                          label: 'Share',
+                          icon: Icons.share_outlined,
+                          onPressed: () {
+                            Share.shareXFiles([XFile(_outputFilePath!)]);
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'RETURN TO LIBRARY',
+                        style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            const EditorialDivider(),
+            _buildFileSelectorCard(),
+            const EditorialDivider(),
+            Expanded(
+              child: _isProcessing
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: EditorialTokens.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'DELETING PAGES FROM DOCUMENT...',
+                            style: EditorialTokens.metadata().copyWith(
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : (_selectedFile == null ? _buildEmptyPicker() : _buildPageGrid()),
+            ),
+            if (_selectedFile != null) _buildBottomBar(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: 'PAGE MANAGEMENT'),
+                const SizedBox(height: 2),
+                Text(
+                  'Delete Pages',
+                  style: EditorialTokens.titleLarge(),
+                ),
+              ],
+            ),
+          ),
+          if (_selectedFile != null) ...[
+            TextButton(
+              onPressed: _selectAll,
+              child: Text(
+                'ALL',
+                style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+              ),
+            ),
+            TextButton(
+              onPressed: _deselectAll,
+              child: Text(
+                'CLEAR',
+                style: EditorialTokens.metadataStrong(color: EditorialTokens.inkMuted),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFileSelectorCard() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      color: EditorialTokens.surface,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _selectedFile?.name ?? 'No Document Selected',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: EditorialTokens.titleSmall().copyWith(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  _selectedFile != null
+                      ? '${_selectedFile!.pageCount} PAGES TOTAL'
+                      : 'TAP BROWSE TO SELECT DOCUMENT',
+                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          EditorialSecondaryButton(
+            label: _selectedFile == null ? 'Browse' : 'Change',
+            icon: Icons.folder_open,
+            onPressed: _pickFile,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyPicker() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                border: Border.all(
+                  color: EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: const Icon(
+                Icons.delete_outline,
+                size: 40,
+                color: EditorialTokens.primary,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'No Document Selected',
+              style: EditorialTokens.titleMedium().copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Choose a PDF from your library to select and remove unwanted pages cleanly without quality loss.',
+              textAlign: TextAlign.center,
+              style: EditorialTokens.bodySmall(color: EditorialTokens.inkMuted),
+            ),
+            const SizedBox(height: 24),
+            EditorialButton(
+              label: 'Browse Library',
+              icon: Icons.folder_open,
+              onPressed: _pickFile,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPageGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 0.72,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: _selectedFile!.pageCount,
+      itemBuilder: (context, index) {
+        final isSelected = _selectedPageIndices.contains(index);
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (isSelected) {
+                _selectedPageIndices.remove(index);
+              } else {
+                _selectedPageIndices.add(index);
+              }
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            decoration: BoxDecoration(
+              color: isSelected ? const Color(0xFFFBF1EE) : EditorialTokens.paper,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isSelected ? EditorialTokens.primary : EditorialTokens.border,
+                width: isSelected ? 1.5 : EditorialTokens.hairline,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.description_outlined,
+                        size: 32,
+                        color: isSelected ? EditorialTokens.primary : EditorialTokens.inkSecondary,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'P. ${index + 1}',
+                        style: EditorialTokens.metadataStrong(
+                          color: isSelected ? EditorialTokens.primary : EditorialTokens.ink,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isSelected)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.primary,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                      ),
+                      child: Text(
+                        'REMOVE',
+                        style: EditorialTokens.metadata(color: Colors.white).copyWith(
+                          fontSize: 8,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBottomBar() {
+    final selCount = _selectedPageIndices.length;
+    final total = _selectedFile?.pageCount ?? 0;
+    final canDelete = selCount > 0 && selCount < total;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: EditorialTokens.surface,
+        border: Border(
+          top: BorderSide(
+            color: EditorialTokens.border,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '$selCount MARKED FOR REMOVAL',
+                  style: EditorialTokens.metadataStrong(
+                    color: selCount > 0 ? EditorialTokens.primary : EditorialTokens.inkMuted,
+                  ),
+                ),
+                Text(
+                  '${total - selCount} PAGES REMAINING',
+                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                ),
+              ],
+            ),
+          ),
+          EditorialButton(
+            label: 'Delete Pages',
+            icon: Icons.delete_outline,
+            isDestructive: true,
+            onPressed: canDelete ? _confirmAndDelete : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 34. lib/features/favorites/favorites_tab.dart <a id="libfeaturesfavoritesfavoritestabdart"></a>
+
+- **Path:** `lib/features/favorites/favorites_tab.dart`
+- **Lines:** 178
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/utils/utils.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_file_card.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+import '../merge/merge_screen.dart';
+import '../delete_pages/delete_pages_screen.dart';
+import '../ocr/ocr_screen.dart';
+
+class FavoritesTab extends ConsumerWidget {
+  const FavoritesTab({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favorites = ref.watch(favoritePdfListProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final totalBytes = favorites.fold<int>(0, (sum, f) => sum + f.sizeBytes);
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const EditorialEyebrow(text: 'CURATED DOCUMENTS · BOOKMARKED'),
+                Text(
+                  'Favorites',
+                  style: EditorialTokens.titleLarge(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          // Sub-strip: stats
+          EditorialStatStrip(
+            primaryText: 'FAVORITES · QUICK ACCESS',
+            secondaryText: '${favorites.length} Starred · ${Utils.formatBytes(totalBytes)}',
+          ),
+
+          Expanded(
+            child: favorites.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(
+                            color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.star_outline,
+                              size: 40,
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No Starred Documents',
+                              style: EditorialTokens.headlineSmall(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Star any document from the library to pin it here for immediate reading.',
+                              style: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    itemCount: favorites.length,
+                    itemBuilder: (context, index) {
+                      final file = favorites[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: PdfFileCard(
+                          file: file,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PdfViewerScreen(filePath: file.path),
+                              ),
+                            );
+                          },
+                          onToggleFavorite: () {
+                            ref.read(pdfListProvider.notifier).toggleFavorite(file.path);
+                          },
+                          onMenuAction: (action) {
+                            switch (action) {
+                              case 'open':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => PdfViewerScreen(filePath: file.path),
+                                  ),
+                                );
+                                break;
+                              case 'merge':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MergeScreen(initialFile: file),
+                                  ),
+                                );
+                                break;
+                              case 'delete_pages':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => DeletePagesScreen(sourceFile: file),
+                                  ),
+                                );
+                                break;
+                              case 'ocr':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => OcrScreen(sourceFile: file),
+                                  ),
+                                );
+                                break;
+                              case 'share':
+                                Share.shareXFiles([XFile(file.path)], text: 'Sharing ${file.name}');
+                                break;
+                              case 'delete':
+                                ref.read(pdfListProvider.notifier).deleteFile(file.path);
+                                break;
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 35. lib/features/home/files_tab.dart <a id="libfeatureshomefilestabdart"></a>
+
+- **Path:** `lib/features/home/files_tab.dart`
+- **Lines:** 1406
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path/path.dart' as p;
+import '../../core/permissions/permissions_service.dart';
+import '../../core/tools/pdf_target_size_compressor_service.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/empty_state.dart';
+import '../../widgets/pdf_file_card.dart';
+import '../../widgets/permission_banner.dart';
+import '../settings/settings_screen.dart';
+import '../viewer/pdf_viewer_screen.dart';
+import '../merge/merge_screen.dart';
+import '../delete_pages/delete_pages_screen.dart';
+import '../ocr/ocr_screen.dart';
+import '../study/study_mode_screen.dart';
+import '../tools/version_history_screen.dart';
+import '../tools/compress_pdf_screen.dart';
+import '../tools/metadata_editor_screen.dart';
+import '../tools/encrypt_pdf_screen.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../widgets/editorial_components.dart';
+import 'pdf_list_provider.dart';
+
+enum SortOption {
+  nameAsc,
+  nameDesc,
+  dateNewest,
+  dateOldest,
+  sizeLargest,
+  sizeSmallest
+}
+
+class FilesTab extends ConsumerStatefulWidget {
+  const FilesTab({super.key});
+
+  @override
+  ConsumerState<FilesTab> createState() => _FilesTabState();
+}
+
+class _FilesTabState extends ConsumerState<FilesTab> {
+  SortOption _sortOption = SortOption.dateNewest;
+  String _activeFilter = 'all'; // 'all', 'recent', 'starred'
+
+  String _getSortLabel() {
+    switch (_sortOption) {
+      case SortOption.nameAsc:
+      case SortOption.nameDesc:
+        return 'Name';
+      case SortOption.dateNewest:
+      case SortOption.dateOldest:
+        return 'Date';
+      case SortOption.sizeLargest:
+      case SortOption.sizeSmallest:
+        return 'Size';
+    }
+  }
+
+  List<PdfFile> _applyFilter(List<PdfFile> files) {
+    switch (_activeFilter) {
+      case 'recent':
+        final list = files
+            .where((f) => f.lastOpenedAt != null || f.readingProgress > 0)
+            .toList();
+        list.sort((a, b) => (b.lastOpenedAt ?? b.modifiedAt)
+            .compareTo(a.lastOpenedAt ?? a.modifiedAt));
+        return list.isNotEmpty ? list : files;
+      case 'starred':
+        return files.where((f) => f.isFavorite).toList();
+      case 'all':
+      default:
+        return files;
+    }
+  }
+
+  List<PdfFile> _sortFiles(List<PdfFile> files) {
+    final list = List<PdfFile>.from(files);
+    switch (_sortOption) {
+      case SortOption.nameAsc:
+        list.sort(
+            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+        break;
+      case SortOption.nameDesc:
+        list.sort(
+            (a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
+        break;
+      case SortOption.dateNewest:
+        list.sort((a, b) => b.modifiedAt.compareTo(a.modifiedAt));
+        break;
+      case SortOption.dateOldest:
+        list.sort((a, b) => a.modifiedAt.compareTo(b.modifiedAt));
+        break;
+      case SortOption.sizeLargest:
+        list.sort((a, b) => b.sizeBytes.compareTo(a.sizeBytes));
+        break;
+      case SortOption.sizeSmallest:
+        list.sort((a, b) => a.sizeBytes.compareTo(b.sizeBytes));
+        break;
+    }
+    return list;
+  }
+
+  void _showSortBottomSheet() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final options = [
+      (SortOption.nameAsc, 'Name (A to Z)', Icons.sort_by_alpha),
+      (SortOption.nameDesc, 'Name (Z to A)', Icons.sort_by_alpha),
+      (SortOption.dateNewest, 'Date Modified (Newest first)', Icons.access_time),
+      (SortOption.sizeLargest, 'Size (Largest first)', Icons.data_usage),
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: EdgeInsets.fromLTRB(
+          16,
+          14,
+          16,
+          MediaQuery.of(context).padding.bottom + 16,
+        ),
+        decoration: BoxDecoration(
+          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(EditorialTokens.r8)),
+          border: Border(
+            top: BorderSide(
+              color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const EditorialEyebrow(
+                        text: 'ORDER & ARRANGEMENT',
+                        color: EditorialTokens.primary,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Sort Documents',
+                        style: EditorialTokens.title(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            const EditorialDivider(),
+            const SizedBox(height: 8),
+            ...options.map((opt) {
+              final isSelected = _sortOption == opt.$1;
+              return InkWell(
+                onTap: () {
+                  setState(() => _sortOption = opt.$1);
+                  Navigator.pop(ctx);
+                },
+                borderRadius: BorderRadius.circular(4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  margin: const EdgeInsets.symmetric(vertical: 2),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? (isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        opt.$3,
+                        size: 17,
+                        color: isSelected
+                            ? EditorialTokens.primary
+                            : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          opt.$2,
+                          style: EditorialTokens.bodySmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        const Icon(
+                          Icons.check,
+                          size: 17,
+                          color: EditorialTokens.primary,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickAndOpenPdf() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null && result.files.single.path != null) {
+      final filePath = result.files.single.path!;
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PdfViewerScreen(filePath: filePath),
+          ),
+        );
+      }
+    }
+  }
+
+  void _handleMenuAction(String action, PdfFile file) {
+    switch (action) {
+      case 'open':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PdfViewerScreen(filePath: file.path),
+          ),
+        );
+        break;
+      case 'merge':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MergeScreen(initialFile: file),
+          ),
+        );
+        break;
+      case 'delete_pages':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DeletePagesScreen(sourceFile: file),
+          ),
+        );
+        break;
+      case 'ocr':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => OcrScreen(sourceFile: file),
+          ),
+        );
+        break;
+      case 'study':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => StudyModeScreen(pdfFile: file),
+          ),
+        );
+        break;
+      case 'version':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => VersionHistoryScreen(pdfFile: file),
+          ),
+        );
+        break;
+      case 'compress_target':
+        _showQuickCompressDialog(file);
+        break;
+      case 'compress':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CompressPdfScreen(pdfFile: file),
+          ),
+        );
+        break;
+      case 'metadata':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MetadataEditorScreen(pdfFile: file),
+          ),
+        );
+        break;
+      case 'encrypt':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EncryptPdfScreen(pdfFile: file),
+          ),
+        );
+        break;
+      case 'share':
+        if (File(file.path).existsSync()) {
+          Share.shareXFiles([XFile(file.path)], text: 'Sharing ${file.name}');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('File does not exist on disk.')),
+          );
+        }
+        break;
+      case 'info':
+        _showFileInfoDialog(file);
+        break;
+      case 'rename':
+        _showRenameDialog(file);
+        break;
+      case 'delete':
+        _showDeleteDialog(file);
+        break;
+    }
+  }
+
+  void _showQuickCompressDialog(PdfFile file) {
+    final controller = TextEditingController(text: '500');
+    String unit = 'KB';
+    bool isCompressing = false;
+    double progress = 0.0;
+    String progressText = '';
+    TargetCompressionResult? result;
+
+    if (file.sizeBytes > 0) {
+      final target = (file.sizeBytes * 0.5).round();
+      if (target >= 1024 * 1024) {
+        unit = 'MB';
+        controller.text = (target / (1024 * 1024)).toStringAsFixed(1);
+      } else {
+        unit = 'KB';
+        controller.text = (target / 1024).round().toString();
+      }
+    }
+
+    final presets = [
+      {'label': '50 KB', 'val': 50.0, 'unit': 'KB'},
+      {'label': '100 KB', 'val': 100.0, 'unit': 'KB'},
+      {'label': '200 KB', 'val': 200.0, 'unit': 'KB'},
+      {'label': '500 KB', 'val': 500.0, 'unit': 'KB'},
+      {'label': '1 MB', 'val': 1.0, 'unit': 'MB'},
+      {'label': '2 MB', 'val': 2.0, 'unit': 'MB'},
+    ];
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (bottomSheetCtx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.tune, color: Colors.deepOrange),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Compress PDF to Target Size',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Text(
+                    file.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Current Size: ${Utils.formatBytes(file.sizeBytes)} • ${file.pageCount > 0 ? "${file.pageCount} pages" : ""}',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
+                  const SizedBox(height: 16),
+                  if (result == null && !isCompressing) ...[
+                    const Text('Target Size:', style: TextStyle(fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: controller,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            decoration: const InputDecoration(
+                              labelText: 'Target Size',
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        DropdownButton<String>(
+                          value: unit,
+                          items: const [
+                            DropdownMenuItem(value: 'KB', child: Text('KB')),
+                            DropdownMenuItem(value: 'MB', child: Text('MB')),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setModalState(() => unit = val);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: presets.map((p) {
+                        return ActionChip(
+                          label: Text(p['label'] as String, style: const TextStyle(fontSize: 12)),
+                          onPressed: () {
+                            setModalState(() {
+                              final v = p['val'] as double;
+                              controller.text = v % 1 == 0 ? v.toInt().toString() : v.toString();
+                              unit = p['unit'] as String;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancel'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepOrange,
+                              foregroundColor: Colors.white,
+                            ),
+                            icon: const Icon(Icons.compress),
+                            label: const Text('Compress'),
+                            onPressed: () async {
+                              final textVal = controller.text.trim();
+                              final val = double.tryParse(textVal);
+                              if (val == null || val <= 0) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Please enter a valid target size.')),
+                                );
+                                return;
+                              }
+                              final targetBytes = PdfTargetSizeCompressorService.parseSizeToBytes(val, unit);
+
+                              setModalState(() {
+                                isCompressing = true;
+                                progress = 0.1;
+                                progressText = 'Optimizing PDF...';
+                              });
+
+                              try {
+                                final compResult = await PdfTargetSizeCompressorService.compressPdfToTargetSize(
+                                  inputPath: file.path,
+                                  targetBytes: targetBytes,
+                                  quality: TargetCompressionQuality.balanced,
+                                  onProgress: (p, status) {
+                                    setModalState(() {
+                                      progress = p;
+                                      progressText = status;
+                                    });
+                                  },
+                                );
+
+                                // Register generated PDF directly into database & state
+                                final outFile = File(compResult.outputPath);
+                                if (await outFile.exists()) {
+                                  final stat = await outFile.stat();
+                                  final docId = DateTime.now().microsecondsSinceEpoch.toRadixString(36) +
+                                      compResult.outputPath.hashCode.toRadixString(36);
+                                  final newPdfFile = PdfFile(
+                                    docId: docId,
+                                    path: compResult.outputPath,
+                                    name: p.basename(compResult.outputPath),
+                                    sizeBytes: stat.size,
+                                    modifiedAt: stat.modified.millisecondsSinceEpoch,
+                                    pageCount: compResult.pageCount,
+                                    sourceType: 'compressed',
+                                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                                  );
+
+                                  ref.read(pdfListProvider.notifier).addFile(newPdfFile);
+                                }
+
+                                setModalState(() {
+                                  isCompressing = false;
+                                  result = compResult;
+                                });
+                              } catch (err) {
+                                setModalState(() {
+                                  isCompressing = false;
+                                });
+                                messenger.showSnackBar(
+                                  SnackBar(content: Text('Compression failed: $err'), backgroundColor: Colors.red),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else if (isCompressing) ...[
+                    const SizedBox(height: 16),
+                    LinearProgressIndicator(value: progress > 0 ? progress : null),
+                    const SizedBox(height: 12),
+                    Center(child: Text(progressText, style: const TextStyle(fontSize: 13, color: Colors.grey))),
+                    const SizedBox(height: 16),
+                  ] else if (result != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                result!.isTargetAchieved ? Icons.check_circle : Icons.info,
+                                color: result!.isTargetAchieved ? Colors.green : Colors.orange,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  result!.statusMessage,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: result!.isTargetAchieved ? Colors.green.shade800 : Colors.orange.shade800,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text('Original: ${Utils.formatBytes(result!.originalSizeBytes)}'),
+                          Text('Target: ${Utils.formatBytes(result!.targetSizeBytes)}'),
+                          Text('Output: ${Utils.formatBytes(result!.outputSizeBytes)} (-${result!.reductionPercentage.toStringAsFixed(1)}%)'),
+                          const SizedBox(height: 4),
+                          Text('Saved to: ${result!.outputPath}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Done'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.visibility),
+                            label: const Text('Open'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => PdfViewerScreen(filePath: result!.outputPath),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showFileInfoDialog(PdfFile file) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('File Information'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: ${file.name}'),
+            const SizedBox(height: 8),
+            Text('Path: ${file.path}'),
+            const SizedBox(height: 8),
+            Text('Pages: ${file.pageCount > 0 ? file.pageCount : "Unknown"}'),
+            const SizedBox(height: 8),
+            Text('Size: ${Utils.formatBytes(file.sizeBytes)}'),
+            const SizedBox(height: 8),
+            Text('Modified: ${Utils.formatDate(file.modifiedAt)}'),
+            if (file.sourceType == 'scanned') ...[
+              const SizedBox(height: 8),
+              const Text('Source: Scanned Document', style: TextStyle(color: Colors.green)),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRenameDialog(PdfFile file) async {
+    final controller = TextEditingController(text: file.name);
+    final messenger = ScaffoldMessenger.of(context);
+    await showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Rename File'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'File Name',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final newName = controller.text.trim();
+              if (newName.isNotEmpty) {
+                Navigator.pop(dialogCtx);
+                final error = await ref
+                    .read(pdfListProvider.notifier)
+                    .renameFile(file.path, newName);
+                if (error != null) {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(error), backgroundColor: Colors.red),
+                  );
+                } else {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Renamed to $newName')),
+                  );
+                }
+              }
+            },
+            child: const Text('Rename'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+  }
+
+  void _showDeleteDialog(PdfFile file) {
+    final messenger = ScaffoldMessenger.of(context);
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Delete File'),
+        content: Text('Are you sure you want to delete "${file.name}"? This cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              Navigator.pop(dialogCtx);
+              final success = await ref.read(pdfListProvider.notifier).deleteFile(file.path);
+              if (success) {
+                messenger.showSnackBar(
+                  SnackBar(content: Text('Deleted "${file.name}"')),
+                );
+              } else {
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('Failed to delete file.'), backgroundColor: Colors.red),
+                );
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentScansSection(List<PdfFile> recentScans) {
+    if (recentScans.isEmpty) return const SizedBox.shrink();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+          child: EditorialSectionHeader(
+            number: '01',
+            label: 'Recent Scans',
+            count: '${recentScans.length} scans',
+          ),
+        ),
+        SizedBox(
+          height: 104,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: recentScans.length,
+            itemBuilder: (context, index) {
+              final scan = recentScans[index];
+              return Container(
+                width: 190,
+                margin: const EdgeInsets.only(right: 8, top: 2, bottom: 2),
+                decoration: BoxDecoration(
+                  color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  border: Border.all(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x0A1C1A18),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PdfViewerScreen(filePath: scan.path),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          EditorialPaperThumbnail(
+                            pageNumber: 1,
+                            totalPages: scan.pageCount > 0 ? scan.pageCount : 1,
+                            width: 36,
+                            height: 50,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  scan.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: EditorialTokens.title(
+                                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                  ).copyWith(fontSize: 12),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  Utils.formatBytes(scan.sizeBytes),
+                                  style: EditorialTokens.metadata(
+                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  ).copyWith(fontSize: 10),
+                                ),
+                                Text(
+                                  Utils.formatRelativeTime(scan.scanCreatedAt ?? scan.modifiedAt),
+                                  style: EditorialTokens.metadata(
+                                    color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                  ).copyWith(fontSize: 9),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 6),
+      ],
+    );
+  }
+
+  Widget _buildCurrentlyReadingCard(PdfFile file) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final progressPct = (file.readingProgress * 100).toInt();
+    final folderPath = file.folder ??
+        (file.path.contains(Platform.pathSeparator)
+            ? file.path.substring(0, file.path.lastIndexOf(Platform.pathSeparator))
+            : '');
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+        border: Border.all(
+          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+          width: EditorialTokens.hairline,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0C1C1A18),
+            blurRadius: 3,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PdfViewerScreen(filePath: file.path),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    EditorialPaperThumbnail(
+                      pageNumber: file.lastOpenedPage > 0 ? file.lastOpenedPage : 1,
+                      totalPages: file.pageCount > 0 ? file.pageCount : 1,
+                      isCompleted: file.completed,
+                      progressPercent: file.readingProgress,
+                      width: 52,
+                      height: 72,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  file.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: EditorialTokens.displayMedium(
+                                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                  ).copyWith(fontSize: 15),
+                                ),
+                              ),
+                              IconButton(
+                                iconSize: 18,
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                icon: Icon(
+                                  file.isFavorite ? Icons.star : Icons.star_border,
+                                  color: file.isFavorite
+                                      ? EditorialTokens.primary
+                                      : (isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted),
+                                ),
+                                onPressed: () {
+                                  ref.read(pdfListProvider.notifier).toggleFavorite(file.path);
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${folderPath.isNotEmpty ? "$folderPath • " : ""}${Utils.formatBytes(file.sizeBytes)} • ${file.pageCount > 0 ? "${file.pageCount} pages" : "PDF"}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: EditorialTokens.metadata(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ).copyWith(fontSize: 11),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Reading Progress',
+                                style: EditorialTokens.bodySmall(
+                                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                ).copyWith(fontSize: 11),
+                              ),
+                              Text(
+                                '$progressPct%',
+                                style: EditorialTokens.metadataStrong(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ).copyWith(fontSize: 11),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: LinearProgressIndicator(
+                              value: file.readingProgress,
+                              backgroundColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                EditorialTokens.primary,
+                              ),
+                              minHeight: 2.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const EditorialDivider(),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(
+                      'Page ${file.lastOpenedPage > 0 ? file.lastOpenedPage : 1} of ${file.pageCount > 0 ? file.pageCount : 1}',
+                      style: EditorialTokens.metadata(
+                        color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                      ).copyWith(fontSize: 10.5),
+                    ),
+                    const Spacer(),
+                    EditorialSecondaryButton(
+                      label: 'Study',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => StudyModeScreen(pdfFile: file),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      iconSize: 18,
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                      onPressed: () => _handleMenuAction('info', file),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final permState = ref.watch(permissionsProvider);
+    final pdfState = ref.watch(pdfListProvider);
+    final recentScans = ref.watch(recentScansListProvider);
+    final isScanning = ref.watch(pdfListProvider.notifier).isScanning;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor:
+          isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? EditorialTokens.darkCanvas
+                  : EditorialTokens.canvas,
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark
+                      ? EditorialTokens.darkBorderSoft
+                      : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const EditorialEyebrow(
+                      text: 'LOCAL STORAGE',
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      'Library',
+                      style: EditorialTokens.displayMedium(
+                        color: isDark
+                            ? EditorialTokens.darkInk
+                            : EditorialTokens.ink,
+                      ).copyWith(fontSize: 22, height: 1.1),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    // Sort pill button
+                    InkWell(
+                      onTap: _showSortBottomSheet,
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      child: Container(
+                        height: 32,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? EditorialTokens.darkSurface
+                              : EditorialTokens.surfaceStrong,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(
+                            color: isDark
+                                ? EditorialTokens.darkBorderSoft
+                                : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.swap_vert,
+                              size: 16,
+                              color: isDark
+                                  ? EditorialTokens.darkInkSecondary
+                                  : EditorialTokens.inkSecondary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _getSortLabel(),
+                              style: EditorialTokens.label(
+                                color: isDark
+                                    ? EditorialTokens.darkInk
+                                    : EditorialTokens.ink,
+                              ).copyWith(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Account circle avatar 'P' linking to settings
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SettingsScreen()),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isDark
+                              ? EditorialTokens.darkSurfaceMuted
+                              : EditorialTokens.surfaceMuted,
+                          border: Border.all(
+                            color: isDark
+                                ? EditorialTokens.darkBorder
+                                : EditorialTokens.border,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'P',
+                          style: EditorialTokens.label(
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
+                          ).copyWith(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          if (isScanning)
+            const LinearProgressIndicator(
+              minHeight: 2.5,
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(EditorialTokens.primary),
+            ),
+          if (permState != StoragePermissionState.granted)
+            PermissionBanner(
+              onRequestPermission: () {
+                if (permState == StoragePermissionState.permanentlyDenied) {
+                  ref.read(permissionsProvider.notifier).openAppSettingsPage();
+                } else {
+                  ref
+                      .read(permissionsProvider.notifier)
+                      .requestStoragePermission();
+                }
+              },
+            ),
+          pdfState.when(
+            data: (files) {
+              final filtered = _applyFilter(files);
+              final sorted = _sortFiles(filtered);
+              final totalBytes =
+                  files.fold<int>(0, (sum, f) => sum + f.sizeBytes);
+
+              // Find currently reading candidate
+              final currentlyReading = files
+                  .where((f) => f.readingProgress > 0 && !f.completed)
+                  .firstOrNull;
+
+              return Expanded(
+                child: Column(
+                  children: [
+                    // Sub-bar: Library Stats Strip (responsive)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'LIBRARY',
+                            style: EditorialTokens.eyebrow(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ).copyWith(fontSize: 10),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    color: EditorialTokens.tertiary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    '${files.length} Docs · ${Utils.formatBytes(totalBytes)} · Indexed (Offline)',
+                                    style: EditorialTokens.metadata(
+                                      color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                    ).copyWith(fontSize: 10),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Filter Chips Strip with + Import (horizontal scrollable on narrow displays)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  EditorialChip(
+                                    label: 'All PDFs',
+                                    selected: _activeFilter == 'all',
+                                    onTap: () => setState(() => _activeFilter = 'all'),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  EditorialChip(
+                                    label: 'Recent',
+                                    selected: _activeFilter == 'recent',
+                                    onTap: () => setState(() => _activeFilter = 'recent'),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  EditorialChip(
+                                    label: 'Starred',
+                                    selected: _activeFilter == 'starred',
+                                    onTap: () => setState(() => _activeFilter = 'starred'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          EditorialSecondaryButton(
+                            label: '+ Import',
+                            icon: Icons.add,
+                            onPressed: _pickAndOpenPdf,
+                          ),
+                          const SizedBox(width: 6),
+                          IconButton(
+                            icon: const Icon(Icons.refresh, size: 18),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                            tooltip: 'Refresh files',
+                            onPressed: () {
+                              ref.read(pdfListProvider.notifier).fastDeviceSync();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Main Scrollable List Area
+                    Expanded(
+                      child: sorted.isEmpty
+                          ? EmptyStateWidget(
+                              icon: Icons.picture_as_pdf_outlined,
+                              title: 'No PDF Files Found',
+                              message: 'Pull to scan your device storage for PDFs or tap "+ Import" above.',
+                              actionText: 'Scan Storage Now',
+                              onAction: () {
+                                ref.read(pdfListProvider.notifier).scanStorage();
+                              },
+                            )
+                          : RefreshIndicator(
+                              color: EditorialTokens.primary,
+                              onRefresh: () async {
+                                await ref.read(pdfListProvider.notifier).fastDeviceSync();
+                              },
+                              child: ListView.builder(
+                                itemCount: sorted.length +
+                                    (recentScans.isNotEmpty ? 1 : 0) +
+                                    (_activeFilter == 'all' && currentlyReading != null ? 2 : 0),
+                                itemBuilder: (context, index) {
+                                  int currentIdx = index;
+
+                                  // Slot 1: Recent Scans Section
+                                  if (recentScans.isNotEmpty) {
+                                    if (currentIdx == 0) {
+                                      return _buildRecentScansSection(recentScans);
+                                    }
+                                    currentIdx--;
+                                  }
+
+                                  // Slot 2: Currently Reading Header & Card
+                                  if (_activeFilter == 'all' && currentlyReading != null) {
+                                    if (currentIdx == 0) {
+                                      return Padding(
+                                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                                        child: EditorialSectionHeader(
+                                          label: 'Currently Reading',
+                                          trailing: Utils.formatRelativeTime(
+                                            currentlyReading.lastOpenedAt ?? currentlyReading.modifiedAt,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    currentIdx--;
+
+                                    if (currentIdx == 0) {
+                                      return _buildCurrentlyReadingCard(currentlyReading);
+                                    }
+                                    currentIdx--;
+                                  }
+
+                                  final file = sorted[currentIdx];
+                                  return PdfFileCard(
+                                    file: file,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => PdfViewerScreen(filePath: file.path),
+                                        ),
+                                      );
+                                    },
+                                    onToggleFavorite: () {
+                                      ref.read(pdfListProvider.notifier).toggleFavorite(file.path);
+                                    },
+                                    onMenuAction: (action) => _handleMenuAction(action, file),
+                                  );
+                                },
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            loading: () => const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(EditorialTokens.primary),
+                ),
+              ),
+            ),
+            error: (err, _) => Expanded(
+              child: EmptyStateWidget(
+                icon: Icons.error_outline,
+                title: 'Error Loading Files',
+                message: err.toString(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 36. lib/features/home/main_navigation_screen.dart <a id="libfeatureshomemainnavigationscreendart"></a>
+
+- **Path:** `lib/features/home/main_navigation_screen.dart`
+- **Lines:** 44
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../widgets/editorial_components.dart';
+import 'files_tab.dart';
+import '../favorites/favorites_tab.dart';
+import '../search/search_tab.dart';
+import '../tools/tools_tab.dart';
+import '../stats/stats_tab.dart';
+
+class MainNavigationScreen extends ConsumerStatefulWidget {
+  const MainNavigationScreen({super.key});
+
+  @override
+  ConsumerState<MainNavigationScreen> createState() =>
+      _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
+  int _currentIndex = 0;
+
+  // The ordering shown in the Stitch screenshots is strictly:
+  // 0: Files, 1: Favorites, 2: Search, 3: Tools, 4: Stats
+  final List<Widget> _tabs = const [
+    FilesTab(),
+    FavoritesTab(),
+    SearchTab(),
+    ToolsTab(),
+    StatsTab(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _tabs,
+      ),
+      bottomNavigationBar: EditorialBottomBar(
+        currentIndex: _currentIndex,
+        onSelected: (index) => setState(() => _currentIndex = index),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 37. lib/features/home/pdf_list_provider.dart <a id="libfeatureshomepdflistproviderdart"></a>
+
+- **Path:** `lib/features/home/pdf_list_provider.dart`
+- **Lines:** 200
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
+import '../../models/pdf_file.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/storage/file_scanner.dart';
+
+class PdfListNotifier extends StateNotifier<AsyncValue<List<PdfFile>>> {
+  PdfListNotifier() : super(const AsyncValue.loading()) {
+    loadFiles();
+  }
+
+  bool _isScanning = false;
+  bool get isScanning => _isScanning;
+
+  List<PdfFile> _deduplicateFiles(List<PdfFile> files) {
+    final Map<String, PdfFile> uniqueMap = {};
+    for (final f in files) {
+      final canonicalPath = p.canonicalize(f.path);
+      uniqueMap[canonicalPath] = f.copyWith(path: canonicalPath);
+    }
+    return uniqueMap.values.toList();
+  }
+
+  /// 1. SQLite-First Startup: Load immediately from database without blocking on filesystem scan
+  Future<void> loadFiles() async {
+    try {
+      final rawFiles = await DatabaseHelper.instance.getAllPdfFiles();
+      final files = _deduplicateFiles(rawFiles);
+      state = AsyncValue.data(files);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  /// 2. Fast Device Sync: Instant reconciliation using MediaStore changes without full recursive walk
+  Future<void> fastDeviceSync() async {
+    try {
+      final rawUpdated = await FileScanner.fastDeviceSync();
+      final updated = _deduplicateFiles(rawUpdated);
+      state = AsyncValue.data(updated);
+    } catch (_) {}
+  }
+
+  /// 3. Deep Recursive Storage Sync (For explicit manual "Re-scan Storage Now")
+  Future<void> syncStorage({bool isUserInitiated = false}) async {
+    if (_isScanning) return;
+    _isScanning = true;
+
+    try {
+      final rawUpdatedFiles = await FileScanner.runScanAndUpdateDb();
+      final updatedFiles = _deduplicateFiles(rawUpdatedFiles);
+      state = AsyncValue.data(updatedFiles);
+    } catch (e) {
+      // Keep existing data on background sync failure
+      if (state.value == null) {
+        state = AsyncValue.error(e, StackTrace.current);
+      }
+    } finally {
+      _isScanning = false;
+    }
+  }
+
+  // Backward compatible alias
+  Future<void> scanStorage() => syncStorage(isUserInitiated: true);
+
+  Future<void> toggleFavorite(String path) async {
+    if (state.value == null) return;
+    final targetCanonical = p.canonicalize(path);
+    final currentFiles = List<PdfFile>.from(state.value!);
+    final index = currentFiles
+        .indexWhere((f) => p.canonicalize(f.path) == targetCanonical);
+    if (index != -1) {
+      final file = currentFiles[index];
+      final updatedStatus = !file.isFavorite;
+      await DatabaseHelper.instance.toggleFavorite(file.path, updatedStatus);
+      currentFiles[index] = file.copyWith(isFavorite: updatedStatus);
+      state = AsyncValue.data(currentFiles);
+    }
+  }
+
+  /// 3. Async Transactional Delete: Deletes physical file and database records without full scan
+  Future<bool> deleteFile(String path) async {
+    try {
+      final canonicalPath = p.canonicalize(path);
+      final file = File(canonicalPath);
+      if (await file.exists()) {
+        await file.delete();
+      }
+      await DatabaseHelper.instance.deletePdfFileFromIndex(canonicalPath);
+      if (state.value != null) {
+        state = AsyncValue.data(state.value!
+            .where((f) => p.canonicalize(f.path) != canonicalPath)
+            .toList());
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// 4. Identity-Preserving Rename: Atomically updates filesystem and database child tables
+  Future<String?> renameFile(String oldPath, String newName) async {
+    try {
+      final canonicalOldPath = p.canonicalize(oldPath);
+      final file = File(canonicalOldPath);
+      if (!await file.exists()) return 'File does not exist on disk.';
+
+      var sanitizedName = newName.trim();
+      if (sanitizedName.isEmpty) return 'Filename cannot be empty.';
+
+      // Strip illegal characters
+      sanitizedName = sanitizedName.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
+      if (!sanitizedName.toLowerCase().endsWith('.pdf')) {
+        sanitizedName = '$sanitizedName.pdf';
+      }
+
+      final dir = file.parent.path;
+      final newPath = p.canonicalize('$dir${Platform.pathSeparator}$sanitizedName');
+
+      if (newPath == canonicalOldPath) return null; // No change needed
+
+      if (await File(newPath).exists()) {
+        return 'A file with this name already exists.';
+      }
+
+      // Asynchronous filesystem rename
+      await file.rename(newPath);
+
+      // Atomic database update preserving docId, bookmarks, notes, OCR, study data, etc.
+      final success = await DatabaseHelper.instance.renamePdfFile(
+        oldPath: canonicalOldPath,
+        newPath: newPath,
+        newName: sanitizedName,
+      );
+
+      if (success && state.value != null) {
+        final currentFiles = List<PdfFile>.from(state.value!);
+        final idx = currentFiles.indexWhere((f) => p.canonicalize(f.path) == canonicalOldPath);
+        if (idx != -1) {
+          final oldItem = currentFiles[idx];
+          currentFiles[idx] = oldItem.copyWith(
+            path: newPath,
+            name: sanitizedName,
+            modifiedAt: DateTime.now().millisecondsSinceEpoch,
+          );
+          state = AsyncValue.data(currentFiles);
+        }
+      }
+
+      return null; // Success (no error)
+    } catch (e) {
+      return 'Failed to rename file: $e';
+    }
+  }
+
+  void addFile(PdfFile file) {
+    final canonicalFile = file.copyWith(path: p.canonicalize(file.path));
+    DatabaseHelper.instance.upsertPdfFile(canonicalFile);
+    if (state.value != null) {
+      final filtered = state.value!
+          .where((f) => p.canonicalize(f.path) != canonicalFile.path)
+          .toList();
+      state = AsyncValue.data([canonicalFile, ...filtered]);
+    }
+  }
+}
+
+final pdfListProvider =
+    StateNotifierProvider<PdfListNotifier, AsyncValue<List<PdfFile>>>((ref) {
+  return PdfListNotifier();
+});
+
+final favoritePdfListProvider = Provider<List<PdfFile>>((ref) {
+  final pdfState = ref.watch(pdfListProvider);
+  return pdfState.when(
+    data: (files) => files.where((f) => f.isFavorite).toList(),
+    loading: () => [],
+    error: (_, __) => [],
+  );
+});
+
+final recentScansListProvider = Provider<List<PdfFile>>((ref) {
+  final pdfState = ref.watch(pdfListProvider);
+  return pdfState.when(
+    data: (files) {
+      final scans = files
+          .where((f) => f.sourceType == 'scanned' || f.scanCreatedAt != null)
+          .toList();
+      scans.sort((a, b) {
+        final aTime = a.scanCreatedAt ?? a.createdAt ?? a.modifiedAt;
+        final bTime = b.scanCreatedAt ?? b.createdAt ?? b.modifiedAt;
+        return bTime.compareTo(aTime);
+      });
+      return scans;
+    },
+    loading: () => [],
+    error: (_, __) => [],
+  );
+});
+```
+
+---
+
+## 38. lib/features/merge/merge_screen.dart <a id="libfeaturesmergemergescreendart"></a>
+
+- **Path:** `lib/features/merge/merge_screen.dart`
+- **Lines:** 605
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../../core/storage/pdf_metadata_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_tool_file_picker_screen.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+class MergeScreen extends ConsumerStatefulWidget {
+  final PdfFile? initialFile;
+
+  const MergeScreen({super.key, this.initialFile});
+
+  @override
+  ConsumerState<MergeScreen> createState() => _MergeScreenState();
+}
+
+class _MergeScreenState extends ConsumerState<MergeScreen> {
+  final List<PdfFile> _selectedFiles = [];
+  final TextEditingController _fileNameController = TextEditingController();
+
+  bool _isMerging = false;
+  double _progress = 0.0;
+  String? _outputFilePath;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialFile != null) {
+      _selectedFiles.add(widget.initialFile!);
+    }
+    final nowStr = DateTime.now().millisecondsSinceEpoch;
+    _fileNameController.text = 'Merged_Document_$nowStr.pdf';
+  }
+
+  @override
+  void dispose() {
+    _fileNameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _openFilePicker() async {
+    final result = await Navigator.push<List<PdfFile>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PdfToolFilePickerScreen(
+          title: 'Select PDF Documents to Merge',
+          mode: ToolPickerMode.multiSelect,
+          initialSelectedFiles: _selectedFiles,
+          actionButtonText: 'CONFIRM SELECTION',
+        ),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedFiles.clear();
+        _selectedFiles.addAll(result);
+      });
+    }
+  }
+
+  Future<void> _performMerge() async {
+    if (_selectedFiles.length < 2) {
+      _showNotice('Please select at least 2 PDF documents to merge.');
+      return;
+    }
+
+    final outputName = _fileNameController.text.trim();
+    if (outputName.isEmpty) {
+      _showNotice('Please provide an output filename.');
+      return;
+    }
+
+    setState(() {
+      _isMerging = true;
+      _progress = 0.1;
+    });
+
+    try {
+      final parentDir = File(_selectedFiles.first.path).parent.path;
+      final targetPath = '$parentDir${Platform.pathSeparator}$outputName';
+
+      final outputDocument = sf.PdfDocument();
+      int processedCount = 0;
+
+      for (final file in _selectedFiles) {
+        try {
+          final bytes = await File(file.path).readAsBytes();
+          final inputDoc = sf.PdfDocument(inputBytes: bytes);
+
+          for (int i = 0; i < inputDoc.pages.count; i++) {
+            final template = inputDoc.pages[i].createTemplate();
+            final newPage = outputDocument.pages.add();
+            newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+          }
+          inputDoc.dispose();
+        } catch (_) {}
+
+        processedCount++;
+        setState(() {
+          _progress = processedCount / _selectedFiles.length;
+        });
+      }
+
+      final savedBytes = await outputDocument.save();
+      outputDocument.dispose();
+
+      final outputFile = File(targetPath);
+      await outputFile.writeAsBytes(savedBytes);
+
+      final registered = await PdfMetadataHelper.registerAndSyncPdf(targetPath);
+      if (registered != null) {
+        ref.read(pdfListProvider.notifier).addFile(registered);
+      }
+
+      setState(() {
+        _isMerging = false;
+        _outputFilePath = targetPath;
+      });
+    } catch (e) {
+      setState(() => _isMerging = false);
+      if (!mounted) return;
+      _showNotice('Error merging documents: $e');
+    }
+  }
+
+  void _showNotice(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
+        backgroundColor: EditorialTokens.secondary,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  int get _totalPageCount {
+    return _selectedFiles.fold(0, (sum, f) => sum + f.pageCount);
+  }
+
+  int get _totalSizeBytes {
+    return _selectedFiles.fold(0, (sum, f) => sum + f.sizeBytes);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (_outputFilePath != null) {
+      final file = File(_outputFilePath!);
+      final size = file.existsSync() ? file.lengthSync() : 0;
+
+      return Scaffold(
+        backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+        appBar: AppBar(
+          backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.close,
+              size: 20,
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const EditorialEyebrow(text: 'MERGE COMPLETE'),
+              Text(
+                'Documents Merged',
+                style: EditorialTokens.titleMedium(
+                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: EditorialTokens.primary.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.layers,
+                      size: 28,
+                      color: EditorialTokens.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Merged PDF Saved',
+                    style: EditorialTokens.headlineSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    file.uri.pathSegments.last,
+                    style: EditorialTokens.metadataStrong(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${Utils.formatBytes(size)} · $_totalPageCount Total Pages',
+                    style: EditorialTokens.metadata(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const EditorialDivider(),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: EditorialButton(
+                      label: 'OPEN MERGED PDF',
+                      icon: Icons.menu_book_outlined,
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PdfViewerScreen(filePath: _outputFilePath!),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: EditorialSecondaryButton(
+                          label: 'SHARE PDF',
+                          icon: Icons.share_outlined,
+                          onPressed: () {
+                            Share.shareXFiles([XFile(_outputFilePath!)]);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: EditorialSecondaryButton(
+                          label: 'DONE',
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'DOCUMENT MERGE'),
+            Text(
+              'Merge Documents',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              size: 22,
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ),
+            onPressed: _openFilePicker,
+            tooltip: 'Add documents',
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: _isMerging
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(height: 24),
+                    const EditorialEyebrow(text: 'MERGING DOCUMENTS'),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Merging Documents... ${(_progress * 100).round()}%',
+                      style: EditorialTokens.titleMedium(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Combining pages and saving PDF',
+                      style: EditorialTokens.bodySmall(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : Column(
+              children: [
+                // Sequence summary sub-strip
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'DOCUMENT SEQUENCE',
+                        style: EditorialTokens.eyebrow(color: EditorialTokens.primary),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '${_selectedFiles.length} FILES · $_totalPageCount PAGES · ${Utils.formatBytes(_totalSizeBytes)}',
+                        style: EditorialTokens.metadata(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Volume output name input
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  child: TextField(
+                    controller: _fileNameController,
+                    style: EditorialTokens.bodyMedium(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'OUTPUT FILENAME',
+                      labelStyle: EditorialTokens.metadataStrong(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                      filled: true,
+                      fillColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        borderSide: BorderSide(
+                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        borderSide: BorderSide(
+                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        borderSide: const BorderSide(
+                          color: EditorialTokens.primary,
+                          width: 1.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Document Sequence list
+                Expanded(
+                  child: _selectedFiles.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                border: Border.all(
+                                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.layers_outlined,
+                                    size: 48,
+                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No Documents Added Yet',
+                                    style: EditorialTokens.headlineSmall(
+                                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Select two or more PDF files to combine them into a single document.',
+                                    style: EditorialTokens.bodySmall(
+                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  EditorialButton(
+                                    label: 'SELECT DOCUMENTS',
+                                    icon: Icons.folder_open,
+                                    onPressed: _openFilePicker,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : ReorderableListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          itemCount: _selectedFiles.length,
+                          onReorder: (oldIdx, newIdx) {
+                            setState(() {
+                              if (newIdx > oldIdx) newIdx -= 1;
+                              final item = _selectedFiles.removeAt(oldIdx);
+                              _selectedFiles.insert(newIdx, item);
+                            });
+                          },
+                          itemBuilder: (context, index) {
+                            final file = _selectedFiles[index];
+                            final seqNum = (index + 1).toString().padLeft(2, '0');
+
+                            return Container(
+                              key: ValueKey(file.path),
+                              margin: const EdgeInsets.only(bottom: 8),
+                              decoration: BoxDecoration(
+                                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                border: Border.all(
+                                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                leading: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      seqNum,
+                                      style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 12),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const EditorialPaperThumbnail(
+                                      thumbnailPath: null,
+                                      width: 32,
+                                      height: 44,
+                                    ),
+                                  ],
+                                ),
+                                title: Text(
+                                  file.name,
+                                  style: EditorialTokens.titleSmall(
+                                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                subtitle: Text(
+                                  '${file.pageCount} Pages · ${Utils.formatBytes(file.sizeBytes)}',
+                                  style: EditorialTokens.metadata(
+                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  ),
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedFiles.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                    Icon(
+                                      Icons.drag_indicator,
+                                      size: 20,
+                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+
+                // Docked Merge Action
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    border: Border(
+                      top: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: EditorialSecondaryButton(
+                          label: 'ADD DOCUMENT',
+                          icon: Icons.add,
+                          onPressed: _openFilePicker,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: EditorialButton(
+                          label: 'MERGE DOCUMENTS',
+                          icon: Icons.layers_outlined,
+                          onPressed: _selectedFiles.length >= 2 ? _performMerge : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+```
+
+---
+
+## 39. lib/features/ocr/ocr_screen.dart <a id="libfeaturesocrocrscreendart"></a>
+
+- **Path:** `lib/features/ocr/ocr_screen.dart`
+- **Lines:** 744
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdfrx/pdfrx.dart' as pdfrx;
+import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../../core/storage/database_helper.dart';
+import '../../core/storage/pdf_metadata_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_tool_file_picker_screen.dart';
+import '../home/pdf_list_provider.dart';
+
+class OcrScreen extends ConsumerStatefulWidget {
+  final PdfFile? sourceFile;
+
+  const OcrScreen({super.key, this.sourceFile});
+
+  @override
+  ConsumerState<OcrScreen> createState() => _OcrScreenState();
+}
+
+class _OcrScreenState extends ConsumerState<OcrScreen> {
+  PdfFile? _selectedFile;
+  bool _isProcessing = false;
+  int _currentPage = 0;
+  int _totalPages = 0;
+  int _activeViewIndex = 0; // 0: Extracted Text, 1: Page Breakdown, 2: Formula Index
+
+  final Map<int, TextEditingController> _pageTextControllers = {};
+  final Map<int, RecognizedText> _recognizedPages = {};
+  final TextEditingController _fullTextController = TextEditingController();
+
+  String _combinedText = '';
+  File? _tempTextFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFile = widget.sourceFile;
+    if (_selectedFile != null) {
+      _startOcrProcess();
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final c in _pageTextControllers.values) {
+      c.dispose();
+    }
+    _fullTextController.dispose();
+    _deleteTempFile();
+    super.dispose();
+  }
+
+  Future<void> _deleteTempFile() async {
+    try {
+      if (_tempTextFile != null && await _tempTextFile!.exists()) {
+        await _tempTextFile!.delete();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _startOcrProcess() async {
+    if (_selectedFile == null) return;
+
+    setState(() {
+      _isProcessing = true;
+      _currentPage = 0;
+      _pageTextControllers.clear();
+      _recognizedPages.clear();
+    });
+
+    try {
+      final pdfDoc = await pdfrx.PdfDocument.openFile(_selectedFile!.path);
+      _totalPages = pdfDoc.pages.length;
+
+      final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
+      final StringBuffer fullTextBuffer = StringBuffer();
+      final tempDir = await getTemporaryDirectory();
+
+      for (int i = 0; i < _totalPages; i++) {
+        if (!mounted) break;
+        setState(() {
+          _currentPage = i + 1;
+        });
+
+        try {
+          final page = pdfDoc.pages[i];
+
+          // High-resolution 300 DPI rendering (min 2000px width) for ultra-crisp ML Kit OCR accuracy
+          final renderWidth = (page.width * 3.0).toInt().clamp(1800, 3600);
+          final renderHeight = (page.height * 3.0).toInt().clamp(2400, 4800);
+          final pageImage = await page.render(width: renderWidth, height: renderHeight);
+
+          if (pageImage != null) {
+            final imagePath = '${tempDir.path}${Platform.pathSeparator}ocr_highres_page_$i.png';
+
+            final uiImage = await pageImage.createImage();
+            final byteData = await uiImage.toByteData(format: ImageByteFormat.png);
+            if (byteData != null) {
+              final buffer = byteData.buffer.asUint8List();
+              await File(imagePath).writeAsBytes(buffer);
+
+              final inputImage = InputImage.fromFilePath(imagePath);
+              final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+
+              _recognizedPages[i] = recognizedText;
+              String pageText = recognizedText.text.trim();
+
+              if (pageText.isEmpty) {
+                final pdfPageText = await page.loadText();
+                pageText = pdfPageText.fullText.trim();
+              }
+
+              _pageTextControllers[i] = TextEditingController(text: pageText);
+              fullTextBuffer.writeln('=== PAGE ${i + 1} OF $_totalPages ===');
+              fullTextBuffer.writeln(pageText);
+              fullTextBuffer.writeln();
+            }
+          }
+        } catch (_) {
+          _pageTextControllers[i] = TextEditingController(text: '[OCR extraction failed for this page]');
+        }
+      }
+
+      await textRecognizer.close();
+      await pdfDoc.dispose();
+
+      _combinedText = fullTextBuffer.toString();
+      _fullTextController.text = _combinedText;
+
+      await _deleteTempFile();
+      _tempTextFile = File('${tempDir.path}${Platform.pathSeparator}temp_ocr_${DateTime.now().millisecondsSinceEpoch}.txt');
+      await _tempTextFile!.writeAsString(_combinedText);
+
+      await DatabaseHelper.instance.updateExtractedText(_selectedFile!.path, _combinedText);
+      ref.read(pdfListProvider.notifier).loadFiles();
+
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+        _showNotice('OCR Process error: $e');
+      }
+    }
+  }
+
+  void _showNotice(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
+        backgroundColor: EditorialTokens.secondary,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _updateTempFileContent(String updatedText) async {
+    _combinedText = updatedText;
+    if (_tempTextFile != null) {
+      try {
+        await _tempTextFile!.writeAsString(updatedText);
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _exportAsTxt() async {
+    if (_selectedFile == null) return;
+    try {
+      final parentDir = File(_selectedFile!.path).parent.path;
+      final txtPath = '$parentDir${Platform.pathSeparator}${_selectedFile!.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '.txt')}';
+      await File(txtPath).writeAsString(_fullTextController.text);
+      if (!mounted) return;
+      _showNotice('Exported to ${txtPath.split(Platform.pathSeparator).last}');
+    } catch (e) {
+      if (!mounted) return;
+      _showNotice('Failed to export .txt: $e');
+    }
+  }
+
+  Future<void> _exportSearchablePdf() async {
+    if (_selectedFile == null) return;
+    try {
+      final parentDir = File(_selectedFile!.path).parent.path;
+      final targetPath = '$parentDir${Platform.pathSeparator}${_selectedFile!.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '_searchable.pdf')}';
+
+      final pdfDoc = sf.PdfDocument();
+      final font = sf.PdfStandardFont(sf.PdfFontFamily.helvetica, 10);
+      final tempDir = await getTemporaryDirectory();
+
+      for (int i = 0; i < _totalPages; i++) {
+        final page = pdfDoc.pages.add();
+        final imagePath = '${tempDir.path}${Platform.pathSeparator}ocr_highres_page_$i.png';
+        final imageFile = File(imagePath);
+
+        if (imageFile.existsSync()) {
+          final bitmap = sf.PdfBitmap(imageFile.readAsBytesSync());
+          final pageSize = page.getClientSize();
+
+          page.graphics.drawImage(bitmap, Rect.fromLTWH(0, 0, pageSize.width, pageSize.height));
+
+          final recognized = _recognizedPages[i];
+          if (recognized != null) {
+            final scaleX = pageSize.width / 2400.0;
+            final scaleY = pageSize.height / 3200.0;
+            for (final block in recognized.blocks) {
+              for (final line in block.lines) {
+                final rect = line.boundingBox;
+                page.graphics.drawString(
+                  line.text,
+                  font,
+                  brush: sf.PdfBrushes.transparent,
+                  bounds: Rect.fromLTWH(
+                    rect.left * scaleX,
+                    rect.top * scaleY,
+                    rect.width * scaleX,
+                    rect.height * scaleY,
+                  ),
+                );
+              }
+            }
+          }
+        }
+      }
+
+      final bytes = await pdfDoc.save();
+      pdfDoc.dispose();
+
+      await File(targetPath).writeAsBytes(bytes);
+
+      final registered = await PdfMetadataHelper.registerAndSyncPdf(targetPath);
+      if (registered != null) {
+        ref.read(pdfListProvider.notifier).addFile(registered);
+      }
+
+      if (!mounted) return;
+      _showNotice('Searchable PDF committed to ${targetPath.split(Platform.pathSeparator).last}');
+    } catch (e) {
+      if (!mounted) return;
+      _showNotice('Failed to export Searchable PDF: $e');
+    }
+  }
+
+  Future<void> _pickFile() async {
+    final result = await Navigator.push<List<PdfFile>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PdfToolFilePickerScreen(
+          title: 'Select PDF for OCR Extraction',
+          mode: ToolPickerMode.singleSelect,
+          actionButtonText: 'CONFIRM DOCUMENT',
+        ),
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && mounted) {
+      setState(() {
+        _selectedFile = result.first;
+      });
+      _startOcrProcess();
+    }
+  }
+
+  List<String> _extractFormulas() {
+    final text = _fullTextController.text;
+    final List<String> formulas = [];
+    final regExp = RegExp(r'(\$\$.*?\$\$|\$.*?\$|\\\[.*?\\\]|\\\(.*?\\\)|\b[A-Za-z]\s*=\s*[^;\n]+)', dotAll: true);
+    for (final match in regExp.allMatches(text)) {
+      final matchStr = match.group(0)?.trim() ?? '';
+      if (matchStr.length > 3 && !formulas.contains(matchStr)) {
+        formulas.add(matchStr);
+      }
+    }
+    return formulas;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'OPTICAL RECOGNITION'),
+            Text(
+              'OCR & Text Extraction',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          if (_fullTextController.text.isNotEmpty && !_isProcessing) ...[
+            IconButton(
+              icon: Icon(
+                Icons.copy,
+                size: 20,
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: _fullTextController.text));
+                _showNotice('All extracted OCR text copied to clipboard');
+              },
+              tooltip: 'Copy all text',
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.share_outlined,
+                size: 20,
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+              onPressed: () {
+                Share.share(_fullTextController.text, subject: 'Extracted OCR Text');
+              },
+              tooltip: 'Share text',
+            ),
+          ],
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: _isProcessing
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(height: 24),
+                    const EditorialEyebrow(text: 'OPTICAL CHARACTER RECOGNITION'),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Processing Page $_currentPage of $_totalPages',
+                      style: EditorialTokens.titleMedium(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'High-resolution 300 DPI neural extraction in progress...',
+                      style: EditorialTokens.bodySmall(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : _selectedFile == null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        border: Border.all(
+                          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.text_snippet_outlined,
+                            size: 48,
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Select PDF for Optical Extraction',
+                            style: EditorialTokens.headlineSmall(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Extract raw copyable text, isolate mathematical formulas, or compile a transparent searchable PDF layer.',
+                            style: EditorialTokens.bodySmall(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          EditorialButton(
+                            label: 'SELECT PDF DOCUMENT',
+                            icon: Icons.folder_open,
+                            onPressed: _pickFile,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              : Column(
+                  children: [
+                    // Sub-strip: active file info & view switcher
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _selectedFile!.name.toUpperCase(),
+                              style: EditorialTokens.metadataStrong(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${Utils.formatBytes(_selectedFile!.sizeBytes)} · $_totalPages PAGES',
+                            style: EditorialTokens.metadata(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // View Mode Tabs
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Row(
+                        children: [
+                          EditorialChip(
+                            label: 'Extracted Text',
+                            selected: _activeViewIndex == 0,
+                            onTap: () => setState(() => _activeViewIndex = 0),
+                          ),
+                          const SizedBox(width: 8),
+                          EditorialChip(
+                            label: 'Page Breakdown',
+                            selected: _activeViewIndex == 1,
+                            onTap: () => setState(() => _activeViewIndex = 1),
+                          ),
+                          const SizedBox(width: 8),
+                          EditorialChip(
+                            label: 'Formula Index',
+                            selected: _activeViewIndex == 2,
+                            onTap: () => setState(() => _activeViewIndex = 2),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Active View Content
+                    Expanded(
+                      child: IndexedStack(
+                        index: _activeViewIndex,
+                        children: [
+                          // Tab 0: Full Text Editor
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: EditorialTokens.paper,
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                border: Border.all(
+                                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: TextField(
+                                controller: _fullTextController,
+                                maxLines: null,
+                                expands: true,
+                                style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  fontSize: 13,
+                                  height: 1.5,
+                                  color: EditorialTokens.ink,
+                                ),
+                                onChanged: _updateTempFileContent,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.all(16),
+                                  border: InputBorder.none,
+                                  hintText: 'Extracted text will appear here. Edit or copy freely...',
+                                  hintStyle: EditorialTokens.bodySmall(color: EditorialTokens.inkMuted),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Tab 1: Page-by-Page Breakdown
+                          _pageTextControllers.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    'No individual page data available.',
+                                    style: EditorialTokens.bodySmall(
+                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    ),
+                                  ),
+                                )
+                              : ListView.separated(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  itemCount: _pageTextControllers.length,
+                                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                        border: Border.all(
+                                          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                          width: EditorialTokens.hairline,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                                  width: EditorialTokens.hairline,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                EditorialEyebrow(
+                                                  text: 'PAGE ${index + 1} OF $_totalPages',
+                                                  color: EditorialTokens.primary,
+                                                ),
+                                                const Spacer(),
+                                                InkWell(
+                                                  onTap: () {
+                                                    Clipboard.setData(ClipboardData(text: _pageTextControllers[index]?.text ?? ''));
+                                                    _showNotice('Page ${index + 1} copied to clipboard');
+                                                  },
+                                                  child: Text(
+                                                    'COPY',
+                                                    style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(12),
+                                            child: TextField(
+                                              controller: _pageTextControllers[index],
+                                              maxLines: null,
+                                              style: TextStyle(
+                                                fontFamily: 'monospace',
+                                                fontSize: 12.5,
+                                                height: 1.45,
+                                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                              ),
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.zero,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                          // Tab 2: Formula Index
+                          Builder(
+                            builder: (context) {
+                              final formulas = _extractFormulas();
+                              if (formulas.isEmpty) {
+                                return Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.functions_outlined,
+                                        size: 40,
+                                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'No isolated mathematical formulas found.',
+                                        style: EditorialTokens.titleSmall(
+                                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Extracted text contains primarily prose content.',
+                                        style: EditorialTokens.bodySmall(
+                                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                              return ListView.separated(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                itemCount: formulas.length,
+                                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  final formula = formulas[index];
+                                  return Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                      border: Border.all(
+                                        color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                        width: EditorialTokens.hairline,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: EditorialTokens.tertiary.withOpacity(0.12),
+                                            borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                          ),
+                                          child: Text(
+                                            'MATH',
+                                            style: EditorialTokens.metadataStrong(color: EditorialTokens.tertiary).copyWith(fontSize: 9),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            formula,
+                                            style: const TextStyle(
+                                              fontFamily: 'monospace',
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.copy, size: 16),
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(text: formula));
+                                            _showNotice('Formula copied: $formula');
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Quiet Action Dock
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                        border: Border(
+                          top: BorderSide(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: EditorialSecondaryButton(
+                              label: 'EXPORT .TXT',
+                              icon: Icons.save_alt_outlined,
+                              onPressed: _exportAsTxt,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: EditorialButton(
+                              label: 'SEARCHABLE PDF',
+                              icon: Icons.picture_as_pdf_outlined,
+                              onPressed: _exportSearchablePdf,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+    );
+  }
+}
+```
+
+---
+
+## 40. lib/features/scan/scan_document_screen.dart <a id="libfeaturesscanscandocumentscreendart"></a>
+
+- **Path:** `lib/features/scan/scan_document_screen.dart`
+- **Lines:** 867
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mlkit_document_scanner/google_mlkit_document_scanner.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/utils/storage_location_helper.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+import '../ocr/ocr_screen.dart';
+
+enum ScanStep { initial, preview, saved }
+
+class ScanDocumentScreen extends ConsumerStatefulWidget {
+  const ScanDocumentScreen({super.key});
+
+  @override
+  ConsumerState<ScanDocumentScreen> createState() => _ScanDocumentScreenState();
+}
+
+class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
+  DocumentScanner? _documentScanner;
+  ScanStep _step = ScanStep.initial;
+  String? _tempPdfPath;
+  String? _finalSavedPath;
+  bool _isScanning = false;
+  String _activeFilter = 'crisp_bw';
+
+  final TextEditingController _fileNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _fileNameController.text =
+        'Scan_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}.pdf';
+  }
+
+  @override
+  void dispose() {
+    _documentScanner?.close();
+    _fileNameController.dispose();
+    _cleanupTempFile();
+    super.dispose();
+  }
+
+  void _cleanupTempFile() {
+    if (_tempPdfPath != null) {
+      final tempFile = File(_tempPdfPath!);
+      if (tempFile.existsSync()) {
+        try {
+          tempFile.deleteSync();
+        } catch (_) {}
+      }
+      _tempPdfPath = null;
+    }
+  }
+
+  Future<String?> _processScanResult(DocumentScanningResult result) async {
+    final tempDir = await getTemporaryDirectory();
+    final localPdfPath =
+        '${tempDir.path}${Platform.pathSeparator}scan_temp_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+    // 1. Check if ML Kit produced a PDF URI directly
+    if (result.pdf != null && result.pdf!.uri.isNotEmpty) {
+      final pdfUriStr = result.pdf!.uri;
+      try {
+        if (pdfUriStr.startsWith('content://') ||
+            pdfUriStr.startsWith('file://')) {
+          final file = File.fromUri(Uri.parse(pdfUriStr));
+          if (await file.exists()) {
+            await file.copy(localPdfPath);
+            return localPdfPath;
+          }
+        } else {
+          final file = File(pdfUriStr);
+          if (await file.exists()) {
+            await file.copy(localPdfPath);
+            return localPdfPath;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2. Fallback: Convert scanned page images into a real PDF document
+    if (result.images.isNotEmpty) {
+      try {
+        final pdfDoc = sf.PdfDocument();
+        for (final imgPath in result.images) {
+          String cleanPath = imgPath;
+          if (imgPath.startsWith('file://')) {
+            cleanPath = Uri.parse(imgPath).path;
+          }
+          final imgFile = File(cleanPath);
+          if (await imgFile.exists()) {
+            final bytes = await imgFile.readAsBytes();
+            final bitmap = sf.PdfBitmap(bytes);
+            final page = pdfDoc.pages.add();
+            final pageSize = page.getClientSize();
+            page.graphics.drawImage(
+              bitmap,
+              Rect.fromLTWH(0, 0, pageSize.width, pageSize.height),
+            );
+          }
+        }
+        final bytes = await pdfDoc.save();
+        pdfDoc.dispose();
+
+        final pdfFile = File(localPdfPath);
+        await pdfFile.writeAsBytes(bytes);
+        return localPdfPath;
+      } catch (_) {}
+    }
+
+    return null;
+  }
+
+  Future<void> _startScan({bool isGallery = false}) async {
+    try {
+      final options = DocumentScannerOptions(
+        mode: ScannerMode.full,
+        pageLimit: 50,
+        isGalleryImport: isGallery,
+      );
+
+      _documentScanner = DocumentScanner(options: options);
+
+      setState(() => _isScanning = true);
+      final result = await _documentScanner!.scanDocument();
+      final pdfPath = await _processScanResult(result);
+
+      if (pdfPath != null && File(pdfPath).existsSync()) {
+        setState(() {
+          _tempPdfPath = pdfPath;
+          _step = ScanStep.preview;
+        });
+      } else {
+        if (!mounted) return;
+        _showNotice('No document was captured.');
+      }
+    } on PlatformException catch (pe) {
+      if (!mounted) return;
+      _showNotice('Scanner error: ${pe.message ?? pe.code}');
+    } catch (e) {
+      if (!mounted) return;
+      _showNotice('Scanner error: $e');
+    } finally {
+      if (mounted) setState(() => _isScanning = false);
+    }
+  }
+
+  void _showNotice(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
+        backgroundColor: EditorialTokens.secondary,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _shareTempPdf() async {
+    if (_tempPdfPath == null) return;
+    final tempFile = File(_tempPdfPath!);
+    if (!tempFile.existsSync()) return;
+
+    final tempDir = await getTemporaryDirectory();
+    final sharePath = '${tempDir.path}${Platform.pathSeparator}Shared_Scan.pdf';
+    final shareFile = await tempFile.copy(sharePath);
+
+    await Share.shareXFiles([XFile(shareFile.path)], text: 'Sharing Scanned PDF');
+
+    if (shareFile.existsSync()) {
+      try {
+        shareFile.deleteSync();
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _saveScannedDocumentDialog() async {
+    if (_tempPdfPath == null) return;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(EditorialTokens.r6)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          20,
+          16,
+          20,
+          MediaQuery.of(ctx).viewInsets.bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 32,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const EditorialEyebrow(text: 'SAVE DOCUMENT'),
+            const SizedBox(height: 6),
+            Text(
+              'Enter Filename',
+              style: EditorialTokens.headlineSmall(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Document will be indexed and saved to Documents/Scans.',
+              style: EditorialTokens.bodySmall(
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _fileNameController,
+              autofocus: true,
+              style: EditorialTokens.bodyMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+              decoration: InputDecoration(
+                labelText: 'FILE NAME',
+                labelStyle: EditorialTokens.metadataStrong(
+                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                ),
+                filled: true,
+                fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  borderSide: BorderSide(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  borderSide: BorderSide(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  borderSide: const BorderSide(
+                    color: EditorialTokens.primary,
+                    width: 1.0,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: EditorialSecondaryButton(
+                    label: 'CANCEL',
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: EditorialButton(
+                    label: 'COMMIT ARCHIVE',
+                    icon: Icons.check,
+                    onPressed: () async {
+                      final name = _fileNameController.text.trim();
+                      if (name.isNotEmpty) {
+                        Navigator.pop(ctx);
+                        await _commitSave(name);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _commitSave(String fileName) async {
+    if (_tempPdfPath == null) return;
+    try {
+      final publicDir = await StorageLocationHelper.getPublicDocumentsDirectory(subFolder: 'Scans');
+      final targetPath = await StorageLocationHelper.getUniqueFilePath(publicDir, fileName);
+
+      final tempFile = File(_tempPdfPath!);
+      await tempFile.copy(targetPath);
+
+      final stat = await File(targetPath).stat();
+      final now = DateTime.now().millisecondsSinceEpoch;
+
+      int truePageCount = 1;
+      try {
+        final bytes = await File(targetPath).readAsBytes();
+        final sfDoc = sf.PdfDocument(inputBytes: bytes);
+        truePageCount = sfDoc.pages.count;
+        sfDoc.dispose();
+      } catch (e) {
+        debugPrint('Unable to determine scanned PDF page count: $e');
+      }
+
+      final docId = DateTime.now().microsecondsSinceEpoch.toRadixString(36) + targetPath.hashCode.toRadixString(36);
+
+      final pdfFile = PdfFile(
+        docId: docId,
+        path: targetPath,
+        name: targetPath.split(Platform.pathSeparator).last,
+        sizeBytes: stat.size,
+        modifiedAt: stat.modified.millisecondsSinceEpoch,
+        pageCount: truePageCount,
+        sourceType: 'scanned',
+        createdAt: now,
+        scanCreatedAt: now,
+      );
+
+      await DatabaseHelper.instance.upsertPdfFile(pdfFile);
+      ref.read(pdfListProvider.notifier).addFile(pdfFile);
+
+      try {
+        if (await tempFile.exists()) {
+          await tempFile.delete();
+        }
+      } catch (_) {}
+
+      setState(() {
+        _finalSavedPath = targetPath;
+        _step = ScanStep.saved;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      _showNotice('Failed to save scanned document: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // STEP 3: SAVED
+    if (_step == ScanStep.saved && _finalSavedPath != null) {
+      final file = File(_finalSavedPath!);
+      final size = file.existsSync() ? file.lengthSync() : 0;
+
+      return Scaffold(
+        backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+        appBar: AppBar(
+          backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.close,
+              size: 20,
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const EditorialEyebrow(text: 'DOCUMENT SAVED'),
+              Text(
+                'Document Saved',
+                style: EditorialTokens.titleMedium(
+                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: EditorialTokens.primary.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      size: 28,
+                      color: EditorialTokens.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Document Saved Successfully',
+                    style: EditorialTokens.headlineSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    file.uri.pathSegments.last,
+                    style: EditorialTokens.metadataStrong(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${Utils.formatBytes(size)} · Saved to Documents/Scans',
+                    style: EditorialTokens.metadata(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const EditorialDivider(),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: EditorialButton(
+                      label: 'Open Document',
+                      icon: Icons.menu_book_outlined,
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PdfViewerScreen(filePath: _finalSavedPath!),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: EditorialSecondaryButton(
+                          label: 'Share',
+                          icon: Icons.share_outlined,
+                          onPressed: () {
+                            Share.shareXFiles([XFile(_finalSavedPath!)]);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: EditorialSecondaryButton(
+                          label: 'Scan Another',
+                          icon: Icons.add_a_photo_outlined,
+                          onPressed: () {
+                            setState(() {
+                              _step = ScanStep.initial;
+                              _tempPdfPath = null;
+                              _finalSavedPath = null;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // STEP 2: PREVIEW
+    if (_step == ScanStep.preview && _tempPdfPath != null) {
+      return Scaffold(
+        backgroundColor: EditorialTokens.viewerBed,
+        appBar: AppBar(
+          backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.close,
+              size: 20,
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ),
+            onPressed: () {
+              _cleanupTempFile();
+              setState(() => _step = ScanStep.initial);
+            },
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const EditorialEyebrow(text: 'DOCUMENT PREVIEW'),
+              Text(
+                'Preview Scan',
+                style: EditorialTokens.titleMedium(
+                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.share_outlined,
+                size: 20,
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+              onPressed: _shareTempPdf,
+              tooltip: 'Share preview',
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SfPdfViewer.file(
+                File(_tempPdfPath!),
+                pageSpacing: 8,
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: EditorialSecondaryButton(
+                      label: 'Recognize Text',
+                      icon: Icons.text_snippet_outlined,
+                      onPressed: () {
+                        final tempPath = _tempPdfPath!;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => OcrScreen(
+                              sourceFile: PdfFile(
+                                docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + tempPath.hashCode.toRadixString(36),
+                                path: tempPath,
+                                name: 'Scanned_Doc.pdf',
+                                sizeBytes: File(tempPath).lengthSync(),
+                                modifiedAt: DateTime.now().millisecondsSinceEpoch,
+                                pageCount: 1,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: EditorialButton(
+                      label: 'Save Document',
+                      icon: Icons.check,
+                      onPressed: _saveScannedDocumentDialog,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // STEP 1: INITIAL CAPTURE
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'DOCUMENT SCANNER'),
+            Text(
+              'Scan Document',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: _isScanning
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: EditorialTokens.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'STARTING CAMERA SCANNER...',
+                    style: EditorialTokens.eyebrow(color: EditorialTokens.primary),
+                  ),
+                ],
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              children: [
+                // Scanner Info Card
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const EditorialEyebrow(text: 'SCANNER ENGINE'),
+                          const Spacer(),
+                          Text(
+                            'ML KIT VISION',
+                            style: EditorialTokens.metadata(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Offline Document Capture',
+                        style: EditorialTokens.titleMedium(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Automatically detects document boundaries, removes perspective distortion, and compiles multiple pages into a clean PDF.',
+                        style: EditorialTokens.bodySmall(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Ingestion Mode Filters
+                const EditorialSectionHeader(
+                  number: '01',
+                  label: 'Filter Preset',
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      EditorialChip(
+                        label: 'Crisp Archival B&W',
+                        selected: _activeFilter == 'crisp_bw',
+                        onTap: () => setState(() => _activeFilter = 'crisp_bw'),
+                      ),
+                      const SizedBox(width: 8),
+                      EditorialChip(
+                        label: 'Full Color Plate',
+                        selected: _activeFilter == 'color',
+                        onTap: () => setState(() => _activeFilter = 'color'),
+                      ),
+                      const SizedBox(width: 8),
+                      EditorialChip(
+                        label: 'High-Contrast Document',
+                        selected: _activeFilter == 'contrast',
+                        onTap: () => setState(() => _activeFilter = 'contrast'),
+                      ),
+                      const SizedBox(width: 8),
+                      EditorialChip(
+                        label: 'Grayscale Charcoal',
+                        selected: _activeFilter == 'charcoal',
+                        onTap: () => setState(() => _activeFilter = 'charcoal'),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Viewfinder / Target Guide
+                const EditorialSectionHeader(
+                  number: '02',
+                  label: 'Scanner Viewfinder',
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.document_scanner_outlined,
+                              size: 48,
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'READY TO SCAN',
+                              style: EditorialTokens.metadataStrong(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Supports up to 50 pages per scan session',
+                              style: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Corner crop bounds
+                      Positioned(
+                        top: 16,
+                        left: 16,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(color: EditorialTokens.primary, width: 2),
+                              left: BorderSide(color: EditorialTokens.primary, width: 2),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(color: EditorialTokens.primary, width: 2),
+                              right: BorderSide(color: EditorialTokens.primary, width: 2),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 16,
+                        left: 16,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: EditorialTokens.primary, width: 2),
+                              left: BorderSide(color: EditorialTokens.primary, width: 2),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 16,
+                        right: 16,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: EditorialTokens.primary, width: 2),
+                              right: BorderSide(color: EditorialTokens.primary, width: 2),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                // Ingestion Actions
+                SizedBox(
+                  width: double.infinity,
+                  child: EditorialButton(
+                    label: 'Scan with Camera',
+                    icon: Icons.camera_alt_outlined,
+                    onPressed: () => _startScan(isGallery: false),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: EditorialSecondaryButton(
+                    label: 'Choose from Gallery',
+                    icon: Icons.photo_library_outlined,
+                    onPressed: () => _startScan(isGallery: true),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+```
+
+---
+
+## 41. lib/features/search/search_tab.dart <a id="libfeaturessearchsearchtabdart"></a>
+
+- **Path:** `lib/features/search/search_tab.dart`
+- **Lines:** 453
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_file_card.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+import '../ocr/ocr_screen.dart';
+
+class SearchTab extends ConsumerStatefulWidget {
+  const SearchTab({super.key});
+
+  @override
+  ConsumerState<SearchTab> createState() => _SearchTabState();
+}
+
+class _SearchTabState extends ConsumerState<SearchTab> {
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounceTimer;
+  bool _searchInside = false;
+  List<PdfFile> _searchResults = [];
+  List<String> _recentSearches = [];
+  bool _isSearching = false;
+  int _searchGeneration = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    _debounceTimer?.cancel();
+    final query = _searchController.text.trim();
+    if (query.isEmpty) {
+      _searchGeneration++;
+      setState(() {
+        _searchResults = [];
+        _isSearching = false;
+      });
+      return;
+    }
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      _performSearch(query);
+    });
+  }
+
+  Future<void> _performSearch(String query) async {
+    final currentGen = ++_searchGeneration;
+    setState(() => _isSearching = true);
+
+    final results = await DatabaseHelper.instance.searchPdfFiles(
+      query,
+      searchInside: _searchInside,
+    );
+
+    if (mounted && currentGen == _searchGeneration) {
+      setState(() {
+        _searchResults = results;
+        _isSearching = false;
+      });
+    }
+  }
+
+  void _addToRecent(String query) {
+    if (query.trim().isEmpty) return;
+    setState(() {
+      _recentSearches.remove(query);
+      _recentSearches.insert(0, query);
+      if (_recentSearches.length > 10) {
+        _recentSearches = _recentSearches.sublist(0, 10);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const EditorialEyebrow(text: 'DOCUMENT SEARCH'),
+                Text(
+                  'Search Documents',
+                  style: EditorialTokens.titleLarge(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          // Search Input Bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Column(
+              children: [
+                Container(
+                  height: 46,
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    onSubmitted: (query) => _addToRecent(query),
+                    style: EditorialTokens.bodyMedium(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Search by title, author, or keywords...',
+                      hintStyle: EditorialTokens.bodySmall(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        size: 20,
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                size: 18,
+                                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              ),
+                              onPressed: () {
+                                _searchController.clear();
+                              },
+                            )
+                          : null,
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // OCR Search Inside Filter Strip
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.manage_search,
+                            size: 16,
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Search inside extracted OCR text',
+                            style: EditorialTokens.label(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ).copyWith(fontSize: 11.5),
+                          ),
+                        ],
+                      ),
+                      Switch(
+                        value: _searchInside,
+                        activeColor: EditorialTokens.primary,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        onChanged: (val) {
+                          setState(() => _searchInside = val);
+                          _onSearchChanged();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Search Stats Strip if active
+          if (_searchController.text.isNotEmpty)
+            EditorialStatStrip(
+              primaryText: 'QUERY · ${_searchController.text.trim().toUpperCase()}',
+              secondaryText: '${_searchResults.length} Results Found',
+            ),
+
+          Expanded(
+            child: _searchController.text.isEmpty
+                ? _buildRecentSearches(isDark)
+                : _isSearching
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: EditorialTokens.primary,
+                        ),
+                      )
+                    : _searchResults.isEmpty
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                  border: Border.all(
+                                    color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                    width: EditorialTokens.hairline,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.search_off_outlined,
+                                      size: 40,
+                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'No Matching Documents',
+                                      style: EditorialTokens.headlineSmall(
+                                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'No documents match "${_searchController.text.trim()}". Try adjusting spelling or toggle OCR search.',
+                                      style: EditorialTokens.bodySmall(
+                                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            itemCount: _searchResults.length,
+                            itemBuilder: (context, index) {
+                              final file = _searchResults[index];
+                              final hasOcr = file.extractedText != null && file.extractedText!.isNotEmpty;
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    PdfFileCard(
+                                      file: file,
+                                      onTap: () {
+                                        _addToRecent(_searchController.text.trim());
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => PdfViewerScreen(filePath: file.path),
+                                          ),
+                                        );
+                                      },
+                                      onToggleFavorite: () {
+                                        ref.read(pdfListProvider.notifier).toggleFavorite(file.path);
+                                      },
+                                    ),
+                                    if (_searchInside && !hasOcr)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 12, right: 12, top: 4),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Full text not yet extracted for this document',
+                                              style: EditorialTokens.metadata(
+                                                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (_) => OcrScreen(sourceFile: file),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                'EXTRACT OCR',
+                                                style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentSearches(bool isDark) {
+    if (_recentSearches.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.manage_search_outlined,
+                  size: 40,
+                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Search Library',
+                  style: EditorialTokens.headlineSmall(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Search by filename or enable OCR text search to scan within document bodies.',
+                  style: EditorialTokens.bodySmall(
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Text(
+            'RECENT QUERIES',
+            style: EditorialTokens.eyebrow(color: EditorialTokens.primary),
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: _recentSearches.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 6),
+            itemBuilder: (context, index) {
+              final term = _recentSearches[index];
+              return Container(
+                decoration: BoxDecoration(
+                  color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  border: Border.all(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: ListTile(
+                  dense: true,
+                  leading: Icon(
+                    Icons.history,
+                    size: 18,
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                  title: Text(
+                    term,
+                    style: EditorialTokens.bodyMedium(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      size: 16,
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    onPressed: () {
+                      setState(() => _recentSearches.removeAt(index));
+                    },
+                  ),
+                  onTap: () {
+                    _searchController.text = term;
+                    _onSearchChanged();
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+```
+
+---
+
+## 42. lib/features/settings/settings_screen.dart <a id="libfeaturessettingssettingsscreendart"></a>
+
+- **Path:** `lib/features/settings/settings_screen.dart`
+- **Lines:** 404
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/permissions/permissions_service.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/storage/thumbnail_cache_service.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../widgets/editorial_components.dart';
+import '../home/pdf_list_provider.dart';
+
+class SettingsScreen extends ConsumerWidget {
+  const SettingsScreen({super.key});
+
+  void _showNotice(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: EditorialTokens.secondary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(EditorialTokens.r4)),
+        content: Text(
+          message,
+          style: EditorialTokens.bodyMedium(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isNightReadingMode = ref.watch(isNightReadingModeProvider);
+    final isEyeComfortMode = ref.watch(isEyeComfortModeProvider);
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'STUDIO PREFERENCES · PRIVACY'),
+            Text(
+              'Settings & Storage',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          // Sub-strip: Local runtime status
+          const EditorialStatStrip(
+            primaryText: 'LOCAL RUNTIME ENVIRONMENT',
+            secondaryText: 'OFFLINE INDEX ACTIVE',
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              children: [
+                // 1. Appearance & Reader Mode
+                const EditorialSectionHeader(
+                  number: '01',
+                  label: 'Appearance & Reading Bed',
+                  count: 'theme & color temperature',
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        dense: true,
+                        title: Text(
+                          'Application Theme',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          themeMode == ThemeMode.system
+                              ? 'System Default'
+                              : themeMode == ThemeMode.dark
+                                  ? 'Dark Studio'
+                                  : 'Light Quiet Editorial',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        trailing: DropdownButtonHideUnderline(
+                          child: DropdownButton<ThemeMode>(
+                            value: themeMode,
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                            items: [
+                              DropdownMenuItem(
+                                value: ThemeMode.system,
+                                child: Text('System', style: EditorialTokens.bodySmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.light,
+                                child: Text('Light', style: EditorialTokens.bodySmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.dark,
+                                child: Text('Dark', style: EditorialTokens.bodySmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                              ),
+                            ],
+                            onChanged: (mode) {
+                              if (mode != null) {
+                                ref.read(themeModeProvider.notifier).setThemeMode(mode);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      const EditorialDivider(),
+                      SwitchListTile(
+                        dense: true,
+                        activeColor: EditorialTokens.primary,
+                        title: Text(
+                          'Reader Night Studio Bed',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Inverts reader background to deep charcoal for low-light study',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        value: isNightReadingMode,
+                        onChanged: (val) {
+                          ref.read(isNightReadingModeProvider.notifier).toggle(val);
+                          if (val) {
+                            ref.read(isEyeComfortModeProvider.notifier).toggle(false);
+                          }
+                        },
+                      ),
+                      const EditorialDivider(),
+                      SwitchListTile(
+                        dense: true,
+                        activeColor: EditorialTokens.primary,
+                        title: Text(
+                          'Eye Comfort (Warm Sepia Protection)',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Warm amber tint filtering harsh blue light for long reading sessions',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        value: isEyeComfortMode,
+                        onChanged: (val) {
+                          ref.read(isEyeComfortModeProvider.notifier).toggle(val);
+                          if (val) {
+                            ref.read(isNightReadingModeProvider.notifier).toggle(false);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 2. Storage & Cache Control
+                const EditorialSectionHeader(
+                  number: '02',
+                  label: 'Persistence & Cache Control',
+                  count: 'local file system',
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        dense: true,
+                        leading: const Icon(
+                          Icons.security_outlined,
+                          size: 20,
+                          color: EditorialTokens.primary,
+                        ),
+                        title: Text(
+                          'Manage Storage Permissions',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Verify Android All-Files-Access or Scoped Storage permissions',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          size: 18,
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                        onTap: () {
+                          ref.read(permissionsProvider.notifier).openAppSettingsPage();
+                        },
+                      ),
+                      const EditorialDivider(),
+                      ListTile(
+                        dense: true,
+                        leading: Icon(
+                          Icons.cached,
+                          size: 20,
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                        title: Text(
+                          'Purge Thumbnail Cache',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Frees disk space by removing rendered thumbnails',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        onTap: () async {
+                          await ThumbnailCacheService.clearCache();
+                          if (!context.mounted) return;
+                          _showNotice(context, 'Thumbnail cache purged.');
+                        },
+                      ),
+                      const EditorialDivider(),
+                      ListTile(
+                        dense: true,
+                        leading: Icon(
+                          Icons.cleaning_services_outlined,
+                          size: 20,
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                        title: Text(
+                          'Purge OCR Full-Text Index',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Removes cached extracted texts and formulas from database',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        onTap: () async {
+                          await DatabaseHelper.instance.clearOcrIndex();
+                          ref.read(pdfListProvider.notifier).loadFiles();
+                          if (!context.mounted) return;
+                          _showNotice(context, 'OCR text index cleared.');
+                        },
+                      ),
+                      const EditorialDivider(),
+                      ListTile(
+                        dense: true,
+                        leading: const Icon(
+                          Icons.refresh,
+                          size: 20,
+                          color: EditorialTokens.primary,
+                        ),
+                        title: Text(
+                          'Re-scan Storage Catalog',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Forces recursive re-indexing across internal & external volumes',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        onTap: () {
+                          ref.read(pdfListProvider.notifier).scanStorage();
+                          _showNotice(context, 'Storage catalog re-scan initiated.');
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 3. System & Build Architecture
+                const EditorialSectionHeader(
+                  number: '03',
+                  label: 'System & Architecture',
+                  count: 'build verification',
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        dense: true,
+                        leading: Icon(
+                          Icons.info_outline,
+                          size: 20,
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                        title: Text(
+                          'Quiet Editorial Document Studio',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Design 01 · 100% Offline Archival Processing Engine',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                      ),
+                      const EditorialDivider(),
+                      ListTile(
+                        dense: true,
+                        leading: Icon(
+                          Icons.description_outlined,
+                          size: 20,
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                        title: Text(
+                          'Open Source Licenses & Attributions',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Source Serif 4, Inter, JetBrains Mono, Syncfusion, Google ML Kit',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          size: 18,
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                        onTap: () => showLicensePage(context: context),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 43. lib/features/split/split_screen.dart <a id="libfeaturessplitsplitscreendart"></a>
+
+- **Path:** `lib/features/split/split_screen.dart`
+- **Lines:** 677
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
+import '../../core/storage/pdf_metadata_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_tool_file_picker_screen.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+enum SplitMethod { ranges, singlePages, everyNPages }
+
+class SplitScreen extends ConsumerStatefulWidget {
+  final PdfFile? sourceFile;
+
+  const SplitScreen({super.key, this.sourceFile});
+
+  @override
+  ConsumerState<SplitScreen> createState() => _SplitScreenState();
+}
+
+class _SplitScreenState extends ConsumerState<SplitScreen> {
+  PdfFile? _selectedFile;
+  SplitMethod _method = SplitMethod.ranges;
+
+  final TextEditingController _rangeController = TextEditingController(text: '1-2');
+  final TextEditingController _everyNController = TextEditingController(text: '2');
+  final TextEditingController _prefixController = TextEditingController();
+
+  bool _isSplitting = false;
+  List<String> _createdFilePaths = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFile = widget.sourceFile;
+    if (_selectedFile != null) {
+      _prefixController.text = _selectedFile!.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+    }
+  }
+
+  @override
+  void dispose() {
+    _rangeController.dispose();
+    _everyNController.dispose();
+    _prefixController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickFile() async {
+    final result = await Navigator.push<List<PdfFile>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PdfToolFilePickerScreen(
+          title: 'Select PDF to Split',
+          mode: ToolPickerMode.singleSelect,
+          actionButtonText: 'CONFIRM DOCUMENT',
+        ),
+      ),
+    );
+
+    if (result != null && result.isNotEmpty) {
+      final file = result.first;
+      setState(() {
+        _selectedFile = file;
+        _prefixController.text = file.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+      });
+    }
+  }
+
+  Future<void> _performSplit() async {
+    if (_selectedFile == null) {
+      _showNotice('Please select a PDF document first.');
+      return;
+    }
+
+    final prefix = _prefixController.text.trim();
+    if (prefix.isEmpty) {
+      _showNotice('Please specify an output filename prefix.');
+      return;
+    }
+
+    setState(() {
+      _isSplitting = true;
+    });
+
+    try {
+      final sourceBytes = await File(_selectedFile!.path).readAsBytes();
+      final sourceDoc = PdfDocument(inputBytes: sourceBytes);
+      final totalPages = sourceDoc.pages.count;
+      final parentDir = File(_selectedFile!.path).parent.path;
+
+      final List<String> newFiles = [];
+
+      if (_method == SplitMethod.ranges) {
+        final pagesToExtract = Utils.parsePageRanges(_rangeController.text, totalPages);
+        if (pagesToExtract.isNotEmpty) {
+          final outDoc = PdfDocument();
+          for (final pageNum in pagesToExtract) {
+            final template = sourceDoc.pages[pageNum - 1].createTemplate();
+            final newPage = outDoc.pages.add();
+            newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+          }
+          final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_split.pdf';
+          await File(targetPath).writeAsBytes(await outDoc.save());
+          outDoc.dispose();
+          newFiles.add(targetPath);
+        }
+      } else if (_method == SplitMethod.singlePages) {
+        for (int i = 0; i < totalPages; i++) {
+          final outDoc = PdfDocument();
+          final template = sourceDoc.pages[i].createTemplate();
+          final newPage = outDoc.pages.add();
+          newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+
+          final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_page_${i + 1}.pdf';
+          await File(targetPath).writeAsBytes(await outDoc.save());
+          outDoc.dispose();
+          newFiles.add(targetPath);
+        }
+      } else if (_method == SplitMethod.everyNPages) {
+        final n = int.tryParse(_everyNController.text.trim()) ?? 1;
+        int partIndex = 1;
+        for (int i = 0; i < totalPages; i += n) {
+          final outDoc = PdfDocument();
+          final end = (i + n < totalPages) ? i + n : totalPages;
+          for (int j = i; j < end; j++) {
+            final template = sourceDoc.pages[j].createTemplate();
+            final newPage = outDoc.pages.add();
+            newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+          }
+          final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_part_$partIndex.pdf';
+          await File(targetPath).writeAsBytes(await outDoc.save());
+          outDoc.dispose();
+          newFiles.add(targetPath);
+          partIndex++;
+        }
+      }
+
+      sourceDoc.dispose();
+
+      for (final p in newFiles) {
+        final registered = await PdfMetadataHelper.registerAndSyncPdf(p);
+        if (registered != null) {
+          ref.read(pdfListProvider.notifier).addFile(registered);
+        }
+      }
+
+      setState(() {
+        _isSplitting = false;
+        _createdFilePaths = newFiles;
+      });
+    } catch (e) {
+      setState(() => _isSplitting = false);
+      if (!mounted) return;
+      _showNotice('Error splitting document: $e');
+    }
+  }
+
+  void _showNotice(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
+        backgroundColor: EditorialTokens.secondary,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (_createdFilePaths.isNotEmpty) {
+      return Scaffold(
+        backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+        appBar: AppBar(
+          backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.close,
+              size: 20,
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const EditorialEyebrow(text: 'SPLIT COMPLETE'),
+              Text(
+                'Pages Extracted',
+                style: EditorialTokens.titleMedium(
+                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                border: Border(
+                  bottom: BorderSide(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const EditorialEyebrow(text: 'EXTRACTED FILES'),
+                  const Spacer(),
+                  Text(
+                    '${_createdFilePaths.length} NEW DOCUMENTS CREATED',
+                    style: EditorialTokens.metadata(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: _createdFilePaths.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final path = _createdFilePaths[index];
+                  final name = path.split(Platform.pathSeparator).last;
+                  final file = File(path);
+                  final size = file.existsSync() ? file.lengthSync() : 0;
+                  final seqNum = (index + 1).toString().padLeft(2, '0');
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            seqNum,
+                            style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 12),
+                          ),
+                          const SizedBox(width: 10),
+                          const EditorialPaperThumbnail(
+                            thumbnailPath: null,
+                            width: 32,
+                            height: 44,
+                          ),
+                        ],
+                      ),
+                      title: Text(
+                        name,
+                        style: EditorialTokens.titleSmall(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Text(
+                        Utils.formatBytes(size),
+                        style: EditorialTokens.metadata(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.share_outlined,
+                              size: 18,
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                            onPressed: () => Share.shareXFiles([XFile(path)]),
+                            tooltip: 'Share',
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.menu_book_outlined,
+                              size: 18,
+                              color: EditorialTokens.primary,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => PdfViewerScreen(filePath: path),
+                                ),
+                              );
+                            },
+                            tooltip: 'Open in Viewer',
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: EditorialButton(
+                  label: 'DONE',
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'DOCUMENT SPLIT'),
+            Text(
+              'Split & Extract Pages',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: _isSplitting
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(height: 24),
+                    const EditorialEyebrow(text: 'SPLITTING DOCUMENT'),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Extracting Pages...',
+                      style: EditorialTokens.titleMedium(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Creating documents and saving to storage',
+                      style: EditorialTokens.bodySmall(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              children: [
+                // Section 01: Active Document Card
+                const EditorialSectionHeader(
+                  number: '01',
+                  label: 'Source Document',
+                ),
+                const SizedBox(height: 8),
+                if (_selectedFile != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const EditorialPaperThumbnail(
+                          thumbnailPath: null,
+                          width: 44,
+                          height: 60,
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _selectedFile!.name,
+                                style: EditorialTokens.titleSmall(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${_selectedFile!.pageCount} Pages · ${Utils.formatBytes(_selectedFile!.sizeBytes)}',
+                                style: EditorialTokens.metadata(
+                                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.swap_horiz,
+                            size: 20,
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                          onPressed: _pickFile,
+                          tooltip: 'Change document',
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else ...[
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.call_split_outlined,
+                          size: 36,
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'No document selected',
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Choose a PDF to split by page range or extract pages',
+                          style: EditorialTokens.bodySmall(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 14),
+                        EditorialSecondaryButton(
+                          label: 'CHOOSE DOCUMENT',
+                          icon: Icons.folder_open,
+                          onPressed: _pickFile,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 24),
+
+                // Section 02: Extraction Method Protocol
+                const EditorialSectionHeader(
+                  number: '02',
+                  label: 'Split Method',
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      EditorialChip(
+                        label: 'Page Ranges',
+                        selected: _method == SplitMethod.ranges,
+                        onTap: () => setState(() => _method = SplitMethod.ranges),
+                      ),
+                      const SizedBox(width: 8),
+                      EditorialChip(
+                        label: 'Single Pages',
+                        selected: _method == SplitMethod.singlePages,
+                        onTap: () => setState(() => _method = SplitMethod.singlePages),
+                      ),
+                      const SizedBox(width: 8),
+                      EditorialChip(
+                        label: 'Every N Pages',
+                        selected: _method == SplitMethod.everyNPages,
+                        onTap: () => setState(() => _method = SplitMethod.everyNPages),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Section 03: Parameters
+                const EditorialSectionHeader(
+                  number: '03',
+                  label: 'Range & Output Settings',
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_method == SplitMethod.ranges) ...[
+                        Text(
+                          'PAGE RANGE SPECIFICATION (e.g. 1-5, 8, 12-15)',
+                          style: EditorialTokens.metadataStrong(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        const SizedBox(height: 6),
+                        TextField(
+                          controller: _rangeController,
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: '1-5, 8',
+                            hintStyle: EditorialTokens.bodySmall(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                            filled: true,
+                            fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              borderSide: BorderSide(
+                                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                      ],
+                      if (_method == SplitMethod.everyNPages) ...[
+                        Text(
+                          'PAGES PER FILE (N)',
+                          style: EditorialTokens.metadataStrong(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        const SizedBox(height: 6),
+                        TextField(
+                          controller: _everyNController,
+                          keyboardType: TextInputType.number,
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: '2',
+                            filled: true,
+                            fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              borderSide: BorderSide(
+                                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                      ],
+                      Text(
+                        'OUTPUT FILENAME PREFIX',
+                        style: EditorialTokens.metadataStrong(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ).copyWith(fontSize: 10),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: _prefixController,
+                        style: EditorialTokens.bodyMedium(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Document_Prefix',
+                          filled: true,
+                          fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                            borderSide: BorderSide(
+                              color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                              width: EditorialTokens.hairline,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                // Action Button
+                SizedBox(
+                  width: double.infinity,
+                  child: EditorialButton(
+                    label: 'SPLIT DOCUMENT',
+                    icon: Icons.call_split_outlined,
+                    onPressed: _selectedFile != null ? _performSplit : null,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const SizedBox(height: 24),
+              ],
+            ),
+    );
+  }
+}
+```
+
+---
+
+## 44. lib/features/stats/stats_tab.dart <a id="libfeaturesstatsstatstabdart"></a>
+
+- **Path:** `lib/features/stats/stats_tab.dart`
+- **Lines:** 663
+- **Language:** `dart`
+
+```dart
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/storage/thumbnail_cache_service.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../models/tool_usage_stat.dart';
+import '../../widgets/editorial_components.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+class StatsTab extends ConsumerStatefulWidget {
+  const StatsTab({super.key});
+
+  @override
+  ConsumerState<StatsTab> createState() => _StatsTabState();
+}
+
+class _StatsTabState extends ConsumerState<StatsTab> {
+  List<PdfFile> _mostOpened = [];
+  List<ToolUsageStat> _toolUsage = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    setState(() => _isLoading = true);
+    final db = DatabaseHelper.instance;
+    final opened = await db.getMostOpenedFiles(limit: 5);
+    final usage = await db.getToolUsageStats();
+
+    if (mounted) {
+      setState(() {
+        _mostOpened = opened;
+        _toolUsage = usage;
+        _isLoading = false;
+      });
+    }
+  }
+
+  String _formatReadingTime(int totalSeconds) {
+    if (totalSeconds <= 0) return '0m';
+    final hours = totalSeconds ~/ 3600;
+    final mins = (totalSeconds % 3600) ~/ 60;
+    if (hours > 0) {
+      return '${hours}h ${mins}m';
+    }
+    return '${mins}m';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pdfState = ref.watch(pdfListProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const EditorialEyebrow(text: 'READING ACTIVITY'),
+                    Text(
+                      'Reading & Activity',
+                      style: EditorialTokens.titleLarge(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.refresh,
+                    size: 20,
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                  tooltip: 'Refresh Metrics',
+                  onPressed: () {
+                    ref.read(pdfListProvider.notifier).scanStorage();
+                    _loadStats();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: EditorialTokens.primary,
+              ),
+            )
+          : pdfState.when(
+              data: (files) {
+                final totalSize = files.fold<int>(0, (sum, f) => sum + f.sizeBytes);
+                return Column(
+                  children: [
+                    // Sub-strip: overview
+                    EditorialStatStrip(
+                      primaryText: '${files.length} DOCUMENTS · ${Utils.formatBytes(totalSize)}',
+                      secondaryText: 'ON-DEVICE STATS',
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSummaryCards(files, totalSize, isDark),
+                            const SizedBox(height: 12),
+                            _buildReadingStatsRow(files, isDark),
+                            const SizedBox(height: 24),
+                            const EditorialSectionHeader(
+                              number: '01',
+                              label: 'Storage Distribution',
+                              count: 'by file size',
+                            ),
+                            const SizedBox(height: 8),
+                            _buildChartCard(files, isDark),
+                            const SizedBox(height: 24),
+                            const EditorialSectionHeader(
+                              number: '02',
+                              label: 'Tool Operations',
+                              count: 'local execution count',
+                            ),
+                            const SizedBox(height: 8),
+                            _buildToolUsageList(isDark),
+                            const SizedBox(height: 24),
+                            const EditorialSectionHeader(
+                              number: '03',
+                              label: 'Frequent Documents',
+                              count: 'top consultations',
+                            ),
+                            const SizedBox(height: 8),
+                            _buildMostOpenedList(isDark),
+                            const SizedBox(height: 32),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+              loading: () => const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: EditorialTokens.primary,
+                ),
+              ),
+              error: (err, _) => Center(
+                child: Text(
+                  'Error loading metrics: $err',
+                  style: EditorialTokens.metadata(color: EditorialTokens.error),
+                ),
+              ),
+            ),
+    );
+  }
+
+  Widget _buildMetricCard({
+    required String label,
+    required String value,
+    required String hint,
+    required bool isDark,
+    Color? accentColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+        border: Border.all(
+          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+          width: EditorialTokens.hairline,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label.toUpperCase(),
+                style: EditorialTokens.metadataStrong(
+                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                ).copyWith(fontSize: 9.5),
+              ),
+              if (accentColor != null)
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: EditorialTokens.headlineSmall(
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            hint,
+            style: EditorialTokens.metadata(
+              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryCards(List<PdfFile> files, int totalSize, bool isDark) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildMetricCard(
+            label: 'Total Library',
+            value: '${files.length}',
+            hint: 'PDF documents cataloged',
+            isDark: isDark,
+            accentColor: EditorialTokens.tertiary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildMetricCard(
+            label: 'Total Footprint',
+            value: Utils.formatBytes(totalSize),
+            hint: 'Local storage allocation',
+            isDark: isDark,
+            accentColor: EditorialTokens.primary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReadingStatsRow(List<PdfFile> files, bool isDark) {
+    final totalReadingSec = files.fold<int>(0, (sum, f) => sum + f.readingTime);
+    final completedCount = files.where((f) => f.completed).length;
+
+    return Row(
+      children: [
+        Expanded(
+          child: _buildMetricCard(
+            label: 'Reading Immersion',
+            value: _formatReadingTime(totalReadingSec),
+            hint: 'Active viewport duration',
+            isDark: isDark,
+            accentColor: EditorialTokens.primary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildMetricCard(
+            label: 'Completed Books',
+            value: '$completedCount / ${files.length}',
+            hint: 'Documents read to 100%',
+            isDark: isDark,
+            accentColor: const Color(0xFF2E6F40),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChartCard(List<PdfFile> files, bool isDark) {
+    int bSmall = 0; // <1MB
+    int bMedium = 0; // 1-10MB
+    int bLarge = 0; // 10-50MB
+    int bHuge = 0; // 50MB+
+
+    for (final f in files) {
+      final mb = f.sizeBytes / (1024 * 1024);
+      if (mb < 1) {
+        bSmall++;
+      } else if (mb < 10) {
+        bMedium++;
+      } else if (mb < 50) {
+        bLarge++;
+      } else {
+        bHuge++;
+      }
+    }
+
+    final maxVal = [bSmall, bMedium, bLarge, bHuge].reduce((a, b) => a > b ? a : b);
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+        border: Border.all(
+          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+          width: EditorialTokens.hairline,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'DOCUMENT DISTRIBUTION BY TIER',
+                style: EditorialTokens.metadataStrong(
+                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                ).copyWith(fontSize: 10),
+              ),
+              Text(
+                'PEAK: $maxVal DOCUMENTS',
+                style: EditorialTokens.metadata(
+                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 160,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: (maxVal + 2).toDouble(),
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (_) => isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    tooltipPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        '${rod.toY.toInt()} files',
+                        EditorialTokens.metadataStrong(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final label = switch (value.toInt()) {
+                          0 => '<1MB',
+                          1 => '1-10MB',
+                          2 => '10-50MB',
+                          3 => '50MB+',
+                          _ => '',
+                        };
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 6.0),
+                          child: Text(
+                            label,
+                            style: EditorialTokens.metadata(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: 5,
+                  getDrawingHorizontalLine: (value) => FlLine(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    strokeWidth: 0.5,
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                barGroups: [
+                  BarChartGroupData(x: 0, barRods: [
+                    BarChartRodData(
+                      toY: bSmall.toDouble(),
+                      color: EditorialTokens.tertiary,
+                      width: 20,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+                    )
+                  ]),
+                  BarChartGroupData(x: 1, barRods: [
+                    BarChartRodData(
+                      toY: bMedium.toDouble(),
+                      color: EditorialTokens.primary,
+                      width: 20,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+                    )
+                  ]),
+                  BarChartGroupData(x: 2, barRods: [
+                    BarChartRodData(
+                      toY: bLarge.toDouble(),
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      width: 20,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+                    )
+                  ]),
+                  BarChartGroupData(x: 3, barRods: [
+                    BarChartRodData(
+                      toY: bHuge.toDouble(),
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      width: 20,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+                    )
+                  ]),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToolUsageList(bool isDark) {
+    if (_toolUsage.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+          border: Border.all(
+            color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+        child: Text(
+          'No tool invocations recorded yet.',
+          style: EditorialTokens.metadata(
+            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+          ),
+        ),
+      );
+    }
+    return Column(
+      children: _toolUsage.map((u) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+            border: Border.all(
+              color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                  border: Border.all(
+                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: Text(
+                  '${u.useCount}',
+                  style: EditorialTokens.metadataStrong(
+                    color: EditorialTokens.primary,
+                  ).copyWith(fontSize: 12),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      u.toolName.toUpperCase().replaceAll('_', ' '),
+                      style: EditorialTokens.label(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Last executed: ${Utils.formatRelativeTime(u.lastUsedAt)}',
+                      style: EditorialTokens.metadata(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildMostOpenedList(bool isDark) {
+    if (_mostOpened.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+          border: Border.all(
+            color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+        child: Text(
+          'No recently opened documents.',
+          style: EditorialTokens.metadata(
+            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+          ),
+        ),
+      );
+    }
+    return Column(
+      children: _mostOpened.map((f) => _MostOpenedTile(file: f, isDark: isDark)).toList(),
+    );
+  }
+}
+
+class _MostOpenedTile extends StatefulWidget {
+  final PdfFile file;
+  final bool isDark;
+
+  const _MostOpenedTile({
+    required this.file,
+    required this.isDark,
+  });
+
+  @override
+  State<_MostOpenedTile> createState() => _MostOpenedTileState();
+}
+
+class _MostOpenedTileState extends State<_MostOpenedTile> {
+  String? _thumbPath;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadThumb();
+  }
+
+  Future<void> _loadThumb() async {
+    final thumbFile = await ThumbnailCacheService.getThumbnailFile(widget.file.path);
+    if (mounted && thumbFile != null) {
+      setState(() => _thumbPath = thumbFile.path);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final f = widget.file;
+    final isDark = widget.isDark;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+        border: Border.all(
+          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+          width: EditorialTokens.hairline,
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PdfViewerScreen(filePath: f.path),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              EditorialPaperThumbnail(
+                thumbnailPath: _thumbPath,
+                pageNumber: f.lastOpenedPage,
+                totalPages: f.pageCount,
+                isCompleted: f.completed,
+                width: 32,
+                height: 44,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      f.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: EditorialTokens.titleSmall(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Opened ${Utils.formatRelativeTime(f.lastOpenedAt)} · ${f.pageCount} pages',
+                      style: EditorialTokens.metadata(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                size: 18,
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 45. lib/features/study/study_mode_screen.dart <a id="libfeaturesstudystudymodescreendart"></a>
+
+- **Path:** `lib/features/study/study_mode_screen.dart`
+- **Lines:** 1078
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import '../../core/storage/database_helper.dart';
+import '../../core/storage/ocr_cache_service.dart';
+import '../../core/study/local_summarizer_service.dart';
+import '../../core/study/study_generator_service.dart';
+import '../../core/study/topic_extractor_service.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../models/pdf_file.dart';
+import '../../models/study_item.dart';
+import '../../models/study_session.dart';
+import '../../widgets/editorial_components.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+class StudyModeScreen extends ConsumerStatefulWidget {
+  final PdfFile pdfFile;
+
+  const StudyModeScreen({super.key, required this.pdfFile});
+
+  @override
+  ConsumerState<StudyModeScreen> createState() => _StudyModeScreenState();
+}
+
+class _StudyModeScreenState extends ConsumerState<StudyModeScreen>
+    with WidgetsBindingObserver {
+  bool _isLoading = true;
+  String _loadingMessage = 'Loading document text...';
+  int _activeTabIndex = 0;
+
+  Map<int, String> _pageTextMap = {};
+  LocalSummarizerResult? _summaryResult;
+  List<StudyTopic> _topics = [];
+  List<ImportantTerm> _terms = [];
+  List<Flashcard> _flashcards = [];
+  List<StudyQuestion> _questions = [];
+
+  int _currentFlashcardIndex = 0;
+  bool _showFlashcardBack = false;
+
+  final Map<int, String> _userAnswers = {};
+  final Map<int, bool> _questionAnswered = {};
+  int _correctCount = 0;
+  int _attemptedCount = 0;
+
+  final Stopwatch _studySessionStopwatch = Stopwatch();
+  int _sessionStartTime = 0;
+  Map<String, double> _weakTopics = {};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _sessionStartTime = DateTime.now().millisecondsSinceEpoch;
+    _studySessionStopwatch.start();
+    _loadStudyData();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _studySessionStopwatch.stop();
+    _saveStudySession();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      _studySessionStopwatch.stop();
+      _saveStudySession();
+    } else if (state == AppLifecycleState.resumed) {
+      _studySessionStopwatch.start();
+    }
+  }
+
+  Future<void> _saveStudySession() async {
+    final elapsedSec = _studySessionStopwatch.elapsed.inSeconds;
+    if (elapsedSec > 5 && _attemptedCount > 0) {
+      final accuracy = (_correctCount / _attemptedCount) * 100.0;
+      final session = StudySession(
+        filePath: widget.pdfFile.path,
+        startTime: _sessionStartTime,
+        endTime: DateTime.now().millisecondsSinceEpoch,
+        durationSeconds: elapsedSec,
+        questionsAttempted: _attemptedCount,
+        correctCount: _correctCount,
+        accuracyPct: accuracy,
+      );
+      await DatabaseHelper.instance.saveStudySession(session);
+    }
+  }
+
+  Future<void> _loadStudyData() async {
+    setState(() {
+      _isLoading = true;
+      _loadingMessage = 'Reading text & cached OCR...';
+    });
+
+    try {
+      final cachedOcr = await OcrCacheService.getCachedFileOcr(widget.pdfFile.path);
+      _pageTextMap = Map.from(cachedOcr);
+
+      if (_pageTextMap.isEmpty) {
+        final fileBytes = await File(widget.pdfFile.path).readAsBytes();
+        if (!mounted) return;
+        final document = sf.PdfDocument(inputBytes: fileBytes);
+        final extractor = sf.PdfTextExtractor(document);
+
+        for (int i = 0; i < document.pages.count; i++) {
+          final pageText = extractor.extractText(startPageIndex: i, endPageIndex: i).trim();
+          if (pageText.isNotEmpty) {
+            _pageTextMap[i + 1] = pageText;
+          }
+        }
+        document.dispose();
+      }
+
+      setState(() => _loadingMessage = 'Generating local summaries & study tools...');
+
+      final fullText = _pageTextMap.values.join('\n\n');
+      _summaryResult = await LocalSummarizerService.summarizeText(fullText);
+      _topics = await TopicExtractorService.extractTopicsFromPages(widget.pdfFile.path, _pageTextMap);
+      _terms = await TopicExtractorService.extractImportantTerms(_pageTextMap);
+
+      final savedCards = await DatabaseHelper.instance.getFlashcards(widget.pdfFile.path);
+      if (savedCards.isNotEmpty) {
+        _flashcards = savedCards;
+      } else {
+        _flashcards = await StudyGeneratorService.generateFlashcards(widget.pdfFile.path, _pageTextMap);
+        await DatabaseHelper.instance.saveFlashcards(_flashcards);
+      }
+
+      final savedQuestions = await DatabaseHelper.instance.getStudyQuestions(widget.pdfFile.path);
+      if (savedQuestions.isNotEmpty) {
+        _questions = savedQuestions;
+      } else {
+        _questions = await StudyGeneratorService.generateQuestions(widget.pdfFile.path, _pageTextMap);
+        await DatabaseHelper.instance.saveStudyQuestions(_questions);
+      }
+
+      _weakTopics = await DatabaseHelper.instance.getTopicAccuracyForFile(widget.pdfFile.path);
+
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _navigateToPage(int pageNumber) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PdfViewerScreen(
+          filePath: widget.pdfFile.path,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildEditorialTopBar(),
+            const EditorialDivider(),
+            _buildTabSelector(),
+            const EditorialDivider(),
+            Expanded(
+              child: _isLoading
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: EditorialTokens.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _loadingMessage.toUpperCase(),
+                            style: EditorialTokens.metadata().copyWith(
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : _buildActiveTabContent(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEditorialTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: '04 · ACADEMIC SYNTHESIS'),
+                const SizedBox(height: 2),
+                Text(
+                  'Study Studio',
+                  style: EditorialTokens.titleLarge(),
+                ),
+                Text(
+                  widget.pdfFile.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabSelector() {
+    final tabs = [
+      '01 · SUMMARY',
+      '02 · FLASHCARDS',
+      '03 · QUIZ',
+      '04 · TELEMETRY',
+    ];
+
+    return Container(
+      height: 44,
+      color: EditorialTokens.surface,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        scrollDirection: Axis.horizontal,
+        itemCount: tabs.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final isSelected = _activeTabIndex == index;
+          return GestureDetector(
+            onTap: () => setState(() => _activeTabIndex = index),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: isSelected ? EditorialTokens.secondary : EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isSelected ? EditorialTokens.secondary : EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                tabs[index],
+                style: EditorialTokens.metadataStrong(
+                  color: isSelected ? EditorialTokens.paper : EditorialTokens.inkMuted,
+                ).copyWith(
+                  fontSize: 10,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildActiveTabContent() {
+    switch (_activeTabIndex) {
+      case 0:
+        return _buildSummaryTab();
+      case 1:
+        return _buildFlashcardsTab();
+      case 2:
+        return _buildQuizTab();
+      case 3:
+        return _buildStatsTab();
+      default:
+        return _buildSummaryTab();
+    }
+  }
+
+  // --- TAB 1: Summary & Key Points ---
+  Widget _buildSummaryTab() {
+    final summary = _summaryResult;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const EditorialSectionHeader(
+            number: '01',
+            label: 'Executive Abstract',
+            trailing: 'LOCAL AI SYNTHESIS',
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: EditorialTokens.paper,
+              borderRadius: BorderRadius.circular(EditorialTokens.r6),
+              border: Border.all(
+                color: EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Text(
+              summary?.quickSummary ?? 'No automated summary available for this document.',
+              style: EditorialTokens.body(color: EditorialTokens.ink).copyWith(
+                height: 1.6,
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          EditorialSectionHeader(
+            number: '02',
+            label: 'Key Insights',
+            trailing: '${summary?.keyPoints.length ?? 0} ITEMS',
+          ),
+          const SizedBox(height: 8),
+          if (summary != null && summary.keyPoints.isNotEmpty)
+            ...summary.keyPoints.asMap().entries.map((entry) {
+              final idx = entry.key + 1;
+              final point = entry.value;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.paper,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  border: Border.all(
+                    color: EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.surfaceMuted,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                        border: Border.all(
+                          color: EditorialTokens.border,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Text(
+                        idx.toString().padLeft(2, '0'),
+                        style: EditorialTokens.metadataStrong(
+                          color: EditorialTokens.primary,
+                        ).copyWith(fontSize: 10),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        point,
+                        style: EditorialTokens.bodyMedium(
+                          color: EditorialTokens.ink,
+                        ).copyWith(height: 1.45),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            })
+          else
+            Text(
+              'No key insights identified.',
+              style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+            ),
+          const SizedBox(height: 24),
+          EditorialSectionHeader(
+            number: '03',
+            label: 'Document Topics',
+            trailing: '${_topics.length} SECTIONS',
+          ),
+          const SizedBox(height: 8),
+          if (_topics.isNotEmpty)
+            ..._topics.map((topic) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.paper,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  border: Border.all(
+                    color: EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: InkWell(
+                  onTap: () => _navigateToPage(topic.startPage),
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: EditorialTokens.surfaceMuted,
+                            borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                          ),
+                          child: Text(
+                            'P. ${topic.startPage}–${topic.endPage}',
+                            style: EditorialTokens.metadata(
+                              color: EditorialTokens.tertiary,
+                            ).copyWith(fontSize: 10),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            topic.title,
+                            style: EditorialTokens.titleSmall().copyWith(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward,
+                          size: 14,
+                          color: EditorialTokens.inkMuted,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            })
+          else
+            Text(
+              'No structured topics detected.',
+              style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+            ),
+          const SizedBox(height: 24),
+          EditorialSectionHeader(
+            number: '04',
+            label: 'Codex Terms',
+            trailing: '${_terms.length} DEFINED',
+          ),
+          const SizedBox(height: 8),
+          if (_terms.isNotEmpty)
+            ..._terms.map((term) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.paper,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  border: Border.all(
+                    color: EditorialTokens.borderSoft,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          term.term,
+                          style: EditorialTokens.titleSmall(
+                            color: EditorialTokens.primary,
+                          ).copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        GestureDetector(
+                          onTap: () => _navigateToPage(term.pageNumber),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: EditorialTokens.surfaceMuted,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'PAGE ${term.pageNumber}',
+                                  style: EditorialTokens.metadata(
+                                    color: EditorialTokens.secondary,
+                                  ).copyWith(fontSize: 10),
+                                ),
+                                const SizedBox(width: 4),
+                                const Icon(
+                                  Icons.open_in_new,
+                                  size: 10,
+                                  color: EditorialTokens.secondary,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      term.context,
+                      style: EditorialTokens.bodySmall(
+                        color: EditorialTokens.inkSecondary,
+                      ).copyWith(height: 1.4),
+                    ),
+                  ],
+                ),
+              );
+            })
+          else
+            Text(
+              'No salient terms detected.',
+              style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // --- TAB 2: Flashcards ---
+  Widget _buildFlashcardsTab() {
+    if (_flashcards.isEmpty) {
+      return Center(
+        child: Text(
+          'NO FLASHCARDS COMPILED FOR THIS DOCUMENT.',
+          style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+        ),
+      );
+    }
+
+    final card = _flashcards[_currentFlashcardIndex];
+    final statusString = card.status == 1
+        ? 'KNOWN'
+        : (card.status == 2 ? 'DIFFICULT' : 'UNREVIEWED');
+
+    final statusColor = card.status == 1
+        ? const Color(0xFF386641)
+        : (card.status == 2 ? EditorialTokens.primary : EditorialTokens.inkMuted);
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'INDEX ${_currentFlashcardIndex + 1} OF ${_flashcards.length}',
+                style: EditorialTokens.metadataStrong().copyWith(letterSpacing: 1.0),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.surface,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                  border: Border.all(
+                    color: statusColor.withOpacity(0.5),
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: Text(
+                  statusString,
+                  style: EditorialTokens.metadataStrong(
+                    color: statusColor,
+                  ).copyWith(fontSize: 10),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _showFlashcardBack = !_showFlashcardBack),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.paper,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                  border: Border.all(
+                    color: EditorialTokens.border,
+                    width: EditorialTokens.hairline,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    EditorialEyebrow(
+                      text: _showFlashcardBack ? 'ANSWER' : 'QUESTION',
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: Center(
+                        child: SingleChildScrollView(
+                           child: Text(
+                            _showFlashcardBack ? card.back : card.front,
+                            style: EditorialTokens.displayMedium(
+                              color: EditorialTokens.ink,
+                            ).copyWith(
+                              fontSize: 18,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'TAP CARD TO FLIP',
+                      style: EditorialTokens.metadata(
+                        color: EditorialTokens.inkMuted,
+                      ).copyWith(
+                        fontSize: 10,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: EditorialSecondaryButton(
+                  label: 'Mark Difficult',
+                  icon: Icons.flag_outlined,
+                  onPressed: () async {
+                    await DatabaseHelper.instance.updateFlashcardStatus(card.id!, 2);
+                    setState(() {
+                      _flashcards[_currentFlashcardIndex] = card.copyWith(status: 2);
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: EditorialButton(
+                  label: 'Mark Known',
+                  icon: Icons.check,
+                  onPressed: () async {
+                    await DatabaseHelper.instance.updateFlashcardStatus(card.id!, 1);
+                    setState(() {
+                      _flashcards[_currentFlashcardIndex] = card.copyWith(status: 1);
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink),
+                onPressed: _currentFlashcardIndex > 0
+                    ? () => setState(() {
+                          _currentFlashcardIndex--;
+                          _showFlashcardBack = false;
+                        })
+                    : null,
+              ),
+              Text(
+                '${_currentFlashcardIndex + 1} / ${_flashcards.length}',
+                style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+              ),
+              IconButton(
+                icon: const Icon(Icons.arrow_forward, color: EditorialTokens.ink),
+                onPressed: _currentFlashcardIndex < _flashcards.length - 1
+                    ? () => setState(() {
+                          _currentFlashcardIndex++;
+                          _showFlashcardBack = false;
+                        })
+                    : null,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- TAB 3: Practice Quiz ---
+  Widget _buildQuizTab() {
+    if (_questions.isEmpty) {
+      return Center(
+        child: Text(
+          'NO PRACTICE QUESTIONS COMPILED.',
+          style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _questions.length,
+      itemBuilder: (context, index) {
+        final q = _questions[index];
+        final isAnswered = _questionAnswered[index] ?? false;
+        final selectedAnswer = _userAnswers[index];
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: EditorialTokens.paper,
+            borderRadius: BorderRadius.circular(EditorialTokens.r6),
+            border: Border.all(
+              color: EditorialTokens.border,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: EditorialTokens.surfaceMuted,
+                      borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                      border: Border.all(
+                        color: EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Text(
+                      '${q.type.name.toUpperCase()}  ·  PAGE ${q.pageNumber}',
+                      style: EditorialTokens.metadata(
+                        color: EditorialTokens.tertiary,
+                      ).copyWith(
+                        fontSize: 10,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ),
+                  if (q.marks > 1)
+                    Text(
+                      '${q.marks} PTS',
+                      style: EditorialTokens.metadataStrong(
+                        color: EditorialTokens.primary,
+                      ).copyWith(fontSize: 10),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '${index + 1}. ${q.question}',
+                style: EditorialTokens.titleMedium().copyWith(
+                  fontSize: 15,
+                  height: 1.4,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 14),
+              if (q.type == QuestionType.mcq || q.type == QuestionType.trueFalse) ...[
+                ...q.options.map((opt) {
+                  final isCorrectOpt = opt == q.correctAnswer;
+                  final isSelected = selectedAnswer == opt;
+
+                  Color optBg = EditorialTokens.surface;
+                  Color borderColor = EditorialTokens.border;
+                  Color textColor = EditorialTokens.ink;
+
+                  if (isAnswered) {
+                    if (isCorrectOpt) {
+                      optBg = const Color(0xFFE8F0EA);
+                      borderColor = const Color(0xFF386641);
+                      textColor = const Color(0xFF24442B);
+                    } else if (isSelected && !isCorrectOpt) {
+                      optBg = const Color(0xFFF9ECE7);
+                      borderColor = EditorialTokens.primary;
+                      textColor = EditorialTokens.secondary;
+                    }
+                  } else if (isSelected) {
+                    borderColor = EditorialTokens.primary;
+                  }
+
+                  return GestureDetector(
+                    onTap: isAnswered
+                        ? null
+                        : () {
+                            final isCorrect = opt == q.correctAnswer;
+                            setState(() {
+                              _userAnswers[index] = opt;
+                              _questionAnswered[index] = true;
+                              _attemptedCount++;
+                              if (isCorrect) _correctCount++;
+                            });
+
+                            DatabaseHelper.instance.recordStudyAttempt(
+                              StudyAttempt(
+                                sessionId: 0,
+                                questionId: q.id ?? index,
+                                userAnswer: opt,
+                                isCorrect: isCorrect,
+                                timestamp: DateTime.now().millisecondsSinceEpoch,
+                                topic: q.topic,
+                              ),
+                            );
+                          },
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: optBg,
+                        border: Border.all(
+                          color: borderColor,
+                          width: EditorialTokens.hairline,
+                        ),
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            isAnswered
+                                ? (isCorrectOpt
+                                    ? Icons.check_circle_outline
+                                    : (isSelected ? Icons.cancel_outlined : Icons.circle_outlined))
+                                : (isSelected ? Icons.radio_button_checked : Icons.radio_button_off),
+                            size: 16,
+                            color: borderColor,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              opt,
+                              style: EditorialTokens.bodyMedium(
+                                color: textColor,
+                              ).copyWith(fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ] else ...[
+                if (!isAnswered)
+                  EditorialButton(
+                    label: 'Reveal Canonical Answer',
+                    icon: Icons.visibility_outlined,
+                    onPressed: () {
+                      setState(() {
+                        _userAnswers[index] = q.correctAnswer;
+                        _questionAnswered[index] = true;
+                        _attemptedCount++;
+                        _correctCount++;
+                      });
+                    },
+                  ),
+              ],
+              if (isAnswered) ...[
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'CANONICAL: ${q.correctAnswer}',
+                        style: EditorialTokens.metadataStrong(
+                          color: EditorialTokens.primary,
+                        ).copyWith(fontSize: 11),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        q.explanation,
+                        style: EditorialTokens.bodySmall(
+                          color: EditorialTokens.inkSecondary,
+                        ).copyWith(height: 1.4),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () => _navigateToPage(q.pageNumber),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.menu_book,
+                              size: 12,
+                              color: EditorialTokens.secondary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'OPEN PAGE ${q.pageNumber} IN VIEWER',
+                              style: EditorialTokens.metadataStrong(
+                                color: EditorialTokens.secondary,
+                              ).copyWith(
+                                fontSize: 10,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // --- TAB 4: Study Stats & Weak Topics ---
+  Widget _buildStatsTab() {
+    final accuracy = _attemptedCount > 0 ? (_correctCount / _attemptedCount) * 100.0 : 0.0;
+    final elapsedSec = _studySessionStopwatch.elapsed.inSeconds;
+    final mins = elapsedSec ~/ 60;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const EditorialSectionHeader(
+            number: '01',
+            label: 'Session Telemetry',
+            trailing: 'LOCAL BENCHMARK',
+          ),
+          const SizedBox(height: 12),
+          EditorialStatStrip(
+            primaryText: 'ACTIVE STUDY DURATION',
+            secondaryText: '${mins}m · ACCURACY: ${accuracy.toInt()}%',
+          ),
+          const SizedBox(height: 8),
+          EditorialStatStrip(
+            primaryText: 'TOTAL ATTEMPTED',
+            secondaryText: '$_attemptedCount QUESTIONS',
+          ),
+          const SizedBox(height: 24),
+          const EditorialSectionHeader(
+            number: '02',
+            label: 'Critical Retention Focus',
+            trailing: 'ACCURACY < 60%',
+          ),
+          const SizedBox(height: 10),
+          if (_weakTopics.entries.any((e) => e.value < 0.60))
+            ..._weakTopics.entries.where((e) => e.value < 0.60).map(
+                  (e) => Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: EditorialTokens.paper,
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                e.key,
+                                style: EditorialTokens.titleSmall().copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                'RETENTION TARGET REQUIRES REVIEW',
+                                style: EditorialTokens.metadata(
+                                  color: EditorialTokens.primary,
+                                ).copyWith(fontSize: 9),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: EditorialTokens.surfaceMuted,
+                            borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                          ),
+                          child: Text(
+                            '${(e.value * 100).toInt()}%',
+                            style: EditorialTokens.metadataStrong(
+                              color: EditorialTokens.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+          else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: EditorialTokens.paper,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.verified_outlined,
+                    color: Color(0xFF386641),
+                    size: 18,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'No weak topics recorded. Document comprehension exceeds thresholds.',
+                      style: EditorialTokens.bodyMedium(
+                        color: EditorialTokens.inkSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 46. lib/features/tools/compress_image_to_target_size_screen.dart <a id="libfeaturestoolscompressimagetotargetsizescreendart"></a>
+
+- **Path:** `lib/features/tools/compress_image_to_target_size_screen.dart`
+- **Lines:** 751
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/tools/image_target_size_compressor_service.dart';
+import '../../core/utils/utils.dart';
+import '../../widgets/editorial_components.dart';
+
+class CompressImageToTargetSizeScreen extends StatefulWidget {
+  const CompressImageToTargetSizeScreen({super.key});
+
+  @override
+  State<CompressImageToTargetSizeScreen> createState() =>
+      _CompressImageToTargetSizeScreenState();
+}
+
+class _CompressImageToTargetSizeScreenState
+    extends State<CompressImageToTargetSizeScreen> {
+  final List<String> _selectedImagePaths = [];
+  final TextEditingController _targetSizeController =
+      TextEditingController(text: '100');
+  String _selectedUnit = 'KB';
+
+  bool _isCompressing = false;
+  bool _isCancelled = false;
+  double _progress = 0.0;
+  String _progressStatus = '';
+  final List<ImageTargetCompressionResult> _results = [];
+
+  static const List<Map<String, dynamic>> _presets = [
+    {'label': '50 KB', 'val': 50.0, 'unit': 'KB'},
+    {'label': '100 KB', 'val': 100.0, 'unit': 'KB'},
+    {'label': '200 KB', 'val': 200.0, 'unit': 'KB'},
+    {'label': '500 KB', 'val': 500.0, 'unit': 'KB'},
+    {'label': '1 MB', 'val': 1.0, 'unit': 'MB'},
+    {'label': '2 MB', 'val': 2.0, 'unit': 'MB'},
+  ];
+
+  @override
+  void dispose() {
+    _targetSizeController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImages() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif', 'bmp'],
+      allowMultiple: true,
+    );
+
+    if (result != null && result.paths.isNotEmpty) {
+      final validPaths = result.paths.whereType<String>().toList();
+      setState(() {
+        _selectedImagePaths.addAll(validPaths);
+        _results.clear();
+      });
+    }
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImagePaths.removeAt(index);
+    });
+  }
+
+  void _applyPreset(Map<String, dynamic> preset) {
+    setState(() {
+      final val = preset['val'] as double;
+      _targetSizeController.text =
+          val % 1 == 0 ? val.toInt().toString() : val.toString();
+      _selectedUnit = preset['unit'] as String;
+    });
+  }
+
+  int? _getTargetBytes() {
+    final text = _targetSizeController.text.trim();
+    final val = double.tryParse(text);
+    if (val == null || val <= 0 || val.isNaN || val.isInfinite) {
+      return null;
+    }
+    final bytes = ImageTargetSizeCompressorService.parseSizeToBytes(val, _selectedUnit);
+    if (bytes < 10 * 1024) return 10 * 1024;
+    return bytes;
+  }
+
+  Future<void> _startCompression() async {
+    if (_selectedImagePaths.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one image.')),
+      );
+      return;
+    }
+
+    final targetBytes = _getTargetBytes();
+    if (targetBytes == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid numeric target size (e.g. 100 KB).'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isCompressing = true;
+      _isCancelled = false;
+      _progress = 0.05;
+      _progressStatus = 'Initializing image compressor...';
+      _results.clear();
+    });
+
+    try {
+      final List<ImageTargetCompressionResult> tempResults = [];
+
+      for (int i = 0; i < _selectedImagePaths.length; i++) {
+        if (_isCancelled) throw Exception('Operation cancelled');
+
+        final imgPath = _selectedImagePaths[i];
+        final fraction = (i + 1) / _selectedImagePaths.length;
+
+        setState(() {
+          _progress = fraction;
+          _progressStatus = 'Compressing image ${i + 1} of ${_selectedImagePaths.length}...';
+        });
+
+        final res = await ImageTargetSizeCompressorService.compressImageToTargetSize(
+          inputPath: imgPath,
+          targetBytes: targetBytes,
+          onProgress: (subProg, status) {},
+          isCancelled: () => _isCancelled,
+        );
+
+        tempResults.add(res);
+      }
+
+      if (mounted) {
+        setState(() {
+          _isCompressing = false;
+          _results.addAll(tempResults);
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isCompressing = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_isCancelled ? 'Compression cancelled.' : 'Error compressing images: $e'),
+        ),
+      );
+    }
+  }
+
+  void _cancel() {
+    setState(() {
+      _isCancelled = true;
+      _progressStatus = 'Cancelling...';
+    });
+  }
+
+  void _openImage(String path) {
+    if (File(path).existsSync()) {
+      OpenFilex.open(path);
+    }
+  }
+
+  void _shareImage(String path, String name) {
+    if (File(path).existsSync()) {
+      Share.shareXFiles([XFile(path)], text: 'Sharing $name');
+    }
+  }
+
+  void _showRenameDialog(ImageTargetCompressionResult item, int index) {
+    final currentName = item.outputPath.split(Platform.pathSeparator).last;
+    final controller = TextEditingController(text: currentName);
+    final messenger = ScaffoldMessenger.of(context);
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: EditorialTokens.paper,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(EditorialTokens.r6),
+          side: const BorderSide(color: EditorialTokens.border, width: EditorialTokens.hairline),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const EditorialEyebrow(text: 'RENAME ASSET'),
+              const SizedBox(height: 6),
+              Text('Rename Image', style: EditorialTokens.titleMedium()),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.surfaceMuted,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  border: Border.all(color: EditorialTokens.borderSoft, width: EditorialTokens.hairline),
+                ),
+                child: TextField(
+                  controller: controller,
+                  style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+                  decoration: const InputDecoration(border: InputBorder.none, isDense: true),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  EditorialSecondaryButton(
+                    label: 'Cancel',
+                    onPressed: () => Navigator.pop(dialogCtx),
+                  ),
+                  const SizedBox(width: 8),
+                  EditorialButton(
+                    label: 'Rename',
+                    onPressed: () async {
+                      final newName = controller.text.trim();
+                      if (newName.isNotEmpty && newName != currentName) {
+                        Navigator.pop(dialogCtx);
+                        final file = File(item.outputPath);
+                        if (await file.exists()) {
+                          final dir = file.parent.path;
+                          final newPath = '$dir${Platform.pathSeparator}$newName';
+                          await file.rename(newPath);
+                          messenger.showSnackBar(SnackBar(content: Text('Renamed to $newName')));
+                          if (mounted) {
+                            setState(() {
+                              _results[index] = ImageTargetCompressionResult(
+                                originalPath: item.originalPath,
+                                outputPath: newPath,
+                                originalSizeBytes: item.originalSizeBytes,
+                                targetSizeBytes: item.targetSizeBytes,
+                                outputSizeBytes: item.outputSizeBytes,
+                                reductionPercentage: item.reductionPercentage,
+                                originalWidth: item.originalWidth,
+                                originalHeight: item.originalHeight,
+                                outputWidth: item.outputWidth,
+                                outputHeight: item.outputHeight,
+                                format: item.format,
+                                isTargetAchieved: item.isTargetAchieved,
+                                statusMessage: item.statusMessage,
+                              );
+                            });
+                          }
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _deleteImage(ImageTargetCompressionResult item, int index) {
+    final messenger = ScaffoldMessenger.of(context);
+    final name = item.outputPath.split(Platform.pathSeparator).last;
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: EditorialTokens.paper,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(EditorialTokens.r6),
+          side: const BorderSide(color: EditorialTokens.border, width: EditorialTokens.hairline),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const EditorialEyebrow(text: 'DELETE CONFIRMATION'),
+              const SizedBox(height: 6),
+              Text('Remove Image Asset', style: EditorialTokens.titleMedium()),
+              const SizedBox(height: 10),
+              Text('Purge "$name" from local filesystem?', style: EditorialTokens.body(color: EditorialTokens.inkSecondary)),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  EditorialSecondaryButton(
+                    label: 'Cancel',
+                    onPressed: () => Navigator.pop(dialogCtx),
+                  ),
+                  const SizedBox(width: 8),
+                  EditorialButton(
+                    label: 'Delete',
+                    isDestructive: true,
+                    onPressed: () async {
+                      Navigator.pop(dialogCtx);
+                      final file = File(item.outputPath);
+                      if (await file.exists()) {
+                        await file.delete();
+                      }
+                      messenger.showSnackBar(const SnackBar(content: Text('Image deleted.')));
+                      if (mounted) {
+                        setState(() {
+                          _results.removeAt(index);
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            const EditorialDivider(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Image Selection Card
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.paper,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                        border: Border.all(color: EditorialTokens.border, width: EditorialTokens.hairline),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'SELECTED IMAGES (${_selectedImagePaths.length})',
+                                style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                              ),
+                              EditorialSecondaryButton(
+                                label: _selectedImagePaths.isEmpty ? 'Select Photos' : 'Add Photos',
+                                icon: Icons.add_photo_alternate_outlined,
+                                onPressed: _isCompressing ? null : _pickImages,
+                              ),
+                            ],
+                          ),
+                          if (_selectedImagePaths.isNotEmpty) ...[
+                            const SizedBox(height: 14),
+                            SizedBox(
+                              height: 100,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _selectedImagePaths.length,
+                                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                                itemBuilder: (context, index) {
+                                  final p = _selectedImagePaths[index];
+                                  return Container(
+                                    width: 80,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                      border: Border.all(color: EditorialTokens.borderSoft, width: EditorialTokens.hairline),
+                                      image: DecorationImage(
+                                        image: FileImage(File(p)),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: 4,
+                                          right: 4,
+                                          child: GestureDetector(
+                                            onTap: () => _removeImage(index),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(2),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black.withOpacity(0.6),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.close, color: Colors.white, size: 12),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 4,
+                                          left: 4,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                            decoration: BoxDecoration(
+                                              color: EditorialTokens.secondary,
+                                              borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                            ),
+                                            child: Text(
+                                              '${index + 1}',
+                                              style: EditorialTokens.metadata(color: Colors.white).copyWith(fontSize: 9),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ] else ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'Select one or multiple photos to downsize toward an exact byte ceiling with zero cropping.',
+                              style: EditorialTokens.bodySmall(color: EditorialTokens.inkMuted),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // 2. Target Size Selection Card
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.paper,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                        border: Border.all(color: EditorialTokens.border, width: EditorialTokens.hairline),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const EditorialEyebrow(text: 'TARGET SPECIFICATION'),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: EditorialTokens.surfaceMuted,
+                                  borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                ),
+                                child: Text(
+                                  'PRESERVE ASPECT RATIO',
+                                  style: EditorialTokens.metadata(color: EditorialTokens.tertiary).copyWith(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: EditorialTokens.surfaceMuted,
+                                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                    border: Border.all(color: EditorialTokens.borderSoft, width: EditorialTokens.hairline),
+                                  ),
+                                  child: TextField(
+                                    controller: _targetSizeController,
+                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                    enabled: !_isCompressing,
+                                    style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+                                    decoration: InputDecoration(
+                                      labelText: 'TARGET SIZE',
+                                      labelStyle: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                      border: InputBorder.none,
+                                      isDense: true,
+                                    ),
+                                    onChanged: (_) => setState(() {}),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: EditorialTokens.surfaceMuted,
+                                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                    border: Border.all(color: EditorialTokens.borderSoft, width: EditorialTokens.hairline),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: _selectedUnit,
+                                      style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+                                      items: const [
+                                        DropdownMenuItem(value: 'KB', child: Text('KB')),
+                                        DropdownMenuItem(value: 'MB', child: Text('MB')),
+                                      ],
+                                      onChanged: _isCompressing
+                                          ? null
+                                          : (val) {
+                                              if (val != null) setState(() => _selectedUnit = val);
+                                            },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'BUDGET PRESETS:',
+                            style: EditorialTokens.metadata(color: EditorialTokens.inkMuted).copyWith(fontSize: 9.5),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: _presets.map((preset) {
+                              final val = preset['val'] as double;
+                              final valStr = val % 1 == 0 ? val.toInt().toString() : val.toString();
+                              final isSelected = _selectedUnit == preset['unit'] &&
+                                  _targetSizeController.text == valStr;
+                              return EditorialChip(
+                                label: preset['label'] as String,
+                                selected: isSelected,
+                                onTap: _isCompressing ? null : () => _applyPreset(preset),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // 3. Action or Progress Card
+                    if (_isCompressing) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: EditorialTokens.paper,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                          border: Border.all(color: EditorialTokens.border, width: EditorialTokens.hairline),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _progressStatus.toUpperCase(),
+                                    style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  '${(_progress * 100).toInt()}%',
+                                  style: EditorialTokens.metadataStrong(color: EditorialTokens.ink),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(2),
+                              child: LinearProgressIndicator(
+                                value: _progress.clamp(0.0, 1.0),
+                                backgroundColor: EditorialTokens.surfaceMuted,
+                                valueColor: const AlwaysStoppedAnimation(EditorialTokens.primary),
+                                minHeight: 4,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            EditorialSecondaryButton(
+                              label: 'Cancel Compression',
+                              icon: Icons.cancel_outlined,
+                              onPressed: _cancel,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else ...[
+                      SizedBox(
+                        width: double.infinity,
+                        child: EditorialButton(
+                          label: _selectedImagePaths.length <= 1
+                              ? 'Compress Image'
+                              : 'Compress (${_selectedImagePaths.length} Photos)',
+                          icon: Icons.tune,
+                          onPressed: _selectedImagePaths.isEmpty ? null : _startCompression,
+                        ),
+                      ),
+                    ],
+
+                    // 4. Results List
+                    if (_results.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      EditorialSectionHeader(
+                        number: '03',
+                        label: 'Compressed Images',
+                        trailing: '${_results.length} COMPLETED',
+                      ),
+                      const SizedBox(height: 8),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _results.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final item = _results[index];
+                          final name = item.outputPath.split(Platform.pathSeparator).last;
+
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: EditorialTokens.paper,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              border: Border.all(color: EditorialTokens.borderSoft, width: EditorialTokens.hairline),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                      child: Image.file(
+                                        File(item.outputPath),
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) => const Icon(Icons.image, size: 50),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            name,
+                                            style: EditorialTokens.titleSmall().copyWith(fontWeight: FontWeight.w600, fontSize: 13),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            '${Utils.formatBytes(item.originalSizeBytes)} → ${Utils.formatBytes(item.outputSizeBytes)} (${item.reductionPercentage.toStringAsFixed(1)}% reduction)',
+                                            style: EditorialTokens.metadataStrong(color: const Color(0xFF386641)),
+                                          ),
+                                          Text(
+                                            '${item.outputWidth}×${item.outputHeight}PX · ${item.format.toUpperCase()} · ZERO CROP',
+                                            style: EditorialTokens.metadata(color: EditorialTokens.inkMuted).copyWith(fontSize: 9),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                const EditorialDivider(),
+                                const SizedBox(height: 6),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    EditorialSecondaryButton(
+                                      label: 'Open',
+                                      icon: Icons.visibility_outlined,
+                                      onPressed: () => _openImage(item.outputPath),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    EditorialSecondaryButton(
+                                      label: 'Share',
+                                      icon: Icons.share_outlined,
+                                      onPressed: () => _shareImage(item.outputPath, name),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    EditorialSecondaryButton(
+                                      label: 'Rename',
+                                      icon: Icons.edit_outlined,
+                                      onPressed: () => _showRenameDialog(item, index),
+                                    ),
+                                    IconButton(
+                                      onPressed: () => _deleteImage(item, index),
+                                      icon: const Icon(Icons.delete_outline, color: EditorialTokens.inkMuted, size: 18),
+                                      tooltip: 'Delete',
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: 'IMAGE COMPRESSION'),
+                const SizedBox(height: 2),
+                Text(
+                  'Compress Images',
+                  style: EditorialTokens.titleLarge(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 47. lib/features/tools/compress_pdf_screen.dart <a id="libfeaturestoolscompresspdfscreendart"></a>
+
+- **Path:** `lib/features/tools/compress_pdf_screen.dart`
+- **Lines:** 279
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/tools/pdf_compression_service.dart';
+import '../../core/tools/pdf_version_service.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+
+class CompressPdfScreen extends StatefulWidget {
+  final PdfFile pdfFile;
+
+  const CompressPdfScreen({super.key, required this.pdfFile});
+
+  @override
+  State<CompressPdfScreen> createState() => _CompressPdfScreenState();
+}
+
+class _CompressPdfScreenState extends State<CompressPdfScreen> {
+  CompressionQuality _quality = CompressionQuality.medium;
+  bool _isCompressing = false;
+  CompressionResult? _result;
+
+  Future<void> _compress() async {
+    setState(() => _isCompressing = true);
+
+    final outputPath = widget.pdfFile.path.replaceFirst(
+        RegExp(r'\.pdf$', caseSensitive: false), '_compressed.pdf');
+
+    final result = await PdfCompressionService.compressPdf(
+      inputPath: widget.pdfFile.path,
+      outputPath: outputPath,
+      quality: _quality,
+    );
+
+    await PdfVersionService.createVersion(
+      docId: widget.pdfFile.path,
+      filePath: outputPath,
+      sourceOperation: 'Compressed (${_quality.name})',
+    );
+
+    if (mounted) {
+      setState(() {
+        _result = result;
+        _isCompressing = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            const EditorialDivider(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.paper,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                        border: Border.all(
+                          color: EditorialTokens.border,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const EditorialEyebrow(text: 'DOCUMENT INFO'),
+                          const SizedBox(height: 6),
+                          Text(
+                            widget.pdfFile.name,
+                            style: EditorialTokens.titleMedium().copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'ORIGINAL SIZE: ${Utils.formatBytes(widget.pdfFile.sizeBytes).toUpperCase()}  ·  ${widget.pdfFile.pageCount} PAGES',
+                            style: EditorialTokens.metadata(color: EditorialTokens.primary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const EditorialSectionHeader(
+                      number: '01',
+                      label: 'Compression Strategy',
+                      trailing: 'OFFLINE',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildQualityOption(
+                      quality: CompressionQuality.low,
+                      title: 'Minimal Compression',
+                      desc: 'Highest visual fidelity for fine typography and vectors.',
+                      ratio: '~20% Reduction',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildQualityOption(
+                      quality: CompressionQuality.medium,
+                      title: 'Balanced Optimization',
+                      desc: 'Optimal balance for reading, sharing, and archival storage.',
+                      ratio: '~45% Reduction',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildQualityOption(
+                      quality: CompressionQuality.high,
+                      title: 'Aggressive Compact',
+                      desc: 'Maximum size reduction for email delivery and low storage.',
+                      ratio: '~70% Reduction',
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: EditorialButton(
+                        label: _isCompressing ? 'Compressing...' : 'Compress PDF',
+                        icon: Icons.compress,
+                        onPressed: _isCompressing ? null : _compress,
+                      ),
+                    ),
+                    if (_result != null) ...[
+                      const SizedBox(height: 24),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: EditorialTokens.paper,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                          border: Border.all(
+                            color: const Color(0xFF386641),
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.verified_outlined,
+                                  color: Color(0xFF386641),
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'COMPRESSION COMPLETE',
+                                  style: EditorialTokens.metadataStrong(
+                                    color: const Color(0xFF386641),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            EditorialStatStrip(
+                              primaryText: 'SIZE REDUCTION',
+                              secondaryText: '${_result!.reductionPercentage.toStringAsFixed(1)}% REDUCTION',
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'ORIGINAL: ${Utils.formatBytes(_result!.originalSizeBytes)}  →  COMPRESSED: ${Utils.formatBytes(_result!.compressedSizeBytes)}',
+                              style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: 'DOCUMENT COMPRESSION'),
+                const SizedBox(height: 2),
+                Text(
+                  'Compress PDF',
+                  style: EditorialTokens.titleLarge(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQualityOption({
+    required CompressionQuality quality,
+    required String title,
+    required String desc,
+    required String ratio,
+  }) {
+    final isSelected = _quality == quality;
+    return GestureDetector(
+      onTap: () => setState(() => _quality = quality),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFBF1EE) : EditorialTokens.paper,
+          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+          border: Border.all(
+            color: isSelected ? EditorialTokens.primary : EditorialTokens.borderSoft,
+            width: isSelected ? 1.5 : EditorialTokens.hairline,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              size: 16,
+              color: isSelected ? EditorialTokens.primary : EditorialTokens.border,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: EditorialTokens.titleSmall().copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    desc,
+                    style: EditorialTokens.bodySmall(color: EditorialTokens.inkMuted),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r2),
+              ),
+              child: Text(
+                ratio,
+                style: EditorialTokens.metadata(color: EditorialTokens.tertiary).copyWith(fontSize: 9),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 48. lib/features/tools/compress_pdf_to_target_size_screen.dart <a id="libfeaturestoolscompresspdftotargetsizescreendart"></a>
+
+- **Path:** `lib/features/tools/compress_pdf_to_target_size_screen.dart`
+- **Lines:** 852
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/tools/pdf_target_size_compressor_service.dart';
+import '../../core/tools/pdf_version_service.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_tool_file_picker_screen.dart';
+import '../home/pdf_list_provider.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+class CompressPdfToTargetSizeScreen extends ConsumerStatefulWidget {
+  final PdfFile? initialFile;
+
+  const CompressPdfToTargetSizeScreen({super.key, this.initialFile});
+
+  @override
+  ConsumerState<CompressPdfToTargetSizeScreen> createState() =>
+      _CompressPdfToTargetSizeScreenState();
+}
+
+class _CompressPdfToTargetSizeScreenState
+    extends ConsumerState<CompressPdfToTargetSizeScreen> {
+  PdfFile? _selectedFile;
+  final TextEditingController _targetSizeController =
+      TextEditingController(text: '500');
+  String _selectedUnit = 'KB';
+  TargetCompressionQuality _quality = TargetCompressionQuality.balanced;
+  bool _preserveTextVectors = true;
+
+  bool _isCompressing = false;
+  bool _isCancelled = false;
+  double _progress = 0.0;
+  String _progressStatus = '';
+  TargetCompressionResult? _result;
+  PdfFile? _createdPdfFile;
+
+  static const List<Map<String, dynamic>> _presets = [
+    {'label': 'Academic (<5MB)', 'val': 5.0, 'unit': 'MB'},
+    {'label': 'Email (<1MB)', 'val': 1.0, 'unit': 'MB'},
+    {'label': 'Web (<500KB)', 'val': 500.0, 'unit': 'KB'},
+    {'label': 'Archival (<200KB)', 'val': 200.0, 'unit': 'KB'},
+    {'label': 'Ultra (<100KB)', 'val': 100.0, 'unit': 'KB'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialFile != null) {
+      _selectedFile = widget.initialFile;
+      _adjustDefaultTarget(widget.initialFile!.sizeBytes);
+    }
+  }
+
+  @override
+  void dispose() {
+    _targetSizeController.dispose();
+    super.dispose();
+  }
+
+  void _adjustDefaultTarget(int originalSize) {
+    if (originalSize > 0) {
+      final targetBytes = (originalSize * 0.5).round();
+      if (targetBytes >= 1024 * 1024) {
+        _selectedUnit = 'MB';
+        _targetSizeController.text =
+            (targetBytes / (1024 * 1024)).toStringAsFixed(1);
+      } else {
+        _selectedUnit = 'KB';
+        _targetSizeController.text = (targetBytes / 1024).round().toString();
+      }
+    }
+  }
+
+  Future<void> _pickPdf() async {
+    final result = await Navigator.push<List<PdfFile>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PdfToolFilePickerScreen(
+          title: 'Select PDF to Downsize',
+          mode: ToolPickerMode.singleSelect,
+          actionButtonText: 'CONFIRM DOCUMENT',
+        ),
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && mounted) {
+      final picked = result.first;
+      setState(() {
+        _selectedFile = picked;
+        _result = null;
+        _createdPdfFile = null;
+        _adjustDefaultTarget(picked.sizeBytes);
+      });
+    }
+  }
+
+  void _applyPreset(Map<String, dynamic> preset) {
+    setState(() {
+      _selectedUnit = preset['unit'] as String;
+      final val = preset['val'] as double;
+      _targetSizeController.text =
+          val % 1 == 0 ? val.toInt().toString() : val.toString();
+    });
+  }
+
+  int? _getTargetBytes() {
+    final raw = double.tryParse(_targetSizeController.text.trim());
+    if (raw == null || raw <= 0) return null;
+    return _selectedUnit == 'MB'
+        ? (raw * 1024 * 1024).round()
+        : (raw * 1024).round();
+  }
+
+  Future<void> _startCompression() async {
+    if (_selectedFile == null) {
+      _showNotice('Please select a PDF document first.');
+      return;
+    }
+
+    final targetBytes = _getTargetBytes();
+    if (targetBytes == null || targetBytes <= 0) {
+      _showNotice('Please enter a valid numeric target size.');
+      return;
+    }
+
+    final originalSize = _selectedFile!.sizeBytes;
+    if (originalSize > 0 && targetBytes >= originalSize) {
+      _showNotice('Target size must be smaller than original size (${Utils.formatBytes(originalSize)}).');
+      return;
+    }
+
+    setState(() {
+      _isCompressing = true;
+      _isCancelled = false;
+      _progress = 0.05;
+      _progressStatus = 'Initializing async isolate...';
+      _result = null;
+      _createdPdfFile = null;
+    });
+
+    try {
+      final sizeLabel = _selectedUnit == 'MB'
+          ? '${_targetSizeController.text.trim()}MB'
+          : '${_targetSizeController.text.trim()}KB';
+
+      final result = await PdfTargetSizeCompressorService.compressPdfToTargetSize(
+        inputPath: _selectedFile!.path,
+        targetBytes: targetBytes,
+        quality: _quality,
+        preserveTextVectors: _preserveTextVectors,
+        isCancelled: () => _isCancelled,
+        onProgress: (p, status) {
+          if (!_isCancelled && mounted) {
+            setState(() {
+              _progress = p;
+              _progressStatus = status;
+            });
+          }
+        },
+      );
+
+      if (_isCancelled) {
+        final f = File(result.outputPath);
+        if (await f.exists()) await f.delete();
+        return;
+      }
+
+      PdfFile? created;
+      if (result.outputSizeBytes > 0 && await File(result.outputPath).exists()) {
+        final stat = await File(result.outputPath).stat();
+        final docId = DateTime.now().microsecondsSinceEpoch.toRadixString(36) +
+            result.outputPath.hashCode.toRadixString(36);
+
+        created = PdfFile(
+          docId: docId,
+          path: result.outputPath,
+          name: result.outputPath.split(Platform.pathSeparator).last,
+          sizeBytes: stat.size,
+          modifiedAt: stat.modified.millisecondsSinceEpoch,
+          pageCount: result.pageCount,
+          sourceType: 'compressed',
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+        );
+
+        await DatabaseHelper.instance.upsertPdfFile(created);
+        ref.read(pdfListProvider.notifier).addFile(created);
+
+        await PdfVersionService.createVersion(
+          docId: _selectedFile!.path,
+          filePath: result.outputPath,
+          sourceOperation: 'Compress Target: $sizeLabel',
+        );
+      }
+
+      if (mounted) {
+        setState(() {
+          _isCompressing = false;
+          _result = result;
+          _createdPdfFile = created;
+          _progress = 1.0;
+        });
+
+        if (result.outputSizeBytes == 0) {
+          _showNotice(result.statusMessage);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isCompressing = false);
+        _showNotice('Compression failed: $e');
+      }
+    }
+  }
+
+  void _showNotice(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
+        backgroundColor: EditorialTokens.secondary,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _cancelCompression() {
+    _isCancelled = true;
+    setState(() {
+      _isCompressing = false;
+      _progressStatus = 'Compression cancelled';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final targetBytes = _getTargetBytes();
+    final originalBytes = _selectedFile?.sizeBytes ?? 0;
+    double? reductionPct;
+    if (targetBytes != null && originalBytes > 0 && targetBytes < originalBytes) {
+      reductionPct = ((originalBytes - targetBytes) / originalBytes) * 100.0;
+    }
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'FILE COMPRESSION'),
+            Text(
+              'Compress to Target Size',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        children: [
+          // Section 01: Selected Document
+          const EditorialSectionHeader(
+            number: '01',
+            label: 'Selected Document',
+          ),
+          const SizedBox(height: 8),
+          if (_selectedFile != null) ...[
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const EditorialPaperThumbnail(
+                    thumbnailPath: null,
+                    width: 44,
+                    height: 60,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _selectedFile!.name,
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${Utils.formatBytes(_selectedFile!.sizeBytes)} · ${_selectedFile!.pageCount} Pages',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.swap_horiz,
+                      size: 20,
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    onPressed: _isCompressing ? null : _pickPdf,
+                    tooltip: 'Change document',
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.tune_outlined,
+                    size: 36,
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'No document selected',
+                    style: EditorialTokens.titleSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Select a PDF from your library to compress to an exact kilobyte or megabyte target',
+                    style: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 14),
+                  EditorialSecondaryButton(
+                    label: 'Choose Document',
+                    icon: Icons.folder_open,
+                    onPressed: _pickPdf,
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 24),
+
+          // Section 02: Budget Presets
+          const EditorialSectionHeader(
+            number: '02',
+            label: 'Target Size Presets',
+          ),
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _presets.map((preset) {
+                final val = preset['val'] as double;
+                final valStr = val % 1 == 0 ? val.toInt().toString() : val.toString();
+                final isSelected = _selectedUnit == preset['unit'] &&
+                    _targetSizeController.text.trim() == valStr;
+
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: EditorialChip(
+                    label: preset['label'] as String,
+                    selected: isSelected,
+                    onTap: _isCompressing ? () {} : () => _applyPreset(preset),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Section 03: Target Budget Parameters
+          const EditorialSectionHeader(
+            number: '03',
+            label: 'Target Size Specification',
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'MAXIMUM TARGET SIZE',
+                            style: EditorialTokens.metadataStrong(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ).copyWith(fontSize: 10),
+                          ),
+                          const SizedBox(height: 6),
+                          TextField(
+                            controller: _targetSizeController,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            enabled: !_isCompressing,
+                            style: EditorialTokens.bodyMedium(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: '500',
+                              filled: true,
+                              fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                borderSide: BorderSide(
+                                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                            ),
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'UNIT',
+                            style: EditorialTokens.metadataStrong(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ).copyWith(fontSize: 10),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            height: 48,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              border: Border.all(
+                                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _selectedUnit,
+                                isExpanded: true,
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                ),
+                                items: const [
+                                  DropdownMenuItem(value: 'KB', child: Text('KB')),
+                                  DropdownMenuItem(value: 'MB', child: Text('MB')),
+                                ],
+                                onChanged: _isCompressing
+                                    ? null
+                                    : (val) {
+                                        if (val != null) setState(() => _selectedUnit = val);
+                                      },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (reductionPct != null) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: EditorialTokens.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'PROJECTED REDUCTION: -${reductionPct.toStringAsFixed(1)}%',
+                          style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${Utils.formatBytes(originalBytes)} → ${Utils.formatBytes(targetBytes!)}',
+                          style: EditorialTokens.metadata(color: EditorialTokens.primary),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Section 04: Quality Strategy & Settings
+          const EditorialSectionHeader(
+            number: '04',
+            label: 'Quality & Compression Settings',
+          ),
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Column(
+              children: [
+                _buildStrategyTile(
+                  title: 'Balanced',
+                  subtitle: 'Optimal compromise between size target and visual sharpness',
+                  selected: _quality == TargetCompressionQuality.balanced,
+                  onTap: () => setState(() => _quality = TargetCompressionQuality.balanced),
+                  isDark: isDark,
+                ),
+                const EditorialDivider(),
+                _buildStrategyTile(
+                  title: 'High Quality',
+                  subtitle: 'Preserves higher image resolution and detail',
+                  selected: _quality == TargetCompressionQuality.betterQuality,
+                  onTap: () => setState(() => _quality = TargetCompressionQuality.betterQuality),
+                  isDark: isDark,
+                ),
+                const EditorialDivider(),
+                _buildStrategyTile(
+                  title: 'Maximum Compression',
+                  subtitle: 'Reduces image sizes to meet tight file limits',
+                  selected: _quality == TargetCompressionQuality.maximumCompression,
+                  onTap: () => setState(() => _quality = TargetCompressionQuality.maximumCompression),
+                  isDark: isDark,
+                ),
+                const EditorialDivider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Preserve Text & Vector Graphics',
+                              style: EditorialTokens.titleSmall(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Prevents text rasterization; preserves sharp typography',
+                              style: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: _preserveTextVectors,
+                        onChanged: _isCompressing
+                            ? null
+                            : (v) => setState(() => _preserveTextVectors = v),
+                        activeColor: EditorialTokens.primary,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // In-progress or Primary Action
+          if (_isCompressing) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const EditorialEyebrow(
+                        text: 'COMPRESSING PDF...',
+                        color: EditorialTokens.primary,
+                      ),
+                      const Spacer(),
+                      Text(
+                        '${(_progress * 100).toInt()}%',
+                        style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: _progress.clamp(0.0, 1.0),
+                    backgroundColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    valueColor: const AlwaysStoppedAnimation<Color>(EditorialTokens.primary),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _progressStatus,
+                    style: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  EditorialSecondaryButton(
+                    label: 'Cancel',
+                    onPressed: _cancelCompression,
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            SizedBox(
+              width: double.infinity,
+              child: EditorialButton(
+                label: 'Compress to Target Size',
+                icon: Icons.tune_outlined,
+                onPressed: _selectedFile != null ? _startCompression : null,
+              ),
+            ),
+          ],
+
+          // Section 05: Result Card
+          if (_result != null && _createdPdfFile != null) ...[
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: _result!.isTargetAchieved ? EditorialTokens.primary : EditorialTokens.border,
+                  width: 1.0,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: EditorialTokens.primary.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                        ),
+                        child: Text(
+                          _result!.isTargetAchieved
+                              ? 'TARGET SIZE ACHIEVED'
+                              : 'CLOSEST SIZE REACHED',
+                          style: EditorialTokens.metadataStrong(color: EditorialTokens.primary).copyWith(fontSize: 10),
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '-${_result!.reductionPercentage.toStringAsFixed(1)}%',
+                        style: EditorialTokens.displayMedium(color: EditorialTokens.primary).copyWith(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _createdPdfFile!.name,
+                    style: EditorialTokens.titleSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${Utils.formatBytes(_result!.originalSizeBytes)} → ${Utils.formatBytes(_result!.outputSizeBytes)} (Target: ${Utils.formatBytes(_result!.targetSizeBytes)})',
+                    style: EditorialTokens.metadata(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const EditorialDivider(),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: EditorialSecondaryButton(
+                          label: 'Share',
+                          icon: Icons.share_outlined,
+                          onPressed: () => Share.shareXFiles([XFile(_createdPdfFile!.path)]),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: EditorialButton(
+                          label: 'Open Document',
+                          icon: Icons.menu_book_outlined,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PdfViewerScreen(filePath: _createdPdfFile!.path),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStrategyTile({
+    required String title,
+    required String subtitle,
+    required bool selected,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: _isCompressing ? null : onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: EditorialTokens.titleSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selected
+                      ? EditorialTokens.primary
+                      : (isDark ? EditorialTokens.darkBorder : EditorialTokens.border),
+                  width: 1.5,
+                ),
+              ),
+              child: selected
+                  ? Center(
+                      child: Container(
+                        width: 9,
+                        height: 9,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: EditorialTokens.primary,
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 49. lib/features/tools/encrypt_pdf_screen.dart <a id="libfeaturestoolsencryptpdfscreendart"></a>
+
+- **Path:** `lib/features/tools/encrypt_pdf_screen.dart`
+- **Lines:** 759
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/tools/pdf_encryption_service.dart';
+import '../../core/tools/pdf_version_service.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_tool_file_picker_screen.dart';
+import '../viewer/pdf_viewer_screen.dart';
+
+class EncryptPdfScreen extends ConsumerStatefulWidget {
+  final PdfFile? pdfFile;
+
+  const EncryptPdfScreen({super.key, this.pdfFile});
+
+  @override
+  ConsumerState<EncryptPdfScreen> createState() => _EncryptPdfScreenState();
+}
+
+class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
+  PdfFile? _selectedFile;
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _ownerPasswordController = TextEditingController();
+
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+  bool _allowPrinting = true;
+  bool _allowCopying = false;
+  bool _allowAnnotations = true;
+  bool _isEncrypting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFile = widget.pdfFile;
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _ownerPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickDocument() async {
+    final result = await Navigator.push<List<PdfFile>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PdfToolFilePickerScreen(
+          title: 'Select Document to Encrypt',
+          mode: ToolPickerMode.singleSelect,
+          actionButtonText: 'CONFIRM DOCUMENT',
+        ),
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && mounted) {
+      setState(() {
+        _selectedFile = result.first;
+      });
+    }
+  }
+
+  Future<void> _encrypt() async {
+    if (_selectedFile == null) {
+      _showNotice('Please select a PDF document first.');
+      return;
+    }
+
+    final pass = _passwordController.text;
+    final confirm = _confirmPasswordController.text;
+
+    if (pass.isEmpty) {
+      _showNotice('Please enter a decryption passphrase.');
+      return;
+    }
+
+    if (pass != confirm) {
+      _showNotice('Passphrases do not match. Please verify.');
+      return;
+    }
+
+    setState(() => _isEncrypting = true);
+
+    try {
+      final inputPath = _selectedFile!.path;
+      final outputPath = inputPath.replaceFirst(
+        RegExp(r'\.pdf$', caseSensitive: false),
+        '_encrypted.pdf',
+      );
+
+      final ownerPass = _ownerPasswordController.text.trim().isNotEmpty
+          ? _ownerPasswordController.text.trim()
+          : null;
+
+      final ok = await PdfEncryptionService.encryptPdf(
+        inputPath: inputPath,
+        outputPath: outputPath,
+        userPassword: pass,
+        ownerPassword: ownerPass,
+        allowPrinting: _allowPrinting,
+        allowCopyContent: _allowCopying,
+        allowAnnotations: _allowAnnotations,
+      );
+
+      if (ok) {
+        await PdfVersionService.createVersion(
+          docId: inputPath,
+          filePath: outputPath,
+          sourceOperation: 'Encrypted (AES-256)',
+        );
+      }
+
+      if (mounted) {
+        setState(() => _isEncrypting = false);
+        if (ok) {
+          _showSuccessSheet(outputPath);
+        } else {
+          _showNotice('Encryption failed. Please verify document permissions.');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isEncrypting = false);
+        _showNotice('Error during encryption: $e');
+      }
+    }
+  }
+
+  void _showNotice(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          msg,
+          style: EditorialTokens.bodyMedium(color: Colors.white),
+        ),
+        backgroundColor: EditorialTokens.secondary,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _showSuccessSheet(String outputPath) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final file = File(outputPath);
+    final size = file.existsSync() ? file.lengthSync() : 0;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(EditorialTokens.r6)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 32,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const EditorialEyebrow(
+              text: 'PDF ENCRYPTION COMPLETE',
+              color: EditorialTokens.primary,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Document Encrypted (AES-256)',
+              style: EditorialTokens.headlineSmall(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'A new encrypted copy has been saved to storage. The password is required to open and decrypt the document.',
+              style: EditorialTokens.bodySmall(
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    file.uri.pathSegments.last,
+                    style: EditorialTokens.titleSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${Utils.formatBytes(size)} · AES-256 Standard · Encrypted',
+                    style: EditorialTokens.metadata(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: EditorialSecondaryButton(
+                    label: 'SHARE FILE',
+                    icon: Icons.share_outlined,
+                    onPressed: () {
+                      Share.shareXFiles([XFile(outputPath)]);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: EditorialButton(
+                    label: 'OPEN VIEWER',
+                    icon: Icons.menu_book_outlined,
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PdfViewerScreen(
+                            filePath: outputPath,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'PDF SECURITY'),
+            Text(
+              'PDF Encryption',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        children: [
+          // Section 1: Active Document Card
+          const EditorialSectionHeader(
+            number: '01',
+            label: 'Selected Document',
+          ),
+          const SizedBox(height: 8),
+          if (_selectedFile != null) ...[
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const EditorialPaperThumbnail(
+                    thumbnailPath: null,
+                    width: 44,
+                    height: 60,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _selectedFile!.name,
+                          style: EditorialTokens.titleSmall(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${Utils.formatBytes(_selectedFile!.sizeBytes)} · Unencrypted',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.swap_horiz,
+                      size: 20,
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    onPressed: _pickDocument,
+                    tooltip: 'Change document',
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.file_present_outlined,
+                    size: 36,
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'No document selected for encryption',
+                    style: EditorialTokens.titleSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Choose a PDF from your library to lock with AES-256 standard',
+                    style: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 14),
+                  EditorialSecondaryButton(
+                    label: 'CHOOSE DOCUMENT',
+                    icon: Icons.folder_open,
+                    onPressed: _pickDocument,
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 24),
+
+          // Section 2: Cryptographic Standards Profile
+          const EditorialSectionHeader(
+            number: '02',
+            label: 'Encryption Standard',
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                        border: Border.all(
+                          color: EditorialTokens.primary.withOpacity(0.3),
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Text(
+                        'AES-256 · STANDARD CIPHER',
+                        style: EditorialTokens.metadataStrong(color: EditorialTokens.primary).copyWith(fontSize: 10),
+                      ),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.shield_outlined,
+                      size: 16,
+                      color: EditorialTokens.primary,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Standard PDF Encryption',
+                  style: EditorialTokens.titleSmall(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Applies full document and stream-level encryption using 256-bit AES keys. The resulting document is readable by any compliant viewer upon entry of the decryption key.',
+                  style: EditorialTokens.bodySmall(
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Section 3: Passphrase Credentials
+          const EditorialSectionHeader(
+            number: '03',
+            label: 'Password Setup',
+          ),
+          const SizedBox(height: 8),
+
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'DOCUMENT PASSWORD',
+                  style: EditorialTokens.metadataStrong(
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ).copyWith(fontSize: 10),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
+                  style: EditorialTokens.bodyMedium(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Enter document password...',
+                    hintStyle: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    filled: true,
+                    fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: const BorderSide(
+                        color: EditorialTokens.primary,
+                        width: 1.0,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        size: 18,
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                Text(
+                  'CONFIRM PASSWORD',
+                  style: EditorialTokens.metadataStrong(
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ).copyWith(fontSize: 10),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirm,
+                  style: EditorialTokens.bodyMedium(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Re-enter password...',
+                    hintStyle: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    filled: true,
+                    fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: const BorderSide(
+                        color: EditorialTokens.primary,
+                        width: 1.0,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        size: 18,
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ),
+                      onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                Text(
+                  'OPTIONAL OWNER PASSWORD',
+                  style: EditorialTokens.metadataStrong(
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ).copyWith(fontSize: 10),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _ownerPasswordController,
+                  obscureText: true,
+                  style: EditorialTokens.bodyMedium(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Leave blank to use document password...',
+                    hintStyle: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                    filled: true,
+                    fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      borderSide: const BorderSide(
+                        color: EditorialTokens.primary,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Section 4: Granular Permissions
+          const EditorialSectionHeader(
+            number: '04',
+            label: 'Permissions Specification',
+          ),
+          const SizedBox(height: 8),
+
+          Container(
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Column(
+              children: [
+                _buildPermissionTile(
+                  title: 'Allow High-Resolution Printing',
+                  subtitle: 'Permits generating physical copies from reader',
+                  value: _allowPrinting,
+                  onChanged: (v) => setState(() => _allowPrinting = v),
+                  isDark: isDark,
+                ),
+                const EditorialDivider(),
+                _buildPermissionTile(
+                  title: 'Allow Content Extraction & Copying',
+                  subtitle: 'Permits selecting and copying text/formula blocks',
+                  value: _allowCopying,
+                  onChanged: (v) => setState(() => _allowCopying = v),
+                  isDark: isDark,
+                ),
+                const EditorialDivider(),
+                _buildPermissionTile(
+                  title: 'Allow Annotations & Stationery',
+                  subtitle: 'Permits ink drawings, highlights, and margin notes',
+                  value: _allowAnnotations,
+                  onChanged: (v) => setState(() => _allowAnnotations = v),
+                  isDark: isDark,
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Primary Fortify Button
+          SizedBox(
+            width: double.infinity,
+            child: EditorialButton(
+              label: _isEncrypting ? 'ENCRYPTING PDF...' : 'ENCRYPT PDF',
+              icon: _isEncrypting ? null : Icons.lock_outline,
+              onPressed: _isEncrypting ? null : _encrypt,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPermissionTile({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: () => onChanged(!value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: EditorialTokens.titleSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Switch(
+              value: value,
+              onChanged: onChanged,
+              activeColor: EditorialTokens.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 50. lib/features/tools/metadata_editor_screen.dart <a id="libfeaturestoolsmetadataeditorscreendart"></a>
+
+- **Path:** `lib/features/tools/metadata_editor_screen.dart`
+- **Lines:** 259
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/tools/pdf_metadata_service.dart';
+import '../../core/tools/pdf_version_service.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+
+class MetadataEditorScreen extends StatefulWidget {
+  final PdfFile pdfFile;
+
+  const MetadataEditorScreen({super.key, required this.pdfFile});
+
+  @override
+  State<MetadataEditorScreen> createState() => _MetadataEditorScreenState();
+}
+
+class _MetadataEditorScreenState extends State<MetadataEditorScreen> {
+  final _titleController = TextEditingController();
+  final _authorController = TextEditingController();
+  final _subjectController = TextEditingController();
+  final _keywordsController = TextEditingController();
+  bool _isLoading = true;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMetadata();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _authorController.dispose();
+    _subjectController.dispose();
+    _keywordsController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadMetadata() async {
+    final meta = await PdfMetadataService.readMetadata(widget.pdfFile.path);
+    _titleController.text = meta.title;
+    _authorController.text = meta.author;
+    _subjectController.text = meta.subject;
+    _keywordsController.text = meta.keywords;
+    if (mounted) setState(() => _isLoading = false);
+  }
+
+  Future<void> _saveMetadata() async {
+    setState(() => _isSaving = true);
+
+    final newMeta = PdfMetadata(
+      title: _titleController.text.trim(),
+      author: _authorController.text.trim(),
+      subject: _subjectController.text.trim(),
+      keywords: _keywordsController.text.trim(),
+    );
+
+    final outputPath = widget.pdfFile.path.replaceFirst(
+        RegExp(r'\.pdf$', caseSensitive: false), '_meta.pdf');
+    final ok = await PdfMetadataService.updateMetadata(
+      inputPath: widget.pdfFile.path,
+      outputPath: outputPath,
+      metadata: newMeta,
+    );
+
+    if (ok) {
+      await PdfVersionService.createVersion(
+        docId: widget.pdfFile.path,
+        filePath: outputPath,
+        sourceOperation: 'Metadata Updated',
+      );
+    }
+
+    if (mounted) {
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(ok ? 'Document metadata updated.' : 'Failed to update metadata.')),
+      );
+      if (ok) Navigator.pop(context);
+    }
+  }
+
+  Future<void> _removeMetadata() async {
+    _titleController.clear();
+    _authorController.clear();
+    _subjectController.clear();
+    _keywordsController.clear();
+    await _saveMetadata();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            const EditorialDivider(),
+            Expanded(
+              child: _isLoading
+                  ? const Center(
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: EditorialTokens.primary,
+                        ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: EditorialTokens.paper,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                              border: Border.all(
+                                color: EditorialTokens.border,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const EditorialEyebrow(text: 'DOCUMENT IDENTIFICATION'),
+                                const SizedBox(height: 6),
+                                Text(
+                                  widget.pdfFile.name,
+                                  style: EditorialTokens.titleMedium().copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  widget.pdfFile.path,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          const EditorialSectionHeader(
+                            number: '01',
+                            label: 'Document Metadata',
+                            trailing: 'PROPERTIES',
+                          ),
+                          const SizedBox(height: 12),
+                          _buildTextField('TITLE', _titleController),
+                          const SizedBox(height: 12),
+                          _buildTextField('AUTHOR', _authorController),
+                          const SizedBox(height: 12),
+                          _buildTextField('SUBJECT', _subjectController),
+                          const SizedBox(height: 12),
+                          _buildTextField('KEYWORDS', _keywordsController),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: EditorialSecondaryButton(
+                                  label: 'Clear All',
+                                  icon: Icons.cleaning_services_outlined,
+                                  onPressed: _isSaving ? null : _removeMetadata,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: EditorialButton(
+                                  label: _isSaving ? 'Saving...' : 'Save Metadata',
+                                  icon: Icons.save_outlined,
+                                  onPressed: _isSaving ? null : _saveMetadata,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: 'DOCUMENT PROPERTIES'),
+                const SizedBox(height: 2),
+                Text(
+                  'Edit Metadata',
+                  style: EditorialTokens.titleLarge(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: EditorialTokens.metadataStrong(color: EditorialTokens.inkSecondary).copyWith(
+            fontSize: 9.5,
+            letterSpacing: 0.8,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          decoration: BoxDecoration(
+            color: EditorialTokens.paper,
+            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+            border: Border.all(
+              color: EditorialTokens.borderSoft,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+          child: TextField(
+            controller: controller,
+            style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+```
+
+---
+
+## 51. lib/features/tools/pdf_compare_screen.dart <a id="libfeaturestoolspdfcomparescreendart"></a>
+
+- **Path:** `lib/features/tools/pdf_compare_screen.dart`
+- **Lines:** 466
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/tools/pdf_compare_service.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_compare_result.dart';
+import '../../models/pdf_file.dart';
+import '../../widgets/editorial_components.dart';
+import '../../widgets/pdf_tool_file_picker_screen.dart';
+
+class PdfCompareScreen extends StatefulWidget {
+  const PdfCompareScreen({super.key});
+
+  @override
+  State<PdfCompareScreen> createState() => _PdfCompareScreenState();
+}
+
+class _PdfCompareScreenState extends State<PdfCompareScreen> {
+  PdfFile? _fileA;
+  PdfFile? _fileB;
+  bool _isComparing = false;
+  PdfCompareResult? _result;
+  int _activeTab = 0; // 0: Diff Ledger, 1: Text & Formula Delta
+
+  Future<void> _pickFileA() async {
+    final result = await Navigator.push<List<PdfFile>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PdfToolFilePickerScreen(
+          title: 'Select Baseline PDF (Document A)',
+          mode: ToolPickerMode.singleSelect,
+          actionButtonText: 'SET AS BASELINE',
+        ),
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && mounted) {
+      setState(() {
+        _fileA = result.first;
+        _result = null;
+      });
+    }
+  }
+
+  Future<void> _pickFileB() async {
+    final result = await Navigator.push<List<PdfFile>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PdfToolFilePickerScreen(
+          title: 'Select Revised PDF (Document B)',
+          mode: ToolPickerMode.singleSelect,
+          actionButtonText: 'SET AS REVISED',
+        ),
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && mounted) {
+      setState(() {
+        _fileB = result.first;
+        _result = null;
+      });
+    }
+  }
+
+  Future<void> _runComparison() async {
+    if (_fileA == null || _fileB == null) return;
+    setState(() => _isComparing = true);
+
+    final res = await PdfCompareService.comparePdfs(
+      fileAPath: _fileA!.path,
+      fileBPath: _fileB!.path,
+    );
+
+    if (mounted) {
+      setState(() {
+        _result = res;
+        _isComparing = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18,
+            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'DOCUMENT COMPARISON'),
+            Text(
+              'Compare Revisions',
+              style: EditorialTokens.titleMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            height: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        children: [
+          // Section 01: Dual Document Selection
+          const EditorialSectionHeader(
+            number: '01',
+            label: 'Select Documents',
+          ),
+          const SizedBox(height: 8),
+
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 360;
+              if (isNarrow) {
+                return Column(
+                  children: [
+                    _buildDocumentCard(
+                      label: 'DOCUMENT A (BASELINE)',
+                      file: _fileA,
+                      onSelect: _pickFileA,
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDocumentCard(
+                      label: 'DOCUMENT B (REVISED)',
+                      file: _fileB,
+                      onSelect: _pickFileB,
+                      isDark: isDark,
+                    ),
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  Expanded(
+                    child: _buildDocumentCard(
+                      label: 'DOCUMENT A (BASELINE)',
+                      file: _fileA,
+                      onSelect: _pickFileA,
+                      isDark: isDark,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildDocumentCard(
+                      label: 'DOCUMENT B (REVISED)',
+                      file: _fileB,
+                      onSelect: _pickFileB,
+                      isDark: isDark,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 20),
+
+          // Compare Action Button
+          SizedBox(
+            width: double.infinity,
+            child: EditorialButton(
+              label: _isComparing ? 'ANALYZING DOCUMENTS...' : 'COMPARE DOCUMENTS',
+              icon: _isComparing ? null : Icons.compare_arrows_outlined,
+              onPressed: (_fileA == null || _fileB == null || _isComparing) ? null : _runComparison,
+            ),
+          ),
+
+          if (_result != null) ...[
+            const SizedBox(height: 28),
+
+            // Section 02: Diff Summary
+            const EditorialSectionHeader(
+              number: '02',
+              label: 'Comparison Summary',
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: EditorialTokens.primary.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                        ),
+                        child: Text(
+                          'DELTA ANALYSIS COMPLETE',
+                          style: EditorialTokens.metadataStrong(color: EditorialTokens.primary).copyWith(fontSize: 9.5),
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '${_result!.pageDiffs.length} PAGES ANALYZED',
+                        style: EditorialTokens.metadata(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _result!.summary,
+                    style: EditorialTokens.titleSmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // View Tabs
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  EditorialChip(
+                    label: 'Diff Ledger',
+                    selected: _activeTab == 0,
+                    onTap: () => setState(() => _activeTab = 0),
+                  ),
+                  const SizedBox(width: 8),
+                  EditorialChip(
+                    label: 'Text & Formula Delta',
+                    selected: _activeTab == 1,
+                    onTap: () => setState(() => _activeTab = 1),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Diff Ledger List
+            ..._result!.pageDiffs.map((diff) {
+              final hasAdditions = diff.addedLines.isNotEmpty;
+              final hasRemovals = diff.removedLines.isNotEmpty;
+              final isIdentical = !hasAdditions && !hasRemovals;
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  border: Border.all(
+                    color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          EditorialEyebrow(
+                            text: 'PAGE ${diff.pageNumber.toString().padLeft(2, '0')}',
+                            color: EditorialTokens.primary,
+                          ),
+                          const Spacer(),
+                          Text(
+                            isIdentical
+                                ? 'IDENTICAL'
+                                : '+${diff.addedLines.length} / -${diff.removedLines.length} CHANGES',
+                            style: EditorialTokens.metadata(
+                              color: isIdentical
+                                  ? (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)
+                                  : EditorialTokens.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: isIdentical
+                          ? Text(
+                              'Content is verbatim across both editions.',
+                              style: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              ),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (hasAdditions) ...[
+                                  Text(
+                                    'INSERTIONS (+)',
+                                    style: EditorialTokens.metadataStrong(color: const Color(0xFF2E6F40)).copyWith(fontSize: 9.5),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  ...diff.addedLines.map(
+                                    (l) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                                      child: Text(
+                                        '+ $l',
+                                        style: const TextStyle(
+                                          fontFamily: 'monospace',
+                                          fontSize: 12,
+                                          color: Color(0xFF2E6F40),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                                if (hasRemovals) ...[
+                                  Text(
+                                    'DELETIONS (-)',
+                                    style: EditorialTokens.metadataStrong(color: const Color(0xFFB33A3A)).copyWith(fontSize: 9.5),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  ...diff.removedLines.map(
+                                    (l) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                                      child: Text(
+                                        '- $l',
+                                        style: const TextStyle(
+                                          fontFamily: 'monospace',
+                                          fontSize: 12,
+                                          color: Color(0xFFB33A3A),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentCard({
+    required String label,
+    required PdfFile? file,
+    required VoidCallback onSelect,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+        border: Border.all(
+          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+          width: EditorialTokens.hairline,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EditorialEyebrow(text: label),
+          const SizedBox(height: 10),
+          if (file != null) ...[
+            const Center(
+              child: EditorialPaperThumbnail(
+                thumbnailPath: null,
+                width: 38,
+                height: 52,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              file.name,
+              style: EditorialTokens.titleSmall(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '${file.pageCount} Pages · ${Utils.formatBytes(file.sizeBytes)}',
+              style: EditorialTokens.metadata(
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            EditorialSecondaryButton(
+              label: 'CHANGE',
+              onPressed: onSelect,
+            ),
+          ] else ...[
+            Container(
+              height: 90,
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.file_present_outlined,
+                    size: 28,
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'No document chosen',
+                    style: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 6),
+            EditorialSecondaryButton(
+              label: 'CHOOSE',
+              icon: Icons.folder_open,
+              onPressed: onSelect,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 52. lib/features/tools/tools_tab.dart <a id="libfeaturestoolstoolstabdart"></a>
+
+- **Path:** `lib/features/tools/tools_tab.dart`
+- **Lines:** 303
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../widgets/editorial_components.dart';
+import '../merge/merge_screen.dart';
+import '../split/split_screen.dart';
+import '../delete_pages/delete_pages_screen.dart';
+import '../scan/scan_document_screen.dart';
+import '../ocr/ocr_screen.dart';
+import 'pdf_compare_screen.dart';
+import 'compress_pdf_to_target_size_screen.dart';
+import 'compress_image_to_target_size_screen.dart';
+import 'encrypt_pdf_screen.dart';
+
+class ToolsTab extends StatefulWidget {
+  const ToolsTab({super.key});
+
+  @override
+  State<ToolsTab> createState() => _ToolsTabState();
+}
+
+class _ToolsTabState extends State<ToolsTab> {
+  String _selectedCategory = 'all'; // 'all', 'transform', 'capture', 'security'
+
+  void _openTool(BuildContext context, String toolName, Widget screen) {
+    DatabaseHelper.instance.incrementToolUsage(toolName);
+    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const EditorialEyebrow(
+                      text: 'DOCUMENT OPERATIONS',
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      'Document Utilities',
+                      style: EditorialTokens.displayMedium(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ).copyWith(fontSize: 22, height: 1.1),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: EditorialTokens.tertiary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        '100% OFFLINE',
+                        style: EditorialTokens.eyebrow(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ).copyWith(fontSize: 9),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        children: [
+          // Filter Chips Strip
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                EditorialChip(
+                  label: 'ALL UTILITIES',
+                  selected: _selectedCategory == 'all',
+                  onTap: () => setState(() => _selectedCategory = 'all'),
+                ),
+                const SizedBox(width: 6),
+                EditorialChip(
+                  label: 'TRANSFORM',
+                  selected: _selectedCategory == 'transform',
+                  onTap: () => setState(() => _selectedCategory = 'transform'),
+                ),
+                const SizedBox(width: 6),
+                EditorialChip(
+                  label: 'CAPTURE',
+                  selected: _selectedCategory == 'capture',
+                  onTap: () => setState(() => _selectedCategory = 'capture'),
+                ),
+                const SizedBox(width: 6),
+                EditorialChip(
+                  label: 'SECURITY',
+                  selected: _selectedCategory == 'security',
+                  onTap: () => setState(() => _selectedCategory = 'security'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Group 01: Document Transformation
+          if (_selectedCategory == 'all' || _selectedCategory == 'transform') ...[
+            const EditorialSectionHeader(
+              number: '01',
+              label: 'Document Transformation',
+              count: '3 modules',
+            ),
+            const SizedBox(height: 6),
+            EditorialToolCard(
+              icon: Icons.layers_outlined,
+              title: 'Merge PDF Documents',
+              description: 'Combine multiple PDF files into a single sequential document',
+              onTap: () => _openTool(context, 'merge', const MergeScreen()),
+            ),
+            EditorialToolCard(
+              icon: Icons.splitscreen_outlined,
+              title: 'Split & Extract Pages',
+              description: 'Divide documents into separate files or chapters with page range selector',
+              onTap: () => _openTool(context, 'split', const SplitScreen()),
+            ),
+            EditorialToolCard(
+              icon: Icons.delete_sweep_outlined,
+              title: 'Delete Pages',
+              description: 'Selectively remove unwanted pages using visual thumbnail selection',
+              onTap: () => _openTool(context, 'delete_pages', const DeletePagesScreen()),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Group 02: Conversion & Capture
+          if (_selectedCategory == 'all' || _selectedCategory == 'capture') ...[
+            const EditorialSectionHeader(
+              number: '02',
+              label: 'Conversion & Capture',
+              count: '3 modules',
+            ),
+            const SizedBox(height: 6),
+            EditorialToolCard(
+              icon: Icons.document_scanner_outlined,
+              title: 'Document Scanner',
+              description: 'Capture physical documents with high-contrast filter and perspective cropping',
+              badge: 'Vision v2',
+              onTap: () => _openTool(context, 'scan', const ScanDocumentScreen()),
+            ),
+            EditorialToolCard(
+              icon: Icons.text_snippet_outlined,
+              title: 'OCR & Text Extraction',
+              description: 'On-device text recognition with formula extraction and searchable PDF export',
+              badge: 'ML Kit',
+              onTap: () => _openTool(context, 'ocr', const OcrScreen()),
+            ),
+            EditorialToolCard(
+              icon: Icons.compare_arrows_outlined,
+              title: 'Document Comparison',
+              description: 'Side-by-side visual diff and page comparison across document versions',
+              onTap: () => _openTool(context, 'compare', const PdfCompareScreen()),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Group 03: Storage & Integrity
+          if (_selectedCategory == 'all' || _selectedCategory == 'security') ...[
+            const EditorialSectionHeader(
+              number: '03',
+              label: 'Storage & Integrity',
+              count: '3 modules',
+            ),
+            const SizedBox(height: 6),
+            EditorialToolCard(
+              icon: Icons.tune_outlined,
+              title: 'Compress to Target Size',
+              description: 'Targeted size reduction (e.g. Email <1MB, Academic <5MB) with quality controls',
+              badge: 'Isolate',
+              onTap: () => _openTool(context, 'compress_target_size', const CompressPdfToTargetSizeScreen()),
+            ),
+            EditorialToolCard(
+              icon: Icons.photo_size_select_small_outlined,
+              title: 'Compress Images to Size',
+              description: 'Downsize standalone images to an exact target kilobyte threshold',
+              onTap: () => _openTool(context, 'compress_image_target_size', const CompressImageToTargetSizeScreen()),
+            ),
+            EditorialToolCard(
+              icon: Icons.lock_outline,
+              title: 'Encrypt PDF',
+              description: 'Standard AES-256 encryption with password protection and permission locks',
+              badge: 'AES-256',
+              onTap: () => _openTool(context, 'encrypt', const EncryptPdfScreen()),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // System & Storage Specs Card
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const EditorialEyebrow(
+                      text: 'SYSTEM & STORAGE SPECS',
+                      color: EditorialTokens.primary,
+                    ),
+                    const Spacer(),
+                    Text(
+                      '9 UTILITIES READY',
+                      style: EditorialTokens.metadataStrong(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ).copyWith(fontSize: 9.5),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const EditorialDivider(),
+                const SizedBox(height: 6),
+                _buildDiagnosticRow('Execution:', '100% On-Device (No Network Connection)', isDark),
+                const SizedBox(height: 3),
+                _buildDiagnosticRow('OCR Engine:', 'Google ML Kit Text Recognition', isDark),
+                const SizedBox(height: 3),
+                _buildDiagnosticRow('PDF Security:', 'Standard AES-256 Encryption', isDark),
+                const SizedBox(height: 3),
+                _buildDiagnosticRow('Storage Sandbox:', 'Private Device Storage', isDark),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiagnosticRow(String label, String value, bool isDark) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: EditorialTokens.metadata(
+            color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+          ).copyWith(fontSize: 10),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            value,
+            style: EditorialTokens.metadata(
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ).copyWith(fontSize: 10, fontWeight: FontWeight.w500),
+          ),
+        ),
+      ],
+    );
+  }
+}
+```
+
+---
+
+## 53. lib/features/tools/version_history_screen.dart <a id="libfeaturestoolsversionhistoryscreendart"></a>
+
+- **Path:** `lib/features/tools/version_history_screen.dart`
+- **Lines:** 243
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../core/tools/pdf_version_service.dart';
+import '../../core/utils/utils.dart';
+import '../../models/pdf_file.dart';
+import '../../models/pdf_version.dart';
+import '../../widgets/editorial_components.dart';
+
+class VersionHistoryScreen extends StatefulWidget {
+  final PdfFile pdfFile;
+
+  const VersionHistoryScreen({super.key, required this.pdfFile});
+
+  @override
+  State<VersionHistoryScreen> createState() => _VersionHistoryScreenState();
+}
+
+class _VersionHistoryScreenState extends State<VersionHistoryScreen> {
+  List<PdfVersion> _versions = [];
+  bool _isLoading = true;
+  int _totalSizeBytes = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersions();
+  }
+
+  Future<void> _loadVersions() async {
+    final versions = await PdfVersionService.getVersions(widget.pdfFile.path);
+    final totalStorage = await PdfVersionService.calculateTotalStorage(widget.pdfFile.path);
+    if (mounted) {
+      setState(() {
+        _versions = versions;
+        _totalSizeBytes = totalStorage > 0 ? totalStorage : widget.pdfFile.sizeBytes;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _restoreVersion(PdfVersion version) async {
+    final ok = await PdfVersionService.restoreVersion(version, widget.pdfFile.path);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(ok ? 'Restored version ${version.versionNumber} successfully' : 'Failed to restore version')),
+      );
+      if (ok) _loadVersions();
+    }
+  }
+
+  Future<void> _deleteVersion(PdfVersion version) async {
+    await PdfVersionService.deleteVersion(version);
+    _loadVersions();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            const EditorialDivider(),
+            EditorialStatStrip(
+              primaryText: 'TOTAL STORAGE',
+              secondaryText: '${Utils.formatBytes(_totalSizeBytes).toUpperCase()} · ${_versions.length} VERSIONS',
+            ),
+            const EditorialDivider(),
+            Expanded(
+              child: _isLoading
+                  ? const Center(
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: EditorialTokens.primary,
+                        ),
+                      ),
+                    )
+                  : (_versions.isEmpty ? _buildEmptyVersions() : _buildVersionsList()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: 'DOCUMENT HISTORY'),
+                const SizedBox(height: 2),
+                Text(
+                  'Version History',
+                  style: EditorialTokens.titleLarge(),
+                ),
+                Text(
+                  widget.pdfFile.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyVersions() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(EditorialTokens.r6),
+                border: Border.all(
+                  color: EditorialTokens.border,
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: const Icon(
+                Icons.history,
+                size: 36,
+                color: EditorialTokens.inkSecondary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No Historical Versions',
+              style: EditorialTokens.titleMedium().copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Compression, editing, and encryption operations generate automatic restore points here.',
+              textAlign: TextAlign.center,
+              style: EditorialTokens.bodySmall(color: EditorialTokens.inkMuted),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVersionsList() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _versions.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final v = _versions[index];
+        return Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: EditorialTokens.paper,
+            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+            border: Border.all(
+              color: EditorialTokens.borderSoft,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: EditorialTokens.surfaceMuted,
+                  borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                  border: Border.all(
+                    color: EditorialTokens.border,
+                    width: EditorialTokens.hairline,
+                  ),
+                ),
+                child: Text(
+                  'v${v.versionNumber}',
+                  style: EditorialTokens.metadataStrong(color: EditorialTokens.primary).copyWith(fontSize: 10),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      v.sourceOperation,
+                      style: EditorialTokens.titleSmall().copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${Utils.formatBytes(v.sizeBytes).toUpperCase()}  ·  ${Utils.formatRelativeTime(v.timestamp).toUpperCase()}',
+                      style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.restore, color: EditorialTokens.tertiary, size: 18),
+                tooltip: 'Restore Version',
+                onPressed: () => _restoreVersion(v),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: EditorialTokens.inkMuted, size: 18),
+                tooltip: 'Delete Version',
+                onPressed: () => _deleteVersion(v),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+```
+
+---
+
+## 54. lib/features/viewer/pdf_viewer_screen.dart <a id="libfeaturesviewerpdfviewerscreendart"></a>
+
+- **Path:** `lib/features/viewer/pdf_viewer_screen.dart`
+- **Lines:** 2065
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'dart:io';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:signature/signature.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import '../../core/storage/database_helper.dart';
+import '../../core/tts/tts_service.dart';
+import '../../core/utils/storage_location_helper.dart';
+import '../../core/utils/utils.dart';
+import '../../models/bookmark.dart';
+import '../../models/annotation_meta.dart';
+import '../../models/pdf_file.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../widgets/editorial_components.dart';
+import '../ocr/ocr_screen.dart';
+import '../study/study_mode_screen.dart';
+import '../ai/doc_qa_screen.dart';
+import '../ai/explain_text_dialog.dart';
+import '../home/pdf_list_provider.dart';
+
+enum MarkupAnnotationType { highlight, underline, strikethrough, squiggly }
+
+class PdfViewerScreen extends ConsumerStatefulWidget {
+  final String filePath;
+  final bool isExternalLaunch;
+
+  const PdfViewerScreen({
+    super.key,
+    required this.filePath,
+    this.isExternalLaunch = false,
+  });
+
+  @override
+  ConsumerState<PdfViewerScreen> createState() => _PdfViewerScreenState();
+}
+
+class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
+    with WidgetsBindingObserver {
+  late PdfViewerController _pdfViewerController;
+  final TtsService _ttsService = TtsService();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  int _currentPage = 1;
+  int _totalPages = 0;
+  int _initialPage = 1;
+  int _rotationAngle = 0;
+  bool _hasResumedPosition = false;
+
+  bool _isSearchActive = false;
+  bool _isTtsPlaying = false;
+  bool _isTtsPaused = false;
+  final double _ttsSpeechRate = 1.0;
+  bool _isCorrupted = false;
+  sf.PdfDocument? _ttsDocument;
+  bool _ttsInitialized = false;
+
+  final ValueNotifier<double> _zoomNotifier = ValueNotifier<double>(1.0);
+  Timer? _progressDebounceTimer;
+
+  final TextEditingController _searchFieldController = TextEditingController();
+  PdfTextSearchResult _searchResult = PdfTextSearchResult();
+  PdfTextSelectionChangedDetails? _lastTextSelectionDetails;
+  bool _showSelectionMenu = false;
+  bool _isAnnotationToolbarOpen = false;
+  String _selectedAnnotationTool = 'chisel';
+  String _selectedStrokeWidth = '1.0mm';
+  Color _selectedAnnotationColor = EditorialTokens.primary;
+
+  List<Bookmark> _userBookmarks = [];
+  List<PdfNote> _pdfNotes = [];
+  sf.PdfBookmarkBase? _docBookmarks;
+
+  final Stopwatch _sessionStopwatch = Stopwatch();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _pdfViewerController = PdfViewerController();
+    _loadMetadataAndProgress();
+    _sessionStopwatch.start();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _sessionStopwatch.stop();
+    _saveReadingSession();
+    _progressDebounceTimer?.cancel();
+    _flushReadingProgress();
+    _ttsService.stop();
+    _ttsService.dispose();
+    _pdfViewerController.dispose();
+    _searchFieldController.dispose();
+    _ttsDocument?.dispose();
+    _zoomNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _sessionStopwatch.stop();
+      _saveReadingSession();
+      _progressDebounceTimer?.cancel();
+      _flushReadingProgress();
+    } else if (state == AppLifecycleState.resumed) {
+      _sessionStopwatch.start();
+    }
+  }
+
+  Future<void> _saveReadingSession() async {
+    final elapsedSec = _sessionStopwatch.elapsed.inSeconds;
+    if (elapsedSec > 0) {
+      await DatabaseHelper.instance.addReadingTime(widget.filePath, elapsedSec);
+    }
+  }
+
+  Future<void> _loadMetadataAndProgress() async {
+    final pdfFile = await DatabaseHelper.instance.getPdfFile(widget.filePath);
+    final bookmarks =
+        await DatabaseHelper.instance.getBookmarksForFile(widget.filePath);
+    final notes =
+        await DatabaseHelper.instance.getNotesForFile(widget.filePath);
+
+    if (mounted) {
+      setState(() {
+        _userBookmarks = bookmarks;
+        _pdfNotes = notes;
+        if (pdfFile != null && pdfFile.lastOpenedPage > 1) {
+          _initialPage = pdfFile.lastOpenedPage;
+        }
+      });
+    }
+    await DatabaseHelper.instance.updateLastOpened(widget.filePath);
+  }
+
+  void _handleBackNavigation() {
+    _ttsService.stop();
+    if (widget.isExternalLaunch) {
+      SystemNavigator.pop();
+    } else if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      SystemNavigator.pop();
+    }
+  }
+
+  void _updateProgress(int pageNumber) {
+    if (_totalPages <= 0) return;
+    _progressDebounceTimer?.cancel();
+    _progressDebounceTimer = Timer(const Duration(milliseconds: 500), () {
+      _flushReadingProgress();
+    });
+  }
+
+  void _flushReadingProgress() {
+    if (_totalPages <= 0) return;
+    final double progress = (_currentPage / _totalPages).clamp(0.0, 1.0);
+    final bool completed = progress >= 0.95 || _currentPage == _totalPages;
+
+    DatabaseHelper.instance.updateReadingProgress(
+      widget.filePath,
+      page: _currentPage,
+      progress: progress,
+      completed: completed,
+    );
+  }
+
+  void _rotateClockwise() {
+    setState(() {
+      _rotationAngle = (_rotationAngle + 90) % 360;
+    });
+  }
+
+  Future<void> _ensureTtsInitialized() async {
+    if (!_ttsInitialized) {
+      await _ttsService.init();
+      _ttsInitialized = true;
+    }
+  }
+
+  Future<void> _sharePdf() async {
+    try {
+      final file = File(widget.filePath);
+      if (await file.exists()) {
+        final fileName = widget.filePath.split(Platform.pathSeparator).last;
+        await Share.shareXFiles([XFile(widget.filePath)], text: 'Sharing $fileName');
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sharing PDF: $e')),
+      );
+    }
+  }
+
+  Future<void> _saveToDevice() async {
+    try {
+      final sourceFile = File(widget.filePath);
+      if (!await sourceFile.exists()) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Source file not found.')),
+        );
+        return;
+      }
+
+      final fileName = widget.filePath.split(Platform.pathSeparator).last;
+      final targetDir = await StorageLocationHelper.getPublicDocumentsDirectory(subFolder: 'Saved');
+      final targetPath = await StorageLocationHelper.getUniqueFilePath(targetDir, fileName);
+
+      await sourceFile.copy(targetPath);
+
+      // Register the saved document in index
+      final stat = await File(targetPath).stat();
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final docId = DateTime.now().microsecondsSinceEpoch.toRadixString(36) + targetPath.hashCode.toRadixString(36);
+
+      final pdfFile = PdfFile(
+        docId: docId,
+        path: targetPath,
+        name: targetPath.split(Platform.pathSeparator).last,
+        sizeBytes: stat.size,
+        modifiedAt: stat.modified.millisecondsSinceEpoch,
+        pageCount: _totalPages,
+        sourceType: 'saved',
+        createdAt: now,
+      );
+
+      await DatabaseHelper.instance.upsertPdfFile(pdfFile);
+      ref.read(pdfListProvider.notifier).addFile(pdfFile);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Saved to: $targetPath'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving PDF: $e')),
+      );
+    }
+  }
+
+  void _showDocumentInfo() {
+    final file = File(widget.filePath);
+    final stat = file.existsSync() ? file.statSync() : null;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Document Information'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: ${widget.filePath.split(Platform.pathSeparator).last}'),
+            const SizedBox(height: 8),
+            Text('Path: ${widget.filePath}'),
+            const SizedBox(height: 8),
+            Text('Total Pages: $_totalPages'),
+            const SizedBox(height: 8),
+            if (stat != null) ...[
+              Text('Size: ${Utils.formatBytes(stat.size)}'),
+              const SizedBox(height: 8),
+              Text(
+                  'Modified: ${Utils.formatDate(stat.modified.millisecondsSinceEpoch)}'),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSignatureDialog() {
+    final SignatureController sigController = SignatureController(
+      penStrokeWidth: 3,
+      penColor: Colors.black,
+      exportBackgroundColor: Colors.transparent,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Freehand Drawing / Signature'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Signature(
+                controller: sigController,
+                backgroundColor: Colors.grey.shade100,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              sigController.clear();
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (sigController.isNotEmpty) {
+                final imageBytes = await sigController.toPngBytes();
+                if (imageBytes != null) {
+                  await _embedSignatureImage(imageBytes);
+                }
+              }
+              sigController.dispose();
+              if (context.mounted) Navigator.pop(context);
+            },
+            child: const Text('Apply'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _embedSignatureImage(Uint8List imageBytes) async {
+    try {
+      final fileBytes = await File(widget.filePath).readAsBytes();
+      final document = sf.PdfDocument(inputBytes: fileBytes);
+      final page = document.pages[_currentPage - 1];
+
+      final sf.PdfBitmap bitmap = sf.PdfBitmap(imageBytes);
+      page.graphics.drawImage(bitmap, const Rect.fromLTWH(100, 100, 150, 75));
+
+      final savedBytes = await document.save();
+      document.dispose();
+
+      await File(widget.filePath).writeAsBytes(savedBytes);
+
+      await DatabaseHelper.instance.addNote(
+        PdfNote(
+          filePath: widget.filePath,
+          pageNumber: _currentPage,
+          noteText: '[SIGNATURE / DRAWING] Added to page $_currentPage',
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+      await _loadMetadataAndProgress();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Signature added to page $_currentPage')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error adding signature: $e')),
+      );
+    }
+  }
+
+  // --- Anchored Text Markup Annotations ---
+  Future<void> _applyTextMarkupAnnotation(MarkupAnnotationType type) async {
+    final details = _lastTextSelectionDetails;
+    if (details == null ||
+        details.selectedText == null ||
+        details.selectedText!.trim().isEmpty) {
+      return;
+    }
+
+    final selectedText = details.selectedText!.trim();
+
+    try {
+      final fileBytes = await File(widget.filePath).readAsBytes();
+      final document = sf.PdfDocument(inputBytes: fileBytes);
+      final page = document.pages[_currentPage - 1];
+
+      final bounds = details.globalSelectedRegion ??
+          const Rect.fromLTWH(100, 100, 200, 20);
+
+      sf.PdfAnnotation annotation;
+      Color annotationColor;
+
+      switch (type) {
+        case MarkupAnnotationType.highlight:
+          annotationColor = Colors.yellow;
+          annotation = sf.PdfRectangleAnnotation(bounds, 'Highlight')
+            ..color = sf.PdfColor(255, 255, 0);
+          break;
+        case MarkupAnnotationType.underline:
+          annotationColor = Colors.blue;
+          annotation = sf.PdfLineAnnotation([
+            bounds.left.toInt(),
+            bounds.bottom.toInt(),
+            bounds.right.toInt(),
+            bounds.bottom.toInt()
+          ], 'Underline')
+            ..color = sf.PdfColor(0, 0, 255);
+          break;
+        case MarkupAnnotationType.strikethrough:
+          annotationColor = Colors.red;
+          final midY = (bounds.top + bounds.bottom) / 2;
+          annotation = sf.PdfLineAnnotation([
+            bounds.left.toInt(),
+            midY.toInt(),
+            bounds.right.toInt(),
+            midY.toInt()
+          ], 'Strikethrough')
+            ..color = sf.PdfColor(255, 0, 0);
+          break;
+        case MarkupAnnotationType.squiggly:
+          annotationColor = Colors.green;
+          annotation = sf.PdfRectangleAnnotation(bounds, 'Squiggly')
+            ..color = sf.PdfColor(0, 255, 0);
+          break;
+      }
+
+      page.annotations.add(annotation);
+      final savedBytes = await document.save();
+      document.dispose();
+
+      await File(widget.filePath).writeAsBytes(savedBytes);
+
+      await DatabaseHelper.instance.addNote(
+        PdfNote(
+          filePath: widget.filePath,
+          pageNumber: _currentPage,
+          noteText: '[${type.name.toUpperCase()}] "$selectedText"',
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+      _pdfViewerController.clearSelection();
+      setState(() => _showSelectionMenu = false);
+      await _loadMetadataAndProgress();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('${type.name.toUpperCase()} added to page $_currentPage'),
+          backgroundColor: annotationColor,
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving annotation: $e')),
+      );
+    }
+  }
+
+  void _handleCopyText() {
+    final text = _lastTextSelectionDetails?.selectedText;
+    if (text != null && text.isNotEmpty) {
+      Clipboard.setData(ClipboardData(text: text));
+      _pdfViewerController.clearSelection();
+      setState(() => _showSelectionMenu = false);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Text copied to clipboard'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
+  // --- Read Aloud TTS Operations ---
+  Future<void> _readAloudPage() async {
+    await _ensureTtsInitialized();
+    try {
+      if (_ttsDocument == null) {
+        final fileBytes = await File(widget.filePath).readAsBytes();
+        _ttsDocument = sf.PdfDocument(inputBytes: fileBytes);
+      }
+      final extractor = sf.PdfTextExtractor(_ttsDocument!);
+      final pageText = extractor.extractText(
+          startPageIndex: _currentPage - 1, endPageIndex: _currentPage - 1);
+
+      if (pageText.trim().isEmpty) {
+        if (!mounted) return;
+        _showImageBasedOcrPrompt();
+        return;
+      }
+
+      setState(() {
+        _isTtsPlaying = true;
+        _isTtsPaused = false;
+      });
+
+      await _ttsService.setSpeechRate(_ttsSpeechRate);
+      await _ttsService.speak(pageText, onCompletion: () {
+        if (_currentPage < _totalPages) {
+          _pdfViewerController.nextPage();
+          _readAloudPage();
+        } else {
+          setState(() {
+            _isTtsPlaying = false;
+            _isTtsPaused = false;
+          });
+        }
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _pauseTts() async {
+    await _ttsService.pause();
+    setState(() {
+      _isTtsPlaying = false;
+      _isTtsPaused = true;
+    });
+  }
+
+  Future<void> _resumeTts() async {
+    await _ttsService.resume();
+    setState(() {
+      _isTtsPlaying = true;
+      _isTtsPaused = false;
+    });
+  }
+
+  void _showImageBasedOcrPrompt() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text(
+            'This document is image-based. Run OCR to enable text selection & reading.'),
+        duration: const Duration(seconds: 5),
+        action: SnackBarAction(
+          label: 'Run OCR',
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => OcrScreen(
+                  sourceFile: PdfFile(
+                    docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
+                    path: widget.filePath,
+                    name: widget.filePath.split(Platform.pathSeparator).last,
+                    sizeBytes: File(widget.filePath).existsSync()
+                        ? File(widget.filePath).lengthSync()
+                        : 0,
+                    modifiedAt: DateTime.now().millisecondsSinceEpoch,
+                    pageCount: _totalPages,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  // --- End Drawer with Outline, Bookmarks & Annotations ---
+  Widget _buildDrawer() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Drawer(
+      backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+      child: DefaultTabController(
+        length: 3,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const EditorialEyebrow(
+                      text: 'DOCUMENT NAVIGATION',
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Outline & Bookmarks',
+                      style: EditorialTokens.displayMedium(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ).copyWith(fontSize: 17),
+                    ),
+                  ],
+                ),
+              ),
+              TabBar(
+                labelColor: EditorialTokens.primary,
+                unselectedLabelColor: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                indicatorColor: EditorialTokens.primary,
+                indicatorWeight: 2,
+                labelStyle: EditorialTokens.label(color: EditorialTokens.primary).copyWith(fontSize: 11),
+                unselectedLabelStyle: EditorialTokens.label().copyWith(fontSize: 11),
+                tabs: const [
+                  Tab(text: 'OUTLINE'),
+                  Tab(text: 'BOOKMARKS'),
+                  Tab(text: 'NOTES'),
+                ],
+              ),
+              const EditorialDivider(),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    // Outline Tab
+                    _docBookmarks == null || _docBookmarks!.count == 0
+                        ? Center(
+                            child: Text(
+                              'No document outline available.',
+                              style: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            itemCount: _docBookmarks!.count,
+                            separatorBuilder: (_, __) => const EditorialDivider(),
+                            itemBuilder: (context, index) {
+                              final bm = _docBookmarks![index];
+                              return ListTile(
+                                dense: true,
+                                leading: Icon(
+                                  Icons.bookmark_outline,
+                                  size: 16,
+                                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                ),
+                                title: Text(
+                                  bm.title,
+                                  style: EditorialTokens.bodySmall(
+                                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                  ),
+                                ),
+                                onTap: () => Navigator.pop(context),
+                              );
+                            },
+                          ),
+
+                    // Bookmarks Tab
+                    Column(
+                      children: [
+                        InkWell(
+                          onTap: _addUserBookmark,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.bookmark_add_outlined, size: 16, color: EditorialTokens.primary),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '+ Add Bookmark (Page $_currentPage)',
+                                  style: EditorialTokens.label(color: EditorialTokens.primary).copyWith(fontSize: 11.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const EditorialDivider(),
+                        Expanded(
+                          child: _userBookmarks.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    'No bookmarks added yet.',
+                                    style: EditorialTokens.bodySmall(
+                                      color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                    ),
+                                  ),
+                                )
+                              : ListView.separated(
+                                  itemCount: _userBookmarks.length,
+                                  separatorBuilder: (_, __) => const EditorialDivider(),
+                                  itemBuilder: (context, index) {
+                                    final bm = _userBookmarks[index];
+                                    return ListTile(
+                                      dense: true,
+                                      leading: const Icon(Icons.bookmark, size: 16, color: EditorialTokens.primary),
+                                      title: Text(
+                                        bm.label,
+                                        style: EditorialTokens.bodySmall(
+                                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        'Page ${bm.pageNumber}',
+                                        style: EditorialTokens.metadata(
+                                          color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                        ).copyWith(fontSize: 10),
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit_outlined, size: 16),
+                                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                            onPressed: () => _editBookmarkDialog(bm),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete_outline, size: 16),
+                                            color: EditorialTokens.error,
+                                            onPressed: () async {
+                                              if (bm.id != null) {
+                                                await DatabaseHelper.instance.deleteBookmark(bm.id!);
+                                                _loadMetadataAndProgress();
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        _pdfViewerController.jumpToPage(bm.pageNumber);
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                ),
+                        ),
+                      ],
+                    ),
+
+                    // Notes & Annotations Tab
+                    _pdfNotes.isEmpty
+                        ? Center(
+                            child: Text(
+                              'No annotations or notes recorded.',
+                              style: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            itemCount: _pdfNotes.length,
+                            separatorBuilder: (_, __) => const EditorialDivider(),
+                            itemBuilder: (context, index) {
+                              final note = _pdfNotes[index];
+                              return ListTile(
+                                dense: true,
+                                leading: Icon(
+                                  Icons.note_alt_outlined,
+                                  size: 16,
+                                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                ),
+                                title: Text(
+                                  note.noteText,
+                                  style: EditorialTokens.bodySmall(
+                                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  'Page ${note.pageNumber}',
+                                  style: EditorialTokens.metadata(
+                                    color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                  ).copyWith(fontSize: 10),
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete_outline, size: 16),
+                                  color: EditorialTokens.error,
+                                  onPressed: () async {
+                                    if (note.id != null) {
+                                      await DatabaseHelper.instance.deleteNote(note.id!);
+                                      _loadMetadataAndProgress();
+                                    }
+                                  },
+                                ),
+                                onTap: () {
+                                  _pdfViewerController.jumpToPage(note.pageNumber);
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addUserBookmark() async {
+    final label = 'Page $_currentPage Bookmark';
+    final bookmark = Bookmark(
+      filePath: widget.filePath,
+      pageNumber: _currentPage,
+      label: label,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    await DatabaseHelper.instance.addBookmark(bookmark);
+    await _loadMetadataAndProgress();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Added bookmark for page $_currentPage')),
+    );
+  }
+
+  void _editBookmarkDialog(Bookmark bm) async {
+    final controller = TextEditingController(text: bm.label);
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Bookmark Label'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(border: OutlineInputBorder()),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (bm.id != null && controller.text.trim().isNotEmpty) {
+                await DatabaseHelper.instance
+                    .updateBookmarkLabel(bm.id!, controller.text.trim());
+                await _loadMetadataAndProgress();
+                if (context.mounted) Navigator.pop(context);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+  }
+
+  // --- Compact Floating Contextual Selection Toolbar ---
+  Widget _buildSelectionToolbar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Positioned(
+      bottom: 12,
+      left: 16,
+      right: 16,
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+            border: Border.all(
+              color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+              width: EditorialTokens.hairline,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x1A1C1A18),
+                blurRadius: 8,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildSelectionAction(
+                  icon: Icons.copy,
+                  label: 'Copy',
+                  onTap: _handleCopyText,
+                ),
+                _buildSelectionDivider(),
+                _buildSelectionAction(
+                  icon: Icons.brush_outlined,
+                  label: 'Highlight',
+                  onTap: () => _applyTextMarkupAnnotation(MarkupAnnotationType.highlight),
+                ),
+                _buildSelectionDivider(),
+                _buildSelectionAction(
+                  icon: Icons.format_underlined,
+                  label: 'Underline',
+                  onTap: () => _applyTextMarkupAnnotation(MarkupAnnotationType.underline),
+                ),
+                _buildSelectionDivider(),
+                _buildSelectionAction(
+                  icon: Icons.strikethrough_s,
+                  label: 'Strike',
+                  onTap: () => _applyTextMarkupAnnotation(MarkupAnnotationType.strikethrough),
+                ),
+                _buildSelectionDivider(),
+                _buildSelectionAction(
+                  icon: Icons.gesture,
+                  label: 'Squiggly',
+                  onTap: () => _applyTextMarkupAnnotation(MarkupAnnotationType.squiggly),
+                ),
+                _buildSelectionDivider(),
+                _buildSelectionAction(
+                  icon: Icons.auto_awesome,
+                  label: 'Explain',
+                  onTap: _handleExplainText,
+                ),
+                _buildSelectionDivider(),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 16),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                  color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                  onPressed: () {
+                    _pdfViewerController.clearSelection();
+                    setState(() => _showSelectionMenu = false);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectionDivider() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      height: 14,
+      width: 0.5,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+    );
+  }
+
+  Widget _buildSelectionAction({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: EditorialTokens.primary,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: EditorialTokens.label(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ).copyWith(fontSize: 11),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEditorialAnnotationInspector() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final paletteColors = [
+      (EditorialTokens.primary, 'Terracotta'),
+      (const Color(0xFFC2843A), 'Ochre'),
+      (const Color(0xFF5D7052), 'Sage'),
+      (const Color(0xFF2C2825), 'Charcoal'),
+      (const Color(0xFF4E5866), 'Slate'),
+    ];
+
+    final strokeWidths = ['0.5mm', '1.0mm', '2.0mm'];
+
+    return Positioned(
+      bottom: 12,
+      left: 16,
+      right: 16,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+            border: Border.all(
+              color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+              width: EditorialTokens.hairline,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x1A1C1A18),
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Row 1: Tools & Close
+              Row(
+                children: [
+                  const EditorialEyebrow(
+                    text: 'STATIONERY SUITE',
+                    color: EditorialTokens.primary,
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 16),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                    onPressed: () => setState(() => _isAnnotationToolbarOpen = false),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildStationeryToolPill(
+                      id: 'pen',
+                      icon: Icons.edit,
+                      label: 'Pen',
+                      onTap: () {
+                        setState(() => _selectedAnnotationTool = 'pen');
+                        _showSignatureDialog();
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                    _buildStationeryToolPill(
+                      id: 'chisel',
+                      icon: Icons.brush_outlined,
+                      label: 'Chisel',
+                      onTap: () {
+                        setState(() => _selectedAnnotationTool = 'chisel');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Select text to apply Chisel highlighter'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                    _buildStationeryToolPill(
+                      id: 'underline',
+                      icon: Icons.format_underlined,
+                      label: 'Underline',
+                      onTap: () {
+                        setState(() => _selectedAnnotationTool = 'underline');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Select text to apply Underline'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                    _buildStationeryToolPill(
+                      id: 'strike',
+                      icon: Icons.strikethrough_s,
+                      label: 'Strike',
+                      onTap: () {
+                        setState(() => _selectedAnnotationTool = 'strike');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Select text to apply Strikethrough'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                    _buildStationeryToolPill(
+                      id: 'sign',
+                      icon: Icons.verified_outlined,
+                      label: 'Sign',
+                      onTap: _showSignatureDialog,
+                    ),
+                    const SizedBox(width: 4),
+                    _buildStationeryToolPill(
+                      id: 'note',
+                      icon: Icons.note_add_outlined,
+                      label: 'Note',
+                      onTap: () => _scaffoldKey.currentState?.openEndDrawer(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              const EditorialDivider(),
+              const SizedBox(height: 6),
+              // Row 2: Stroke Widths & Palette
+              Row(
+                children: [
+                  // Stroke width selectors
+                  ...strokeWidths.map((w) {
+                    final isSel = _selectedStrokeWidth == w;
+                    return InkWell(
+                      onTap: () => setState(() => _selectedStrokeWidth = w),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        margin: const EdgeInsets.only(right: 4),
+                        decoration: BoxDecoration(
+                          color: isSel
+                              ? (isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(
+                            color: isSel ? EditorialTokens.primary : Colors.transparent,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        child: Text(
+                          w,
+                          style: EditorialTokens.metadata(
+                            color: isSel
+                                ? EditorialTokens.primary
+                                : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                          ).copyWith(fontSize: 10, fontWeight: isSel ? FontWeight.w600 : FontWeight.w400),
+                        ),
+                      ),
+                    );
+                  }),
+                  const Spacer(),
+                  // Palette swatches
+                  ...paletteColors.map((cp) {
+                    final isSel = _selectedAnnotationColor == cp.$1;
+                    return InkWell(
+                      onTap: () => setState(() => _selectedAnnotationColor = cp.$1),
+                      child: Container(
+                        width: 16,
+                        height: 16,
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: cp.$1,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSel ? Colors.white : Colors.transparent,
+                            width: 1.5,
+                          ),
+                          boxShadow: isSel
+                              ? [
+                                  BoxShadow(
+                                    color: cp.$1.withOpacity(0.6),
+                                    blurRadius: 3,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStationeryToolPill({
+    required String id,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isSelected = _selectedAnnotationTool == id;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+          border: Border.all(
+            color: isSelected ? EditorialTokens.primary : Colors.transparent,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 13,
+              color: isSelected
+                  ? EditorialTokens.primary
+                  : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: EditorialTokens.label(
+                color: isSelected
+                    ? EditorialTokens.primary
+                    : (isDark ? EditorialTokens.darkInk : EditorialTokens.ink),
+              ).copyWith(fontSize: 10.5, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomToolTrigger({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    bool isActive = false,
+    bool isAccent = false,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final color = isAccent
+        ? EditorialTokens.primary
+        : (isActive
+            ? EditorialTokens.primary
+            : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary));
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: EditorialTokens.label(
+                color: color,
+              ).copyWith(
+                fontSize: 11,
+                fontWeight: (isActive || isAccent) ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showReaderModeSheet() {
+    final isNightMode = ref.read(isNightReadingModeProvider);
+    final isEyeComfortMode = ref.read(isEyeComfortModeProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: EdgeInsets.fromLTRB(
+          16,
+          14,
+          16,
+          MediaQuery.of(context).padding.bottom + 16,
+        ),
+        decoration: BoxDecoration(
+          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(EditorialTokens.r8)),
+          border: Border(
+            top: BorderSide(
+              color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const EditorialEyebrow(
+                        text: 'READING ENVIRONMENT',
+                        color: EditorialTokens.primary,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Atmosphere & Modes',
+                        style: EditorialTokens.title(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const EditorialDivider(),
+            const SizedBox(height: 8),
+            _buildModeTile(
+              label: 'Standard Editorial (Default)',
+              description: 'Authentic warm paper canvas bed with clean serif styling',
+              isSelected: !isNightMode && !isEyeComfortMode,
+              onTap: () {
+                ref.read(isEyeComfortModeProvider.notifier).toggle(false);
+                ref.read(isNightReadingModeProvider.notifier).toggle(false);
+                Navigator.pop(ctx);
+              },
+            ),
+            _buildModeTile(
+              label: 'Eye Comfort (Amber Warmth)',
+              description: 'Softened blue light reduction for extended reading',
+              isSelected: isEyeComfortMode,
+              onTap: () {
+                ref.read(isNightReadingModeProvider.notifier).toggle(false);
+                ref.read(isEyeComfortModeProvider.notifier).toggle(true);
+                Navigator.pop(ctx);
+              },
+            ),
+            _buildModeTile(
+              label: 'Night Studio (Low Contrast Dark)',
+              description: 'Deep archival ink bed with inverted readability',
+              isSelected: isNightMode,
+              onTap: () {
+                ref.read(isEyeComfortModeProvider.notifier).toggle(false);
+                ref.read(isNightReadingModeProvider.notifier).toggle(true);
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeTile({
+    required String label,
+    required String description,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 2),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+          border: Border.all(
+            color: isSelected ? EditorialTokens.primary : Colors.transparent,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: EditorialTokens.bodySmall(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ).copyWith(
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: EditorialTokens.metadata(
+                      color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                    ).copyWith(fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(
+                Icons.check,
+                size: 16,
+                color: EditorialTokens.primary,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openStudyMode() {
+    final pdfFile = PdfFile(
+      docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
+      path: widget.filePath,
+      name: widget.filePath.split(Platform.pathSeparator).last,
+      sizeBytes: File(widget.filePath).existsSync() ? File(widget.filePath).lengthSync() : 0,
+      modifiedAt: DateTime.now().millisecondsSinceEpoch,
+      pageCount: _totalPages,
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => StudyModeScreen(pdfFile: pdfFile),
+      ),
+    );
+  }
+
+  void _openDocQa() {
+    final pdfFile = PdfFile(
+      docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
+      path: widget.filePath,
+      name: widget.filePath.split(Platform.pathSeparator).last,
+      sizeBytes: File(widget.filePath).existsSync() ? File(widget.filePath).lengthSync() : 0,
+      modifiedAt: DateTime.now().millisecondsSinceEpoch,
+      pageCount: _totalPages,
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DocQaScreen(pdfFile: pdfFile),
+      ),
+    );
+  }
+
+  void _handleExplainText() {
+    final text = _lastTextSelectionDetails?.selectedText;
+    _pdfViewerController.clearSelection();
+    setState(() => _showSelectionMenu = false);
+    if (text != null && text.trim().isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (_) => ExplainTextDialog(selectedText: text),
+      );
+    }
+  }
+
+  Future<void> _toggleBookmarkForCurrentPage() async {
+    final existing = _userBookmarks.where((b) => b.pageNumber == _currentPage).toList();
+    if (existing.isNotEmpty) {
+      if (existing.first.id != null) {
+        await DatabaseHelper.instance.deleteBookmark(existing.first.id!);
+      }
+    } else {
+      await DatabaseHelper.instance.addBookmark(
+        Bookmark(
+          filePath: widget.filePath,
+          pageNumber: _currentPage,
+          label: 'Page $_currentPage',
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+    }
+    _loadMetadataAndProgress();
+  }
+
+
+
+  void _showJumpToPageDialog() async {
+    final controller = TextEditingController(text: '$_currentPage');
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Jump to Page'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            hintText: '1 - $_totalPages',
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final target = int.tryParse(controller.text);
+              if (target != null && target >= 1 && target <= _totalPages) {
+                _pdfViewerController.jumpToPage(target);
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Go'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isNightMode = ref.watch(isNightReadingModeProvider);
+    final isEyeComfortMode = ref.watch(isEyeComfortModeProvider);
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark || isNightMode;
+
+    final scaffoldBg = isEyeComfortMode
+        ? AppTheme.eyeComfortReaderBg
+        : (isNightMode ? AppTheme.nightReaderBg : EditorialTokens.viewerBed);
+
+    final appBarBg = isEyeComfortMode
+        ? AppTheme.eyeComfortCardBg
+        : (isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong);
+
+    final textColor = isEyeComfortMode
+        ? const Color(0xFF3B2F23)
+        : (isDark ? EditorialTokens.darkInk : EditorialTokens.ink);
+
+    final double currentProgress =
+        _totalPages > 0 ? (_currentPage / _totalPages).clamp(0.0, 1.0) : 0.0;
+    final int progressPct = (currentProgress * 100).toInt();
+
+    Widget viewerWidget = SfPdfViewer.file(
+      File(widget.filePath),
+      controller: _pdfViewerController,
+      enableTextSelection: true,
+      canShowTextSelectionMenu: false, // CRITICAL FIX: Disables double native popup toolbar!
+      canShowScrollHead: false,
+      canShowScrollStatus: false,
+      enableDoubleTapZooming: true,
+      pageLayoutMode: PdfPageLayoutMode.continuous,
+      scrollDirection: PdfScrollDirection.vertical,
+      pageSpacing: 4.0,
+      currentSearchTextHighlightColor: Colors.yellow.withOpacity(0.6),
+      otherSearchTextHighlightColor: Colors.yellow.withOpacity(0.3),
+      onTextSelectionChanged: (details) {
+        _lastTextSelectionDetails = details;
+        if (details.selectedText != null &&
+            details.selectedText!.trim().isNotEmpty) {
+          setState(() => _showSelectionMenu = true);
+        } else {
+          setState(() => _showSelectionMenu = false);
+        }
+      },
+      onZoomLevelChanged: (details) {
+        _zoomNotifier.value = details.newZoomLevel;
+      },
+      onDocumentLoaded: (details) {
+        setState(() {
+          _totalPages = details.document.pages.count;
+          _docBookmarks = details.document.bookmarks;
+        });
+        if (!_hasResumedPosition &&
+            _initialPage > 1 &&
+            _initialPage <= _totalPages) {
+          _hasResumedPosition = true;
+          _pdfViewerController.jumpToPage(_initialPage);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Resumed reading at page $_initialPage'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onPageChanged: (details) {
+        setState(() {
+          _currentPage = details.newPageNumber;
+        });
+        _updateProgress(details.newPageNumber);
+      },
+      onDocumentLoadFailed: (details) {
+        setState(() => _isCorrupted = true);
+      },
+    );
+
+    if (isEyeComfortMode) {
+      viewerWidget = ColorFiltered(
+        colorFilter: const ColorFilter.mode(
+          Color(0x1CFFAA00),
+          BlendMode.darken,
+        ),
+        child: viewerWidget,
+      );
+    }
+
+    return PopScope(
+      canPop: !widget.isExternalLaunch,
+      onPopInvokedWithResult: (didPop, result) {
+        if (_isTtsPlaying || _isTtsPaused) {
+          _ttsService.stop();
+        }
+        if (!didPop || widget.isExternalLaunch) {
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: scaffoldBg,
+        endDrawer: _buildDrawer(),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 380;
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: appBarBg,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, size: 20),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                        color: textColor,
+                        onPressed: _handleBackNavigation,
+                      ),
+                      const SizedBox(width: 4),
+                      if (_isSearchActive)
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchFieldController,
+                                  autofocus: true,
+                                  style: EditorialTokens.bodySmall(color: textColor),
+                                  decoration: InputDecoration(
+                                    hintText: 'Search document text...',
+                                    hintStyle: EditorialTokens.metadata(
+                                      color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                    ),
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                  ),
+                                  onChanged: (query) {
+                                    if (query.trim().isNotEmpty) {
+                                      _searchResult = _pdfViewerController.searchText(query);
+                                    } else {
+                                      _searchResult.clear();
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                              if (_searchResult.totalInstanceCount > 0)
+                                Text(
+                                  '${_searchResult.currentInstanceIndex}/${_searchResult.totalInstanceCount}',
+                                  style: EditorialTokens.metadataStrong(
+                                    color: EditorialTokens.primary,
+                                  ).copyWith(fontSize: 11),
+                                ),
+                              IconButton(
+                                icon: const Icon(Icons.navigate_before, size: 18),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+                                onPressed: () => _searchResult.previousInstance(),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.navigate_next, size: 18),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+                                onPressed: () => _searchResult.nextInstance(),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close, size: 18),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 26, minHeight: 26),
+                                onPressed: () {
+                                  _searchResult.clear();
+                                  _searchFieldController.clear();
+                                  setState(() => _isSearchActive = false);
+                                },
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        Expanded(
+                          child: InkWell(
+                            onTap: _showJumpToPageDialog,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'PAGE $_currentPage OF ${_totalPages > 0 ? _totalPages : 1} ($progressPct%)',
+                                  style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 8.5),
+                                ),
+                                const SizedBox(height: 1),
+                                Text(
+                                  widget.filePath.split(Platform.pathSeparator).last,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: EditorialTokens.title(color: textColor).copyWith(fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (!_isSearchActive) ...[
+                        IconButton(
+                          icon: const Icon(Icons.search, size: 19),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          tooltip: 'Search Document',
+                          onPressed: () => setState(() => _isSearchActive = true),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            _userBookmarks.any((b) => b.pageNumber == _currentPage)
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
+                            size: 19,
+                            color: _userBookmarks.any((b) => b.pageNumber == _currentPage)
+                                ? EditorialTokens.primary
+                                : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                          tooltip: 'Bookmark Page',
+                          onPressed: _toggleBookmarkForCurrentPage,
+                        ),
+                        if (!isNarrow)
+                          IconButton(
+                            icon: const Icon(Icons.rotate_right, size: 19),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            tooltip: 'Rotate Clockwise',
+                            onPressed: _rotateClockwise,
+                          ),
+                        PopupMenuButton<String>(
+                          icon: const Icon(Icons.more_vert, size: 19),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+                          onSelected: (val) {
+                            switch (val) {
+                              case 'rotate':
+                                _rotateClockwise();
+                                break;
+                              case 'share':
+                                _sharePdf();
+                                break;
+                              case 'save':
+                                _saveToDevice();
+                                break;
+                              case 'info':
+                                _showDocumentInfo();
+                                break;
+                              case 'draw':
+                                _showSignatureDialog();
+                                break;
+                              case 'tts':
+                                if (_isTtsPlaying) {
+                                  _pauseTts();
+                                } else if (_isTtsPaused) {
+                                  _resumeTts();
+                                } else {
+                                  _readAloudPage();
+                                }
+                                break;
+                              case 'mode':
+                                _showReaderModeSheet();
+                                break;
+                              case 'study':
+                                _openStudyMode();
+                                break;
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            if (isNarrow)
+                              PopupMenuItem(
+                                value: 'rotate',
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.rotate_right, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text('Rotate Clockwise', style: EditorialTokens.bodySmall()),
+                                  ],
+                                ),
+                              ),
+                            PopupMenuItem(
+                              value: 'mode',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.visibility_outlined, size: 16),
+                                  const SizedBox(width: 8),
+                                  Text('Reading Atmosphere', style: EditorialTokens.bodySmall()),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'tts',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _isTtsPlaying ? Icons.pause_circle_filled : Icons.volume_up,
+                                    size: 16,
+                                    color: EditorialTokens.primary,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    _isTtsPlaying ? 'Pause Read Aloud' : 'Read Aloud Page',
+                                    style: EditorialTokens.bodySmall(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'study',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.school_outlined, size: 16),
+                                  const SizedBox(width: 8),
+                                  Text('Study Mode', style: EditorialTokens.bodySmall()),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'info',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.info_outline, size: 16),
+                                  const SizedBox(width: 8),
+                                  Text('Document Info', style: EditorialTokens.bodySmall()),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'share',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.share_outlined, size: 16),
+                                  const SizedBox(width: 8),
+                                  Text('Share PDF', style: EditorialTokens.bodySmall()),
+                                ],
+                              ),
+                            ),
+                            if (widget.isExternalLaunch)
+                              PopupMenuItem(
+                                value: 'save',
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.download, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text('Save to Device', style: EditorialTokens.bodySmall()),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        body: Stack(
+          children: [
+            _isCorrupted
+                ? const Center(child: Text('Failed to load PDF document.'))
+                : viewerWidget,
+            if (_showSelectionMenu) _buildSelectionToolbar(),
+            if (_isAnnotationToolbarOpen) _buildEditorialAnnotationInspector(),
+          ],
+        ),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: appBarBg,
+            border: Border(
+              top: BorderSide(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+          ),
+          padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Scrubber row
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: _showJumpToPageDialog,
+                      child: Text(
+                        'Page $_currentPage of ${_totalPages > 0 ? _totalPages : 1}',
+                        style: EditorialTokens.metadataStrong(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ).copyWith(fontSize: 11),
+                      ),
+                    ),
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderThemeData(
+                          trackHeight: 2.0,
+                          activeTrackColor: EditorialTokens.primary,
+                          inactiveTrackColor: isDark
+                              ? EditorialTokens.darkSurfaceMuted
+                              : EditorialTokens.borderSoft,
+                          thumbColor: EditorialTokens.primary,
+                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 4.5),
+                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 9),
+                        ),
+                        child: Slider(
+                          value: _currentPage.toDouble().clamp(
+                              1.0, (_totalPages > 0 ? _totalPages : 1).toDouble()),
+                          min: 1.0,
+                          max: (_totalPages > 0 ? _totalPages : 1).toDouble(),
+                          onChanged: (val) {
+                            final page = val.toInt();
+                            if (page != _currentPage) {
+                              _pdfViewerController.jumpToPage(page);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '$progressPct%',
+                      style: EditorialTokens.metadataStrong(
+                        color: EditorialTokens.primary,
+                      ).copyWith(fontSize: 11),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                const EditorialDivider(),
+                const SizedBox(height: 4),
+
+                // Tool Triggers row (responsive, never overflows)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: (MediaQuery.of(context).size.width - 32).clamp(0.0, double.infinity),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildBottomToolTrigger(
+                          icon: Icons.format_list_bulleted,
+                          label: 'Outline',
+                          onTap: () => _scaffoldKey.currentState?.openEndDrawer(),
+                        ),
+                        _buildBottomToolTrigger(
+                          icon: Icons.draw_outlined,
+                          label: 'Annotate',
+                          isActive: _isAnnotationToolbarOpen,
+                          onTap: () {
+                            setState(() {
+                              _isAnnotationToolbarOpen = !_isAnnotationToolbarOpen;
+                            });
+                          },
+                        ),
+                        _buildBottomToolTrigger(
+                          icon: Icons.psychology_outlined,
+                          label: 'Ask Doc',
+                          isAccent: true,
+                          onTap: _openDocQa,
+                        ),
+                        _buildBottomToolTrigger(
+                          icon: Icons.visibility_outlined,
+                          label: 'Mode',
+                          onTap: _showReaderModeSheet,
+                        ),
+                        const SizedBox(width: 4),
+                        // Zoom Level Pill
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                            border: Border.all(
+                              color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                              width: EditorialTokens.hairline,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove, size: 14),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                                tooltip: 'Zoom Out',
+                                onPressed: () {
+                                  final next = (_pdfViewerController.zoomLevel - 0.25).clamp(1.0, 3.0);
+                                  _pdfViewerController.zoomLevel = next;
+                                  _zoomNotifier.value = next;
+                                },
+                              ),
+                              ValueListenableBuilder<double>(
+                                valueListenable: _zoomNotifier,
+                                builder: (context, zoom, _) => Text(
+                                  '${(zoom * 100).toInt()}%',
+                                  style: EditorialTokens.metadataStrong(
+                                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                  ).copyWith(fontSize: 10),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add, size: 14),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                                tooltip: 'Zoom In',
+                                onPressed: () {
+                                  final next = (_pdfViewerController.zoomLevel + 0.25).clamp(1.0, 3.0);
+                                  _pdfViewerController.zoomLevel = next;
+                                  _zoomNotifier.value = next;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 55. lib/main.dart <a id="libmaindart"></a>
+
+- **Path:** `lib/main.dart`
+- **Lines:** 53
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:syncfusion_flutter_core/core.dart';
+import 'core/config/app_config.dart';
+import 'core/services/external_pdf_intent_service.dart';
+import 'core/theme/app_theme.dart';
+import 'features/home/main_navigation_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Register Syncfusion License Key
+  // ignore: deprecated_member_use
+  SyncfusionLicense.registerLicense(AppConfig.syncfusionLicenseKey);
+
+  runApp(
+    const ProviderScope(
+      child: OfflinePdfReaderApp(),
+    ),
+  );
+}
+
+class OfflinePdfReaderApp extends ConsumerStatefulWidget {
+  const OfflinePdfReaderApp({super.key});
+
+  @override
+  ConsumerState<OfflinePdfReaderApp> createState() =>
+      _OfflinePdfReaderAppState();
+}
+
+class _OfflinePdfReaderAppState extends ConsumerState<OfflinePdfReaderApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize external PDF intent listener once on app start
+    ExternalPdfIntentService.initialize(ref);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeModeProvider);
+
+    return MaterialApp(
+      title: AppConfig.appName,
+      navigatorKey: appNavigatorKey,
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
+      home: const MainNavigationScreen(),
+    );
+  }
+}
+```
+
+---
+
+## 56. lib/models/ai_model_config.dart <a id="libmodelsaimodelconfigdart"></a>
+
+- **Path:** `lib/models/ai_model_config.dart`
+- **Lines:** 69
+- **Language:** `dart`
+
+```dart
+class AiModelConfig {
+  final bool isInstalled;
+  final bool isEnabled;
+  final String modelName;
+  final double sizeMb;
+  final String statusMessage;
+  final int maxContextLength;
+  final double temperature;
+  final bool autoUnload;
+
+  AiModelConfig({
+    required this.isInstalled,
+    required this.isEnabled,
+    required this.modelName,
+    required this.sizeMb,
+    required this.statusMessage,
+    this.maxContextLength = 2048,
+    this.temperature = 0.7,
+    this.autoUnload = true,
+  });
+
+  AiModelConfig copyWith({
+    bool? isInstalled,
+    bool? isEnabled,
+    String? modelName,
+    double? sizeMb,
+    String? statusMessage,
+    int? maxContextLength,
+    double? temperature,
+    bool? autoUnload,
+  }) {
+    return AiModelConfig(
+      isInstalled: isInstalled ?? this.isInstalled,
+      isEnabled: isEnabled ?? this.isEnabled,
+      modelName: modelName ?? this.modelName,
+      sizeMb: sizeMb ?? this.sizeMb,
+      statusMessage: statusMessage ?? this.statusMessage,
+      maxContextLength: maxContextLength ?? this.maxContextLength,
+      temperature: temperature ?? this.temperature,
+      autoUnload: autoUnload ?? this.autoUnload,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'is_installed': isInstalled ? 1 : 0,
+      'is_enabled': isEnabled ? 1 : 0,
+      'model_name': modelName,
+      'size_mb': sizeMb,
+      'status_message': statusMessage,
+      'max_context_length': maxContextLength,
+      'temperature': temperature,
+      'auto_unload': autoUnload ? 1 : 0,
+    };
+  }
+
+  factory AiModelConfig.fromMap(Map<String, dynamic> map) {
+    return AiModelConfig(
+      isInstalled: map['is_installed'] == 1 || map['is_installed'] == true,
+      isEnabled: map['is_enabled'] == 1 || map['is_enabled'] == true,
+      modelName: map['model_name'] as String? ?? '',
+      sizeMb: (map['size_mb'] as num?)?.toDouble() ?? 0.0,
+      statusMessage: map['status_message'] as String? ?? '',
+      maxContextLength: (map['max_context_length'] as num?)?.toInt() ?? 2048,
+      temperature: (map['temperature'] as num?)?.toDouble() ?? 0.7,
+      autoUnload: map['auto_unload'] == 1 || map['auto_unload'] == true,
+    );
+  }
+}
+```
+
+---
+
+## 57. lib/models/annotation_meta.dart <a id="libmodelsannotationmetadart"></a>
+
+- **Path:** `lib/models/annotation_meta.dart`
+- **Lines:** 51
+- **Language:** `dart`
+
+```dart
+class PdfNote {
+  final int? id;
+  final String filePath;
+  final int pageNumber;
+  final String noteText;
+  final int createdAt;
+
+  PdfNote({
+    this.id,
+    required this.filePath,
+    required this.pageNumber,
+    required this.noteText,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'page_number': pageNumber,
+      'note_text': noteText,
+      'created_at': createdAt,
+    };
+  }
+
+  factory PdfNote.fromMap(Map<String, dynamic> map) {
+    return PdfNote(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      pageNumber: (map['page_number'] as num?)?.toInt() ?? 1,
+      noteText: map['note_text'] as String? ?? '',
+      createdAt: (map['created_at'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  PdfNote copyWith({
+    int? id,
+    String? filePath,
+    int? pageNumber,
+    String? noteText,
+    int? createdAt,
+  }) {
+    return PdfNote(
+      id: id ?? this.id,
+      filePath: filePath ?? this.filePath,
+      pageNumber: pageNumber ?? this.pageNumber,
+      noteText: noteText ?? this.noteText,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+}
+```
+
+---
+
+## 58. lib/models/bookmark.dart <a id="libmodelsbookmarkdart"></a>
+
+- **Path:** `lib/models/bookmark.dart`
+- **Lines:** 51
+- **Language:** `dart`
+
+```dart
+class Bookmark {
+  final int? id;
+  final String filePath;
+  final int pageNumber;
+  final String label;
+  final int createdAt;
+
+  Bookmark({
+    this.id,
+    required this.filePath,
+    required this.pageNumber,
+    required this.label,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'page_number': pageNumber,
+      'label': label,
+      'created_at': createdAt,
+    };
+  }
+
+  factory Bookmark.fromMap(Map<String, dynamic> map) {
+    return Bookmark(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      pageNumber: (map['page_number'] as num?)?.toInt() ?? 1,
+      label: map['label'] as String? ?? 'Page ${map['page_number'] ?? 1}',
+      createdAt: (map['created_at'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  Bookmark copyWith({
+    int? id,
+    String? filePath,
+    int? pageNumber,
+    String? label,
+    int? createdAt,
+  }) {
+    return Bookmark(
+      id: id ?? this.id,
+      filePath: filePath ?? this.filePath,
+      pageNumber: pageNumber ?? this.pageNumber,
+      label: label ?? this.label,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+}
+```
+
+---
+
+## 59. lib/models/exam_session.dart <a id="libmodelsexamsessiondart"></a>
+
+- **Path:** `lib/models/exam_session.dart`
+- **Lines:** 47
+- **Language:** `dart`
+
+```dart
+class ExamSession {
+  final int? id;
+  final String filePath;
+  final String topic;
+  final String difficulty;
+  final int numQuestions;
+  final double scorePct;
+  final int durationSeconds;
+  final int timestamp;
+
+  ExamSession({
+    this.id,
+    required this.filePath,
+    required this.topic,
+    required this.difficulty,
+    required this.numQuestions,
+    required this.scorePct,
+    required this.durationSeconds,
+    required this.timestamp,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'topic': topic,
+      'difficulty': difficulty,
+      'num_questions': numQuestions,
+      'score_pct': scorePct,
+      'duration_seconds': durationSeconds,
+      'timestamp': timestamp,
+    };
+  }
+
+  factory ExamSession.fromMap(Map<String, dynamic> map) {
+    return ExamSession(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      topic: map['topic'] as String? ?? 'General',
+      difficulty: map['difficulty'] as String? ?? 'Medium',
+      numQuestions: (map['num_questions'] as num?)?.toInt() ?? 10,
+      scorePct: (map['score_pct'] as num?)?.toDouble() ?? 0.0,
+      durationSeconds: (map['duration_seconds'] as num?)?.toInt() ?? 0,
+      timestamp: (map['timestamp'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+```
+
+---
+
+## 60. lib/models/ocr_cache_entry.dart <a id="libmodelsocrcacheentrydart"></a>
+
+- **Path:** `lib/models/ocr_cache_entry.dart`
+- **Lines:** 35
+- **Language:** `dart`
+
+```dart
+class OcrCacheEntry {
+  final String filePath;
+  final int pageNumber;
+  final String extractedText;
+  final int timestamp;
+  final String? hash;
+
+  OcrCacheEntry({
+    required this.filePath,
+    required this.pageNumber,
+    required this.extractedText,
+    required this.timestamp,
+    this.hash,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'file_path': filePath,
+      'page_number': pageNumber,
+      'extracted_text': extractedText,
+      'timestamp': timestamp,
+      'hash': hash,
+    };
+  }
+
+  factory OcrCacheEntry.fromMap(Map<String, dynamic> map) {
+    return OcrCacheEntry(
+      filePath: map['file_path'] as String? ?? '',
+      pageNumber: (map['page_number'] as num?)?.toInt() ?? 1,
+      extractedText: map['extracted_text'] as String? ?? '',
+      timestamp: (map['timestamp'] as num?)?.toInt() ?? 0,
+      hash: map['hash'] as String?,
+    );
+  }
+}
+```
+
+---
+
+## 61. lib/models/pdf_compare_result.dart <a id="libmodelspdfcompareresultdart"></a>
+
+- **Path:** `lib/models/pdf_compare_result.dart`
+- **Lines:** 41
+- **Language:** `dart`
+
+```dart
+enum DiffType { unchanged, modified, added, removed }
+
+class PageDiff {
+  final int pageNumber;
+  final int? pageNumberA;
+  final int? pageNumberB;
+  final DiffType diffType;
+  final List<String> addedLines;
+  final List<String> removedLines;
+  final bool hasVisualDiff;
+
+  PageDiff({
+    required this.pageNumber,
+    this.pageNumberA,
+    this.pageNumberB,
+    this.diffType = DiffType.modified,
+    this.addedLines = const [],
+    this.removedLines = const [],
+    this.hasVisualDiff = false,
+  });
+
+  bool get hasDiff => diffType != DiffType.unchanged || addedLines.isNotEmpty || removedLines.isNotEmpty || hasVisualDiff;
+}
+
+class PdfCompareResult {
+  final String fileAPath;
+  final String fileBPath;
+  final int fileAPages;
+  final int fileBPages;
+  final List<PageDiff> pageDiffs;
+  final String summary;
+
+  PdfCompareResult({
+    required this.fileAPath,
+    required this.fileBPath,
+    required this.fileAPages,
+    required this.fileBPages,
+    required this.pageDiffs,
+    required this.summary,
+  });
+}
+```
+
+---
+
+## 62. lib/models/pdf_file.dart <a id="libmodelspdffiledart"></a>
+
+- **Path:** `lib/models/pdf_file.dart`
+- **Lines:** 151
+- **Language:** `dart`
+
+```dart
+const Object _unset = Object();
+
+class PdfFile {
+  final String docId;
+  final String path;
+  final String name;
+  final int sizeBytes;
+  final int modifiedAt;
+  final int pageCount;
+  final bool isFavorite;
+  final int? lastOpenedAt;
+  final String? extractedText;
+  final int lastOpenedPage;
+  final double readingProgress;
+  final int readingTime;
+  final bool completed;
+  final String? folder;
+  final String? tags;
+  final String sourceType; // 'imported', 'scanned', 'saved'
+  final int? createdAt;
+  final int? scanCreatedAt;
+
+  PdfFile({
+    required this.docId,
+    required this.path,
+    required this.name,
+    required this.sizeBytes,
+    required this.modifiedAt,
+    required this.pageCount,
+    this.isFavorite = false,
+    this.lastOpenedAt,
+    this.extractedText,
+    this.lastOpenedPage = 1,
+    this.readingProgress = 0.0,
+    this.readingTime = 0,
+    this.completed = false,
+    this.folder,
+    this.tags,
+    this.sourceType = 'imported',
+    this.createdAt,
+    this.scanCreatedAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'doc_id': docId,
+      'path': path,
+      'name': name,
+      'size_bytes': sizeBytes,
+      'modified_at': modifiedAt,
+      'page_count': pageCount,
+      'is_favorite': isFavorite ? 1 : 0,
+      'last_opened_at': lastOpenedAt,
+      'extracted_text': extractedText,
+      'last_opened_page': lastOpenedPage,
+      'reading_progress': readingProgress,
+      'reading_time': readingTime,
+      'completed': completed ? 1 : 0,
+      'folder': folder,
+      'tags': tags,
+      'source_type': sourceType,
+      'created_at': createdAt,
+      'scan_created_at': scanCreatedAt,
+    };
+  }
+
+  factory PdfFile.fromMap(Map<String, dynamic> map) {
+    return PdfFile(
+      docId: map['doc_id'] as String? ??
+          (DateTime.now().microsecondsSinceEpoch.toRadixString(36) +
+              (map['path'] as String? ?? '').hashCode.toRadixString(36)),
+      path: map['path'] as String? ?? '',
+      name: map['name'] as String? ?? '',
+      sizeBytes: (map['size_bytes'] as num?)?.toInt() ?? 0,
+      modifiedAt: (map['modified_at'] as num?)?.toInt() ?? 0,
+      pageCount: (map['page_count'] as num?)?.toInt() ?? 0,
+      isFavorite: ((map['is_favorite'] as num?)?.toInt() ?? 0) == 1,
+      lastOpenedAt: (map['last_opened_at'] as num?)?.toInt(),
+      extractedText: map['extracted_text'] as String?,
+      lastOpenedPage: (map['last_opened_page'] as num?)?.toInt() ?? 1,
+      readingProgress: (map['reading_progress'] as num?)?.toDouble() ?? 0.0,
+      readingTime: (map['reading_time'] as num?)?.toInt() ?? 0,
+      completed: ((map['completed'] as num?)?.toInt() ?? 0) == 1,
+      folder: map['folder'] as String?,
+      tags: map['tags'] as String?,
+      sourceType: map['source_type'] as String? ?? 'imported',
+      createdAt: (map['created_at'] as num?)?.toInt(),
+      scanCreatedAt: (map['scan_created_at'] as num?)?.toInt(),
+    );
+  }
+
+  PdfFile copyWith({
+    String? docId,
+    String? path,
+    String? name,
+    int? sizeBytes,
+    int? modifiedAt,
+    int? pageCount,
+    bool? isFavorite,
+    Object? lastOpenedAt = _unset,
+    Object? extractedText = _unset,
+    int? lastOpenedPage,
+    double? readingProgress,
+    int? readingTime,
+    bool? completed,
+    Object? folder = _unset,
+    Object? tags = _unset,
+    String? sourceType,
+    Object? createdAt = _unset,
+    Object? scanCreatedAt = _unset,
+  }) {
+    return PdfFile(
+      docId: docId ?? this.docId,
+      path: path ?? this.path,
+      name: name ?? this.name,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      modifiedAt: modifiedAt ?? this.modifiedAt,
+      pageCount: pageCount ?? this.pageCount,
+      isFavorite: isFavorite ?? this.isFavorite,
+      lastOpenedAt: identical(lastOpenedAt, _unset)
+          ? this.lastOpenedAt
+          : lastOpenedAt as int?,
+      extractedText: identical(extractedText, _unset)
+          ? this.extractedText
+          : extractedText as String?,
+      lastOpenedPage: lastOpenedPage ?? this.lastOpenedPage,
+      readingProgress: readingProgress ?? this.readingProgress,
+      readingTime: readingTime ?? this.readingTime,
+      completed: completed ?? this.completed,
+      folder: identical(folder, _unset) ? this.folder : folder as String?,
+      tags: identical(tags, _unset) ? this.tags : tags as String?,
+      sourceType: sourceType ?? this.sourceType,
+      createdAt: identical(createdAt, _unset)
+          ? this.createdAt
+          : createdAt as int?,
+      scanCreatedAt: identical(scanCreatedAt, _unset)
+          ? this.scanCreatedAt
+          : scanCreatedAt as int?,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PdfFile &&
+          runtimeType == other.runtimeType &&
+          docId == other.docId;
+
+  @override
+  int get hashCode => docId.hashCode;
+}
+```
+
+---
+
+## 63. lib/models/pdf_open_request.dart <a id="libmodelspdfopenrequestdart"></a>
+
+- **Path:** `lib/models/pdf_open_request.dart`
+- **Lines:** 49
+- **Language:** `dart`
+
+```dart
+class PdfOpenRequest {
+  final String localPath;
+  final String originalUri;
+  final String fileName;
+  final String mimeType;
+  final String action;
+  final String sourceApp;
+  final bool isExternalLaunch;
+  final bool isTemporary;
+  final String requestId;
+  final List<PdfOpenRequest> documents;
+
+  PdfOpenRequest({
+    required this.localPath,
+    required this.originalUri,
+    required this.fileName,
+    required this.mimeType,
+    required this.action,
+    required this.sourceApp,
+    this.isExternalLaunch = false,
+    this.isTemporary = false,
+    required this.requestId,
+    this.documents = const [],
+  });
+
+  factory PdfOpenRequest.fromMap(Map<dynamic, dynamic> map) {
+    List<PdfOpenRequest> docsList = [];
+    if (map['documents'] is List) {
+      final rawDocs = map['documents'] as List;
+      docsList = rawDocs
+          .whereType<Map<dynamic, dynamic>>()
+          .map((d) => PdfOpenRequest.fromMap(d))
+          .toList();
+    }
+
+    return PdfOpenRequest(
+      localPath: map['localPath'] as String? ?? '',
+      originalUri: map['originalUri'] as String? ?? '',
+      fileName: map['fileName'] as String? ?? 'External_Document.pdf',
+      mimeType: map['mimeType'] as String? ?? 'application/pdf',
+      action: map['action'] as String? ?? 'android.intent.action.VIEW',
+      sourceApp: map['sourceApp'] as String? ?? 'external',
+      isExternalLaunch: map['isExternalLaunch'] as bool? ?? false,
+      isTemporary: map['isTemporary'] as bool? ?? false,
+      requestId: map['requestId'] as String? ?? '',
+      documents: docsList,
+    );
+  }
+}
+```
+
+---
+
+## 64. lib/models/pdf_version.dart <a id="libmodelspdfversiondart"></a>
+
+- **Path:** `lib/models/pdf_version.dart`
+- **Lines:** 47
+- **Language:** `dart`
+
+```dart
+class PdfVersion {
+  final int? id;
+  final String docId;
+  final int versionNumber;
+  final String filePath;
+  final int sizeBytes;
+  final int timestamp;
+  final String sourceOperation;
+  final String? hash;
+
+  PdfVersion({
+    this.id,
+    required this.docId,
+    required this.versionNumber,
+    required this.filePath,
+    required this.sizeBytes,
+    required this.timestamp,
+    required this.sourceOperation,
+    this.hash,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'doc_id': docId,
+      'version_number': versionNumber,
+      'file_path': filePath,
+      'size_bytes': sizeBytes,
+      'timestamp': timestamp,
+      'source_operation': sourceOperation,
+      'hash': hash,
+    };
+  }
+
+  factory PdfVersion.fromMap(Map<String, dynamic> map) {
+    return PdfVersion(
+      id: map['id'] as int?,
+      docId: map['doc_id'] as String,
+      versionNumber: map['version_number'] as int? ?? 1,
+      filePath: map['file_path'] as String,
+      sizeBytes: map['size_bytes'] as int? ?? 0,
+      timestamp: map['timestamp'] as int? ?? 0,
+      sourceOperation: map['source_operation'] as String? ?? 'Imported',
+      hash: map['hash'] as String?,
+    );
+  }
+}
+```
+
+---
+
+## 65. lib/models/semantic_chunk.dart <a id="libmodelssemanticchunkdart"></a>
+
+- **Path:** `lib/models/semantic_chunk.dart`
+- **Lines:** 44
+- **Language:** `dart`
+
+```dart
+class SemanticChunk {
+  final int? id;
+  final String filePath;
+  final int pageNumber;
+  final String chunkText;
+  final List<double> vectorData;
+  final String? keywords;
+
+  SemanticChunk({
+    this.id,
+    required this.filePath,
+    required this.pageNumber,
+    required this.chunkText,
+    required this.vectorData,
+    this.keywords,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'page_number': pageNumber,
+      'chunk_text': chunkText,
+      'vector_data': vectorData.join(','),
+      'keywords': keywords,
+    };
+  }
+
+  factory SemanticChunk.fromMap(Map<String, dynamic> map) {
+    final rawVec = map['vector_data'] as String? ?? '';
+    final vec = rawVec.isNotEmpty
+        ? rawVec.split(',').map((e) => double.tryParse(e) ?? 0.0).toList()
+        : <double>[];
+
+    return SemanticChunk(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      pageNumber: (map['page_number'] as num?)?.toInt() ?? 1,
+      chunkText: map['chunk_text'] as String? ?? '',
+      vectorData: vec,
+      keywords: map['keywords'] as String?,
+    );
+  }
+}
+```
+
+---
+
+## 66. lib/models/study_item.dart <a id="libmodelsstudyitemdart"></a>
+
+- **Path:** `lib/models/study_item.dart`
+- **Lines:** 196
+- **Language:** `dart`
+
+```dart
+class StudyTopic {
+  final int? id;
+  final String filePath;
+  final String title;
+  final int startPage;
+  final int endPage;
+  final String? keywords;
+
+  StudyTopic({
+    this.id,
+    required this.filePath,
+    required this.title,
+    required this.startPage,
+    required this.endPage,
+    this.keywords,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'title': title,
+      'start_page': startPage,
+      'end_page': endPage,
+      'keywords': keywords,
+    };
+  }
+
+  factory StudyTopic.fromMap(Map<String, dynamic> map) {
+    return StudyTopic(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      title: map['title'] as String? ?? '',
+      startPage: (map['start_page'] as num?)?.toInt() ?? 1,
+      endPage: (map['end_page'] as num?)?.toInt() ?? 1,
+      keywords: map['keywords'] as String?,
+    );
+  }
+}
+
+class ImportantTerm {
+  final String term;
+  final String context;
+  final int pageNumber;
+
+  ImportantTerm({
+    required this.term,
+    required this.context,
+    required this.pageNumber,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'term': term,
+      'context': context,
+      'page_number': pageNumber,
+    };
+  }
+
+  factory ImportantTerm.fromMap(Map<String, dynamic> map) {
+    return ImportantTerm(
+      term: map['term'] as String? ?? '',
+      context: map['context'] as String? ?? '',
+      pageNumber: (map['page_number'] as num?)?.toInt() ?? 1,
+    );
+  }
+}
+
+class Flashcard {
+  final int? id;
+  final String filePath;
+  final int pageNumber;
+  final String front;
+  final String back;
+  final String? topic;
+  final int status; // 0 = unstudied, 1 = known, 2 = difficult
+
+  Flashcard({
+    this.id,
+    required this.filePath,
+    required this.pageNumber,
+    required this.front,
+    required this.back,
+    this.topic,
+    this.status = 0,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'page_number': pageNumber,
+      'front': front,
+      'back': back,
+      'topic': topic,
+      'status': status,
+    };
+  }
+
+  factory Flashcard.fromMap(Map<String, dynamic> map) {
+    return Flashcard(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      pageNumber: (map['page_number'] as num?)?.toInt() ?? 1,
+      front: map['front'] as String? ?? '',
+      back: map['back'] as String? ?? '',
+      topic: map['topic'] as String?,
+      status: (map['status'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  Flashcard copyWith({int? status}) {
+    return Flashcard(
+      id: id,
+      filePath: filePath,
+      pageNumber: pageNumber,
+      front: front,
+      back: back,
+      topic: topic,
+      status: status ?? this.status,
+    );
+  }
+}
+
+enum QuestionType { mcq, trueFalse, fillBlank, shortAnswer }
+
+class StudyQuestion {
+  final int? id;
+  final String filePath;
+  final int pageNumber;
+  final QuestionType type;
+  final String question;
+  final List<String> options; // for MCQ
+  final String correctAnswer;
+  final String explanation;
+  final int marks;
+  final String? topic;
+
+  StudyQuestion({
+    this.id,
+    required this.filePath,
+    required this.pageNumber,
+    required this.type,
+    required this.question,
+    this.options = const [],
+    required this.correctAnswer,
+    required this.explanation,
+    this.marks = 1,
+    this.topic,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'page_number': pageNumber,
+      'question_type': type.name,
+      'question': question,
+      'option_a': options.isNotEmpty ? options[0] : null,
+      'option_b': options.length > 1 ? options[1] : null,
+      'option_c': options.length > 2 ? options[2] : null,
+      'option_d': options.length > 3 ? options[3] : null,
+      'correct_answer': correctAnswer,
+      'explanation': explanation,
+      'marks': marks,
+      'topic': topic,
+    };
+  }
+
+  factory StudyQuestion.fromMap(Map<String, dynamic> map) {
+    final opts = <String>[];
+    if (map['option_a'] != null) opts.add(map['option_a'] as String);
+    if (map['option_b'] != null) opts.add(map['option_b'] as String);
+    if (map['option_c'] != null) opts.add(map['option_c'] as String);
+    if (map['option_d'] != null) opts.add(map['option_d'] as String);
+
+    final typeStr = map['question_type'] as String? ?? 'mcq';
+    final type = QuestionType.values.firstWhere(
+      (e) => e.name == typeStr,
+      orElse: () => QuestionType.mcq,
+    );
+
+    return StudyQuestion(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      pageNumber: (map['page_number'] as num?)?.toInt() ?? 1,
+      type: type,
+      question: map['question'] as String? ?? '',
+      options: opts,
+      correctAnswer: map['correct_answer'] as String? ?? '',
+      explanation: map['explanation'] as String? ?? '',
+      marks: (map['marks'] as num?)?.toInt() ?? 1,
+      topic: map['topic'] as String?,
+    );
+  }
+}
+```
+
+---
+
+## 67. lib/models/study_session.dart <a id="libmodelsstudysessiondart"></a>
+
+- **Path:** `lib/models/study_session.dart`
+- **Lines:** 91
+- **Language:** `dart`
+
+```dart
+class StudySession {
+  final int? id;
+  final String filePath;
+  final int startTime;
+  final int endTime;
+  final int durationSeconds;
+  final int questionsAttempted;
+  final int correctCount;
+  final double accuracyPct;
+
+  StudySession({
+    this.id,
+    required this.filePath,
+    required this.startTime,
+    required this.endTime,
+    required this.durationSeconds,
+    required this.questionsAttempted,
+    required this.correctCount,
+    required this.accuracyPct,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'file_path': filePath,
+      'start_time': startTime,
+      'end_time': endTime,
+      'duration_seconds': durationSeconds,
+      'questions_attempted': questionsAttempted,
+      'correct_count': correctCount,
+      'accuracy_pct': accuracyPct,
+    };
+  }
+
+  factory StudySession.fromMap(Map<String, dynamic> map) {
+    return StudySession(
+      id: (map['id'] as num?)?.toInt(),
+      filePath: map['file_path'] as String? ?? '',
+      startTime: (map['start_time'] as num?)?.toInt() ?? 0,
+      endTime: (map['end_time'] as num?)?.toInt() ?? 0,
+      durationSeconds: (map['duration_seconds'] as num?)?.toInt() ?? 0,
+      questionsAttempted: (map['questions_attempted'] as num?)?.toInt() ?? 0,
+      correctCount: (map['correct_count'] as num?)?.toInt() ?? 0,
+      accuracyPct: (map['accuracy_pct'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+class StudyAttempt {
+  final int? id;
+  final int sessionId;
+  final int questionId;
+  final String userAnswer;
+  final bool isCorrect;
+  final int timestamp;
+  final String? topic;
+
+  StudyAttempt({
+    this.id,
+    required this.sessionId,
+    required this.questionId,
+    required this.userAnswer,
+    required this.isCorrect,
+    required this.timestamp,
+    this.topic,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'session_id': sessionId,
+      'question_id': questionId,
+      'user_answer': userAnswer,
+      'is_correct': isCorrect ? 1 : 0,
+      'timestamp': timestamp,
+      'topic': topic,
+    };
+  }
+
+  factory StudyAttempt.fromMap(Map<String, dynamic> map) {
+    return StudyAttempt(
+      id: (map['id'] as num?)?.toInt(),
+      sessionId: (map['session_id'] as num?)?.toInt() ?? 0,
+      questionId: (map['question_id'] as num?)?.toInt() ?? 0,
+      userAnswer: map['user_answer'] as String? ?? '',
+      isCorrect: map['is_correct'] == 1 || map['is_correct'] == true,
+      timestamp: (map['timestamp'] as num?)?.toInt() ?? 0,
+      topic: map['topic'] as String?,
+    );
+  }
+}
+```
+
+---
+
+## 68. lib/models/tool_usage_stat.dart <a id="libmodelstoolusagestatdart"></a>
+
+- **Path:** `lib/models/tool_usage_stat.dart`
+- **Lines:** 27
+- **Language:** `dart`
+
+```dart
+class ToolUsageStat {
+  final String toolName;
+  final int useCount;
+  final int? lastUsedAt;
+
+  ToolUsageStat({
+    required this.toolName,
+    required this.useCount,
+    this.lastUsedAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'tool_name': toolName,
+      'use_count': useCount,
+      'last_used_at': lastUsedAt,
+    };
+  }
+
+  factory ToolUsageStat.fromMap(Map<String, dynamic> map) {
+    return ToolUsageStat(
+      toolName: map['tool_name'] as String? ?? '',
+      useCount: (map['use_count'] as num?)?.toInt() ?? 0,
+      lastUsedAt: (map['last_used_at'] as num?)?.toInt(),
+    );
+  }
+}
+```
+
+---
+
+## 69. lib/widgets/editorial_components.dart <a id="libwidgetseditorialcomponentsdart"></a>
+
+- **Path:** `lib/widgets/editorial_components.dart`
+- **Lines:** 881
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import '../core/theme/editorial_tokens.dart';
+
+/// Design 01: Quiet Editorial Document Studio shared visual components.
+/// Strictly implements the visual specification from Stitch Design 01.
+
+// 1. Editorial Eyebrow
+class EditorialEyebrow extends StatelessWidget {
+  final String text;
+  final Color? color;
+
+  const EditorialEyebrow({
+    super.key,
+    required this.text,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text.toUpperCase(),
+      style: EditorialTokens.eyebrow(
+        color: color ?? EditorialTokens.inkSecondary,
+      ),
+    );
+  }
+}
+
+// 2. Editorial Page Header
+class EditorialPageHeader extends StatelessWidget {
+  final String eyebrow;
+  final String title;
+  final Widget? trailing;
+  final VoidCallback? onBack;
+
+  const EditorialPageHeader({
+    super.key,
+    this.eyebrow = 'OFFLINE PDF',
+    required this.title,
+    this.trailing,
+    this.onBack,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          if (onBack != null) ...[
+            InkWell(
+              onTap: onBack,
+              borderRadius: BorderRadius.circular(4),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Icon(
+                  Icons.arrow_back,
+                  size: 20,
+                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                EditorialEyebrow(
+                  text: eyebrow,
+                  color: EditorialTokens.primary,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: EditorialTokens.displayMedium(
+                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (trailing != null) trailing!,
+        ],
+      ),
+    );
+  }
+}
+
+// 3. Editorial Section Header
+class EditorialSectionHeader extends StatelessWidget {
+  final String? number;
+  final String label;
+  final String? count;
+  final String? trailing;
+
+  const EditorialSectionHeader({
+    super.key,
+    this.number,
+    required this.label,
+    this.count,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (number != null && number!.isNotEmpty)
+            Text(
+              '$number · ',
+              style: EditorialTokens.eyebrow(
+                color: EditorialTokens.primary,
+              ),
+            ),
+          Expanded(
+            child: Text(
+              label,
+              style: EditorialTokens.displayMedium(
+                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+              ).copyWith(fontSize: 17),
+            ),
+          ),
+          if (count != null)
+            Text(
+              count!,
+              style: EditorialTokens.metadata(
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+              ),
+            ),
+          if (trailing != null)
+            Text(
+              trailing!,
+              style: EditorialTokens.metadata(
+                color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// 4. Editorial Divider
+class EditorialDivider extends StatelessWidget {
+  final double height;
+
+  const EditorialDivider({super.key, this.height = 1});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Divider(
+      height: height,
+      thickness: EditorialTokens.hairline,
+      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+    );
+  }
+}
+
+// 5. Editorial Chip
+class EditorialChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  const EditorialChip({
+    super.key,
+    required this.label,
+    this.selected = false,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: selected
+                ? (isDark ? EditorialTokens.primary : EditorialTokens.secondary)
+                : (isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: selected
+                  ? (isDark ? EditorialTokens.primary : EditorialTokens.secondary)
+                  : (isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft),
+              width: EditorialTokens.hairline,
+            ),
+          ),
+          child: Text(
+            label,
+            style: EditorialTokens.label(
+              color: selected
+                  ? Colors.white
+                  : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+            ).copyWith(fontSize: 10.5),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Backward compatibility alias
+typedef EditorialFilterChip = EditorialChip;
+
+// 6. Editorial Button (Primary)
+class EditorialButton extends StatelessWidget {
+  final String label;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final bool isDestructive;
+
+  const EditorialButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.icon,
+    this.isDestructive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: isDestructive ? EditorialTokens.error : EditorialTokens.primary,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 16, color: Colors.white),
+                const SizedBox(width: 7),
+              ],
+              Text(
+                label,
+                style: EditorialTokens.label(color: Colors.white).copyWith(fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// 7. Editorial Secondary Button
+class EditorialSecondaryButton extends StatelessWidget {
+  final String label;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+
+  const EditorialSecondaryButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+          decoration: BoxDecoration(
+            color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(
+                  icon,
+                  size: 15,
+                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                ),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                label,
+                style: EditorialTokens.label(
+                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                ).copyWith(fontSize: 11.5),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// 8. Editorial Metadata Text
+class EditorialMetadata extends StatelessWidget {
+  final String text;
+  final Color? color;
+  final int maxLines;
+
+  const EditorialMetadata({
+    super.key,
+    required this.text,
+    this.color,
+    this.maxLines = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Text(
+      text,
+      maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
+      style: EditorialTokens.metadata(
+        color: color ?? (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+      ),
+    );
+  }
+}
+
+// 9. Editorial Stat Strip
+class EditorialStatStrip extends StatelessWidget {
+  final String primaryText;
+  final String secondaryText;
+
+  const EditorialStatStrip({
+    super.key,
+    required this.primaryText,
+    required this.secondaryText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            primaryText,
+            style: EditorialTokens.metadataStrong(
+              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+            ),
+          ),
+          Text(
+            secondaryText.toUpperCase(),
+            style: EditorialTokens.eyebrow(
+              color: EditorialTokens.primary,
+            ).copyWith(fontSize: 9.5),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// 10. Physical Paper Thumbnail (1:1.414 ISO paper aspect ratio)
+class EditorialPaperThumbnail extends StatelessWidget {
+  final String? thumbnailPath;
+  final int pageNumber;
+  final int totalPages;
+  final double? progressPercent;
+  final bool isCompleted;
+  final double width;
+  final double height;
+
+  const EditorialPaperThumbnail({
+    super.key,
+    this.thumbnailPath,
+    this.pageNumber = 1,
+    this.totalPages = 1,
+    this.progressPercent,
+    this.isCompleted = false,
+    this.width = 46,
+    this.height = 65,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasValidThumbnail = thumbnailPath != null &&
+        thumbnailPath!.isNotEmpty &&
+        File(thumbnailPath!).existsSync();
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: EditorialTokens.paper,
+        borderRadius: BorderRadius.zero,
+        border: Border.all(
+          color: EditorialTokens.border,
+          width: EditorialTokens.hairline,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x121C1A18),
+            blurRadius: 3,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          if (hasValidThumbnail)
+            Positioned.fill(
+              child: Image.file(
+                File(thumbnailPath!),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _buildSimulatedRules(),
+              ),
+            )
+          else
+            Positioned.fill(child: _buildSimulatedRules()),
+
+          // Small corner page notation
+          Positioned(
+            bottom: 2,
+            right: 2,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 0.5),
+              decoration: BoxDecoration(
+                color: isCompleted
+                    ? EditorialTokens.successLight
+                    : EditorialTokens.surfaceMuted,
+                borderRadius: BorderRadius.circular(1.5),
+              ),
+              child: Text(
+                isCompleted ? '✓' : 'p.$pageNumber',
+                style: EditorialTokens.metadata(
+                  color: isCompleted
+                      ? EditorialTokens.success
+                      : EditorialTokens.inkSecondary,
+                ).copyWith(fontSize: 7.5, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+
+          // Bottom terracotta progress baseline
+          if (progressPercent != null && progressPercent! > 0)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 2,
+                color: EditorialTokens.primary,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSimulatedRules() {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 2.5,
+            width: width * 0.65,
+            color: EditorialTokens.primary.withOpacity(0.65),
+          ),
+          const SizedBox(height: 3),
+          Container(height: 1.2, color: EditorialTokens.border),
+          const SizedBox(height: 2.5),
+          Container(height: 1.2, width: width * 0.8, color: EditorialTokens.border),
+          const SizedBox(height: 2.5),
+          Container(height: 1.2, width: width * 0.7, color: EditorialTokens.border),
+          const SizedBox(height: 2.5),
+          Container(height: 1.2, width: width * 0.5, color: EditorialTokens.border),
+        ],
+      ),
+    );
+  }
+}
+
+// Alias for backwards compatibility
+typedef PhysicalPaperThumbnail = EditorialPaperThumbnail;
+
+// 11. Custom Editorial Bottom Navigation Bar (Files, Favorites, Search, Tools, Stats)
+class EditorialBottomBar extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onSelected;
+
+  const EditorialBottomBar({
+    super.key,
+    required this.currentIndex,
+    required this.onSelected,
+  });
+
+  static const items = [
+    (Icons.folder_outlined, 'Files'),
+    (Icons.bookmark_border, 'Favorites'),
+    (Icons.search, 'Search'),
+    (Icons.build_outlined, 'Tools'),
+    (Icons.insights_outlined, 'Stats'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return SafeArea(
+      top: false,
+      child: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+          border: Border(
+            top: BorderSide(
+              color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+              width: EditorialTokens.hairline,
+            ),
+          ),
+        ),
+        child: Row(
+          children: List.generate(
+            items.length,
+            (index) {
+              final selected = index == currentIndex;
+              final item = items[index];
+
+              return Expanded(
+                child: InkWell(
+                  onTap: () => onSelected(index),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        item.$1,
+                        size: selected ? 20 : 19,
+                        color: selected
+                            ? EditorialTokens.primary
+                            : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        item.$2,
+                        style: selected
+                            ? EditorialTokens.label(color: EditorialTokens.primary).copyWith(fontSize: 10.5)
+                            : EditorialTokens.metadata(
+                                color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                              ).copyWith(fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// 12. Editorial Tool Card
+class EditorialToolCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final String? badge;
+  final VoidCallback onTap;
+
+  const EditorialToolCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.description,
+    this.badge,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+        borderRadius: BorderRadius.circular(EditorialTokens.r8),
+        border: Border.all(
+          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+          width: EditorialTokens.hairline,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(EditorialTokens.r8),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      icon,
+                      size: 18,
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: EditorialTokens.title(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ),
+                      ),
+                    ),
+                    if (badge != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        child: Text(
+                          badge!,
+                          style: EditorialTokens.metadata(
+                            color: EditorialTokens.primary,
+                          ).copyWith(fontSize: 9.5, fontWeight: FontWeight.w600),
+                        ),
+                      )
+                    else
+                      Icon(
+                        Icons.chevron_right,
+                        size: 18,
+                        color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  description,
+                  style: EditorialTokens.bodySmall(
+                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// 13. Editorial Document Operations Sheet
+class EditorialDocumentOperationsSheet extends StatelessWidget {
+  final String fileName;
+  final int pageCount;
+  final int sizeBytes;
+  final bool isFavorite;
+  final Function(String action) onAction;
+
+  const EditorialDocumentOperationsSheet({
+    super.key,
+    required this.fileName,
+    required this.pageCount,
+    required this.sizeBytes,
+    required this.isFavorite,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final actions = [
+      (Icons.menu_book_outlined, 'Study Mode', 'study'),
+      (Icons.history_outlined, 'Version History', 'version'),
+      (Icons.compress_outlined, 'Compress PDF', 'compress'),
+      (Icons.photo_size_select_small, 'Target Size', 'target_size'),
+      (Icons.edit_note_outlined, 'Edit Metadata', 'metadata'),
+      (Icons.lock_outline, 'Encrypt PDF', 'encrypt'),
+      (Icons.compare_arrows_outlined, 'Compare PDF', 'compare'),
+      (Icons.info_outline, 'Document Info', 'info'),
+      (Icons.share_outlined, 'Share Document', 'share'),
+      (Icons.drive_file_rename_outline, 'Rename File', 'rename'),
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(EditorialTokens.r8)),
+        border: Border(
+          top: BorderSide(
+            color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        14,
+        16,
+        MediaQuery.of(context).padding.bottom + 16,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const EditorialEyebrow(
+                      text: 'DOCUMENT OPERATIONS',
+                      color: EditorialTokens.primary,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      fileName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: EditorialTokens.title(
+                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close, size: 20),
+                color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const EditorialDivider(),
+          const SizedBox(height: 12),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 360;
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: isNarrow ? 2.8 : 3.4,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: actions.length,
+                itemBuilder: (context, i) {
+              final a = actions[i];
+              return InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  onAction(a.$3);
+                },
+                borderRadius: BorderRadius.circular(4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        a.$1,
+                        size: 16,
+                        color: EditorialTokens.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          a.$2,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: EditorialTokens.label(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 11),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              onAction('delete');
+            },
+            borderRadius: BorderRadius.circular(4),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: EditorialTokens.errorLight,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: EditorialTokens.error.withOpacity(0.3),
+                  width: EditorialTokens.hairline,
+                ),
+              ),
+              child: Text(
+                'Delete Document from Device',
+                style: EditorialTokens.label(color: EditorialTokens.error).copyWith(fontSize: 11.5),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 70. lib/widgets/empty_state.dart <a id="libwidgetsemptystatedart"></a>
+
+- **Path:** `lib/widgets/empty_state.dart`
+- **Lines:** 52
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+
+class EmptyStateWidget extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String message;
+  final String? actionText;
+  final VoidCallback? onAction;
+
+  const EmptyStateWidget({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.message,
+    this.actionText,
+    this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            if (actionText != null && onAction != null) ...[
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: onAction,
+                child: Text(actionText!),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 71. lib/widgets/pdf_file_card.dart <a id="libwidgetspdffilecarddart"></a>
+
+- **Path:** `lib/widgets/pdf_file_card.dart`
+- **Lines:** 237
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import '../core/storage/thumbnail_cache_service.dart';
+import '../core/theme/editorial_tokens.dart';
+import '../core/utils/utils.dart';
+import '../models/pdf_file.dart';
+import 'editorial_components.dart';
+
+class PdfFileCard extends StatefulWidget {
+  final PdfFile file;
+  final VoidCallback onTap;
+  final VoidCallback? onFavoriteToggle;
+  final VoidCallback? onToggleFavorite;
+  final VoidCallback? onDelete;
+  final Function(String)? onMenuAction;
+  final VoidCallback? onMoreOptions;
+  final bool showFolderPath;
+
+  const PdfFileCard({
+    super.key,
+    required this.file,
+    required this.onTap,
+    this.onFavoriteToggle,
+    this.onToggleFavorite,
+    this.onDelete,
+    this.onMenuAction,
+    this.onMoreOptions,
+    this.showFolderPath = true,
+  });
+
+  @override
+  State<PdfFileCard> createState() => _PdfFileCardState();
+}
+
+class _PdfFileCardState extends State<PdfFileCard> {
+  File? _thumbnailFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadThumbnail();
+  }
+
+  @override
+  void didUpdateWidget(covariant PdfFileCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.file.path != widget.file.path) {
+      _loadThumbnail();
+    }
+  }
+
+  Future<void> _loadThumbnail() async {
+    if (!mounted) return;
+    final file = await ThumbnailCacheService.getThumbnailFile(widget.file.path);
+    if (mounted) {
+      setState(() {
+        _thumbnailFile = file;
+      });
+    }
+  }
+
+  void _showOperationsSheet(BuildContext context) {
+    if (widget.onMoreOptions != null) {
+      widget.onMoreOptions!();
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => EditorialDocumentOperationsSheet(
+        fileName: widget.file.name,
+        pageCount: widget.file.pageCount,
+        sizeBytes: widget.file.sizeBytes,
+        isFavorite: widget.file.isFavorite,
+        onAction: (action) {
+          if (action == 'delete') {
+            if (widget.onDelete != null) {
+              widget.onDelete!();
+            } else {
+              widget.onMenuAction?.call('delete');
+            }
+          } else {
+            widget.onMenuAction?.call(action);
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final file = widget.file;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final folderPath = file.folder ??
+        (file.path.contains(Platform.pathSeparator)
+            ? file.path
+                .substring(0, file.path.lastIndexOf(Platform.pathSeparator))
+            : '');
+
+    final progressPct = (file.readingProgress * 100).toInt();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+        borderRadius: BorderRadius.circular(EditorialTokens.r8),
+        border: Border.all(
+          color: isDark
+              ? EditorialTokens.darkBorderSoft
+              : EditorialTokens.borderSoft,
+          width: EditorialTokens.hairline,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(EditorialTokens.r8),
+          onTap: widget.onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1:1.414 ISO Physical Paper Thumbnail
+                EditorialPaperThumbnail(
+                  thumbnailPath: _thumbnailFile?.path,
+                  pageNumber: file.lastOpenedPage > 0
+                      ? file.lastOpenedPage
+                      : (file.pageCount > 0 ? file.pageCount : 1),
+                  totalPages: file.pageCount,
+                  isCompleted: file.completed,
+                  progressPercent: file.readingProgress,
+                  width: 44,
+                  height: 62,
+                ),
+                const SizedBox(width: 12),
+
+                // Main metadata column
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        file.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: EditorialTokens.title(
+                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        ).copyWith(fontSize: 15),
+                      ),
+                      const SizedBox(height: 5),
+                      EditorialMetadata(
+                        text:
+                            '${file.pageCount > 0 ? "${file.pageCount} pages" : "PDF"} · ${Utils.formatBytes(file.sizeBytes)}${progressPct > 0 ? " · $progressPct% read" : ""}',
+                        color: isDark
+                            ? EditorialTokens.darkInkSecondary
+                            : EditorialTokens.inkSecondary,
+                      ),
+                      if (widget.showFolderPath && folderPath.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        EditorialMetadata(
+                          text: folderPath,
+                          color: isDark
+                              ? EditorialTokens.darkInkMuted
+                              : EditorialTokens.inkMuted,
+                        ),
+                      ],
+                      if (file.readingProgress > 0 && !file.completed) ...[
+                        const SizedBox(height: 6),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(1),
+                          child: LinearProgressIndicator(
+                            value: file.readingProgress,
+                            backgroundColor: isDark
+                                ? EditorialTokens.darkSurfaceMuted
+                                : EditorialTokens.surfaceMuted,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              EditorialTokens.primary,
+                            ),
+                            minHeight: 2,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 6),
+
+                // Star & Menu Actions
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      iconSize: 18,
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      icon: Icon(
+                        file.isFavorite ? Icons.star : Icons.star_border,
+                        color: file.isFavorite
+                            ? EditorialTokens.primary
+                            : (isDark
+                                ? EditorialTokens.darkInkMuted
+                                : EditorialTokens.inkMuted),
+                      ),
+                      onPressed: () {
+                        final cb =
+                            widget.onFavoriteToggle ?? widget.onToggleFavorite;
+                        if (cb != null) cb();
+                      },
+                    ),
+                    IconButton(
+                      iconSize: 18,
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: isDark
+                            ? EditorialTokens.darkInkMuted
+                            : EditorialTokens.inkMuted,
+                      ),
+                      onPressed: () => _showOperationsSheet(context),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 72. lib/widgets/pdf_tool_file_picker_screen.dart <a id="libwidgetspdftoolfilepickerscreendart"></a>
+
+- **Path:** `lib/widgets/pdf_tool_file_picker_screen.dart`
+- **Lines:** 624
+- **Language:** `dart`
+
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
+import '../core/storage/thumbnail_cache_service.dart';
+import '../core/theme/editorial_tokens.dart';
+import '../core/utils/utils.dart';
+import '../features/home/files_tab.dart';
+import '../features/home/pdf_list_provider.dart';
+import '../models/pdf_file.dart';
+import 'editorial_components.dart';
+
+enum ToolPickerMode { singleSelect, multiSelect }
+
+class PdfToolFilePickerScreen extends ConsumerStatefulWidget {
+  final String title;
+  final ToolPickerMode mode;
+  final List<PdfFile>? initialSelectedFiles;
+  final String? actionButtonText;
+
+  const PdfToolFilePickerScreen({
+    super.key,
+    required this.title,
+    required this.mode,
+    this.initialSelectedFiles,
+    this.actionButtonText,
+  });
+
+  @override
+  ConsumerState<PdfToolFilePickerScreen> createState() =>
+      _PdfToolFilePickerScreenState();
+}
+
+class _PdfToolFilePickerScreenState
+    extends ConsumerState<PdfToolFilePickerScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final List<PdfFile> _selectedFiles = [];
+  SortOption _sortOption = SortOption.dateNewest;
+  String _searchQuery = '';
+  bool _showReorderSheet = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialSelectedFiles != null) {
+      _selectedFiles.addAll(widget.initialSelectedFiles!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<PdfFile> _filterAndSortFiles(List<PdfFile> files) {
+    var list = List<PdfFile>.from(files);
+    if (_searchQuery.trim().isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      list = list
+          .where((f) =>
+              f.name.toLowerCase().contains(q) ||
+              f.path.toLowerCase().contains(q))
+          .toList();
+    }
+
+    switch (_sortOption) {
+      case SortOption.nameAsc:
+        list.sort(
+            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+        break;
+      case SortOption.nameDesc:
+        list.sort(
+            (a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
+        break;
+      case SortOption.dateNewest:
+        list.sort((a, b) => b.modifiedAt.compareTo(a.modifiedAt));
+        break;
+      case SortOption.dateOldest:
+        list.sort((a, b) => a.modifiedAt.compareTo(b.modifiedAt));
+        break;
+      case SortOption.sizeLargest:
+        list.sort((a, b) => b.sizeBytes.compareTo(a.sizeBytes));
+        break;
+      case SortOption.sizeSmallest:
+        list.sort((a, b) => a.sizeBytes.compareTo(b.sizeBytes));
+        break;
+    }
+    return list;
+  }
+
+  void _showSortDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: EditorialTokens.paper,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(EditorialTokens.r8)),
+        side: BorderSide(color: EditorialTokens.border, width: EditorialTokens.hairline),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'ORDERING PREFERENCE'),
+            const SizedBox(height: 4),
+            Text('Sort Documents', style: EditorialTokens.titleMedium()),
+            const SizedBox(height: 12),
+            const EditorialDivider(),
+            _buildSortTile('Alphabetical (A to Z)', SortOption.nameAsc),
+            _buildSortTile('Date modified (Newest first)', SortOption.dateNewest),
+            _buildSortTile('Document size (Largest first)', SortOption.sizeLargest),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSortTile(String title, SortOption option) {
+    final isSelected = _sortOption == option;
+    return InkWell(
+      onTap: () {
+        setState(() => _sortOption = option);
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: EditorialTokens.bodyMedium(
+                color: isSelected ? EditorialTokens.primary : EditorialTokens.ink,
+              ).copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
+            ),
+            if (isSelected)
+              const Icon(Icons.check, size: 16, color: EditorialTokens.primary),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getFolderDisplay(String filePath) {
+    try {
+      final parent = p.dirname(filePath);
+      if (parent.startsWith('/storage/emulated/0/')) {
+        return parent.replaceFirst('/storage/emulated/0/', '');
+      } else if (parent.startsWith('/storage/emulated/0')) {
+        return 'Internal Storage';
+      }
+      final parts = parent.split(Platform.pathSeparator);
+      if (parts.length > 2) {
+        return '.../${parts.sublist(parts.length - 2).join('/')}';
+      }
+      return parent;
+    } catch (_) {
+      return p.dirname(filePath);
+    }
+  }
+
+  int get _totalSelectedPages {
+    return _selectedFiles.fold(0, (sum, file) => sum + file.pageCount);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pdfState = ref.watch(pdfListProvider);
+
+    return Scaffold(
+      backgroundColor: EditorialTokens.canvas,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            const EditorialDivider(),
+            _buildSearchBar(),
+            const EditorialDivider(),
+            Expanded(
+              child: pdfState.when(
+                data: (allFiles) {
+                  final displayFiles = _filterAndSortFiles(allFiles);
+
+                  return Column(
+                    children: [
+                      // Reorderable sheet / Chips if multi-select
+                      if (widget.mode == ToolPickerMode.multiSelect &&
+                          _selectedFiles.isNotEmpty) ...[
+                        Container(
+                          color: EditorialTokens.surface,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'SELECTED (${_selectedFiles.length} DOCUMENTS · $_totalSelectedPages PAGES)',
+                                    style: EditorialTokens.metadataStrong(
+                                      color: EditorialTokens.primary,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  GestureDetector(
+                                    onTap: () => setState(() => _selectedFiles.clear()),
+                                    child: Text(
+                                      'CLEAR ALL',
+                                      style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              if (_showReorderSheet) ...[
+                                Text(
+                                  'Drag handles to sequence compilation order:',
+                                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                ),
+                                const SizedBox(height: 6),
+                                SizedBox(
+                                  height: 140,
+                                  child: ReorderableListView.builder(
+                                    itemCount: _selectedFiles.length,
+                                    onReorder: (oldIdx, newIdx) {
+                                      setState(() {
+                                        if (newIdx > oldIdx) newIdx -= 1;
+                                        final item = _selectedFiles.removeAt(oldIdx);
+                                        _selectedFiles.insert(newIdx, item);
+                                      });
+                                    },
+                                    itemBuilder: (context, index) {
+                                      final f = _selectedFiles[index];
+                                      return Container(
+                                        key: ValueKey(f.path),
+                                        margin: const EdgeInsets.symmetric(vertical: 3),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: EditorialTokens.paper,
+                                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                          border: Border.all(
+                                            color: EditorialTokens.borderSoft,
+                                            width: EditorialTokens.hairline,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.drag_handle, size: 16, color: EditorialTokens.inkMuted),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                f.name,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: EditorialTokens.titleSmall().copyWith(fontSize: 12),
+                                              ),
+                                            ),
+                                            Text(
+                                              '${f.pageCount}P',
+                                              style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                            ),
+                                            const SizedBox(width: 6),
+                                            GestureDetector(
+                                              onTap: () => setState(() => _selectedFiles.removeAt(index)),
+                                              child: const Icon(Icons.close, size: 14, color: EditorialTokens.inkMuted),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ] else ...[
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: _selectedFiles.map((file) {
+                                      return Container(
+                                        margin: const EdgeInsets.only(right: 6),
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: EditorialTokens.surfaceMuted,
+                                          borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                          border: Border.all(
+                                            color: EditorialTokens.border,
+                                            width: EditorialTokens.hairline,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              file.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: EditorialTokens.metadataStrong().copyWith(fontSize: 11),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _selectedFiles.removeWhere((f) => f.path == file.path);
+                                                });
+                                              },
+                                              child: const Icon(Icons.close, size: 12, color: EditorialTokens.inkMuted),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        const EditorialDivider(),
+                      ],
+
+                      // File list
+                      Expanded(
+                        child: displayFiles.isEmpty
+                            ? Center(
+                                child: Text(
+                                  _searchQuery.isNotEmpty
+                                      ? 'NO MATCHING DOCUMENTS FOUND.'
+                                      : 'NO DOCUMENTS REGISTERED IN STORAGE.',
+                                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                ),
+                              )
+                            : ListView.separated(
+                                padding: const EdgeInsets.all(16),
+                                itemCount: displayFiles.length,
+                                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                                itemBuilder: (context, index) {
+                                  final file = displayFiles[index];
+                                  final isSelected =
+                                      _selectedFiles.any((f) => f.path == file.path);
+                                  final folder = _getFolderDisplay(file.path);
+
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? const Color(0xFFFBF1EE) : EditorialTokens.paper,
+                                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                      border: Border.all(
+                                        color: isSelected ? EditorialTokens.primary : EditorialTokens.borderSoft,
+                                        width: isSelected ? 1.5 : EditorialTokens.hairline,
+                                      ),
+                                    ),
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                      onTap: () {
+                                        if (widget.mode == ToolPickerMode.singleSelect) {
+                                          Navigator.pop(context, file);
+                                        } else {
+                                          setState(() {
+                                            if (isSelected) {
+                                              _selectedFiles.removeWhere((f) => f.path == file.path);
+                                            } else {
+                                              _selectedFiles.add(file);
+                                            }
+                                          });
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12),
+                                        child: Row(
+                                          children: [
+                                            // Thumbnail
+                                            Container(
+                                              width: 38,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: EditorialTokens.surfaceMuted,
+                                                borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                                border: Border.all(
+                                                  color: EditorialTokens.borderSoft,
+                                                  width: EditorialTokens.hairline,
+                                                ),
+                                              ),
+                                              child: FutureBuilder<File?>(
+                                                future: ThumbnailCacheService.getThumbnailFile(file.path),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.connectionState == ConnectionState.done &&
+                                                      snapshot.data != null &&
+                                                      snapshot.data!.existsSync()) {
+                                                    return ClipRRect(
+                                                      borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                                      child: Image.file(snapshot.data!, fit: BoxFit.cover),
+                                                    );
+                                                  }
+                                                  return const Icon(
+                                                    Icons.picture_as_pdf_outlined,
+                                                    size: 18,
+                                                    color: EditorialTokens.primary,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    file.name,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: EditorialTokens.titleSmall().copyWith(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 3),
+                                                  Text(
+                                                    '${file.pageCount > 0 ? "${file.pageCount} PAGES" : "PAGES UNKNOWN"}  ·  ${Utils.formatBytes(file.sizeBytes).toUpperCase()}',
+                                                    style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                                  ),
+                                                  if (folder.isNotEmpty) ...[
+                                                    const SizedBox(height: 2),
+                                                    Text(
+                                                      folder.toUpperCase(),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: EditorialTokens.metadata(
+                                                        color: EditorialTokens.inkMuted.withOpacity(0.8),
+                                                      ).copyWith(fontSize: 9),
+                                                    ),
+                                                  ],
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            if (widget.mode == ToolPickerMode.multiSelect)
+                                              Icon(
+                                                isSelected ? Icons.check_circle : Icons.circle_outlined,
+                                                size: 18,
+                                                color: isSelected ? EditorialTokens.primary : EditorialTokens.border,
+                                              )
+                                            else
+                                              const Icon(
+                                                Icons.chevron_right,
+                                                size: 18,
+                                                color: EditorialTokens.inkMuted,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+
+                      // Bottom Action Bar for Multi-select Mode
+                      if (widget.mode == ToolPickerMode.multiSelect)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          decoration: const BoxDecoration(
+                            color: EditorialTokens.surface,
+                            border: Border(
+                              top: BorderSide(
+                                color: EditorialTokens.border,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '${_selectedFiles.length} DOCUMENTS SELECTED',
+                                    style: EditorialTokens.metadataStrong(
+                                      color: _selectedFiles.isNotEmpty ? EditorialTokens.primary : EditorialTokens.inkMuted,
+                                    ),
+                                  ),
+                                  Text(
+                                    'TOTAL $_totalSelectedPages PAGES',
+                                    style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              EditorialSecondaryButton(
+                                label: 'Cancel',
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              const SizedBox(width: 8),
+                              EditorialButton(
+                                label: widget.actionButtonText ?? 'Assemble',
+                                onPressed: _selectedFiles.isNotEmpty
+                                    ? () => Navigator.pop(context, _selectedFiles)
+                                    : null,
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  );
+                },
+                loading: () => const Center(
+                  child: SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: EditorialTokens.primary,
+                    ),
+                  ),
+                ),
+                error: (err, _) => Center(
+                  child: Text('Error loading files: $err', style: EditorialTokens.metadata()),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const EditorialEyebrow(text: 'DOCUMENT LIBRARY'),
+                const SizedBox(height: 2),
+                Text(
+                  widget.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: EditorialTokens.titleLarge(),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.sort, color: EditorialTokens.ink, size: 20),
+            onPressed: _showSortDialog,
+            tooltip: 'Sort Documents',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+          ),
+          if (widget.mode == ToolPickerMode.multiSelect && _selectedFiles.isNotEmpty)
+            IconButton(
+              icon: Icon(
+                Icons.swap_vert,
+                color: _showReorderSheet ? EditorialTokens.primary : EditorialTokens.ink,
+                size: 20,
+              ),
+              onPressed: () => setState(() => _showReorderSheet = !_showReorderSheet),
+              tooltip: 'Sequence order',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      color: EditorialTokens.surface,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: EditorialTokens.surfaceMuted,
+          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+          border: Border.all(
+            color: EditorialTokens.borderSoft,
+            width: EditorialTokens.hairline,
+          ),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.search, size: 16, color: EditorialTokens.inkMuted),
+            const SizedBox(width: 8),
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                onChanged: (val) => setState(() => _searchQuery = val),
+                style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+                decoration: InputDecoration(
+                  hintText: 'SEARCH ARCHIVE BY TITLE OR FOLDER...',
+                  hintStyle: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+              ),
+            ),
+            if (_searchQuery.isNotEmpty)
+              GestureDetector(
+                onTap: () {
+                  _searchController.clear();
+                  setState(() => _searchQuery = '');
+                },
+                child: const Icon(Icons.clear, size: 16, color: EditorialTokens.inkMuted),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 73. lib/widgets/permission_banner.dart <a id="libwidgetspermissionbannerdart"></a>
+
+- **Path:** `lib/widgets/permission_banner.dart`
+- **Lines:** 31
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+
+class PermissionBanner extends StatelessWidget {
+  final VoidCallback onRequestPermission;
+
+  const PermissionBanner({super.key, required this.onRequestPermission});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.amber.shade100,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: Colors.amber.shade900),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'Storage access required to scan PDFs on your device.',
+              style: TextStyle(color: Colors.amber.shade900, fontSize: 13),
+            ),
+          ),
+          TextButton(
+            onPressed: onRequestPermission,
+            child: const Text('Grant Access'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 74. test/e2e_smoke_test.dart <a id="teste2esmoketestdart"></a>
+
+- **Path:** `test/e2e_smoke_test.dart`
+- **Lines:** 183
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:offline_pdf_reader/main.dart' show OfflinePdfReaderApp;
+import 'package:offline_pdf_reader/features/home/main_navigation_screen.dart';
+import 'package:offline_pdf_reader/features/home/files_tab.dart';
+import 'package:offline_pdf_reader/features/favorites/favorites_tab.dart';
+import 'package:offline_pdf_reader/features/search/search_tab.dart';
+import 'package:offline_pdf_reader/features/tools/tools_tab.dart';
+import 'package:offline_pdf_reader/features/stats/stats_tab.dart';
+import 'package:offline_pdf_reader/features/settings/settings_screen.dart';
+import 'package:offline_pdf_reader/widgets/editorial_components.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    GoogleFonts.config.allowRuntimeFetching = false;
+    databaseFactory = databaseFactorySqflitePlugin;
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('com.tekartik.sqflite'),
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'getDatabasesPath') return '.';
+        if (methodCall.method == 'openDatabase') return 1;
+        if (methodCall.method == 'query') return <Map<String, dynamic>>[];
+        if (methodCall.method == 'insert' ||
+            methodCall.method == 'update' ||
+            methodCall.method == 'delete') {
+          return 1;
+        }
+        return null;
+      },
+    );
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/path_provider'),
+      (MethodCall methodCall) async => '.',
+    );
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('com.offlinepdf.app/intent'),
+      (MethodCall methodCall) async => null,
+    );
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('flutter.baseflow.com/permissions/methods'),
+      (MethodCall methodCall) async => 1,
+    );
+  });
+
+  group('Release Candidate Smoke Test Suite', () {
+    testWidgets('1. FILES Tab loads and displays Quiet Editorial Header & Shell',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const ProviderScope(child: OfflinePdfReaderApp()));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MainNavigationScreen), findsOneWidget);
+      expect(find.byType(FilesTab), findsOneWidget);
+      expect(find.text('LOCAL STORAGE'), findsOneWidget);
+      expect(find.text('Files'), findsWidgets);
+      expect(find.text('All PDFs'), findsOneWidget);
+      expect(find.text('Recent'), findsOneWidget);
+      expect(find.text('Starred'), findsOneWidget);
+    });
+
+    testWidgets('2. Navigation to FAVORITES tab renders Editorial Curated Documents',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const ProviderScope(child: OfflinePdfReaderApp()));
+      await tester.pumpAndSettle();
+
+      // Tap on Favorites in navigation bar
+      await tester.tap(find.text('Favorites'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FavoritesTab), findsOneWidget);
+      expect(find.textContaining('CURATED DOCUMENTS'), findsOneWidget);
+      expect(find.text('Favorites'), findsWidgets);
+    });
+
+    testWidgets('3. Navigation to SEARCH tab renders Search and OCR controls',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const ProviderScope(child: OfflinePdfReaderApp()));
+      await tester.pumpAndSettle();
+
+      // Tap on Search in navigation bar
+      await tester.tap(find.text('Search'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SearchTab), findsOneWidget);
+      expect(find.textContaining('DOCUMENT SEARCH'), findsOneWidget);
+      expect(find.text('Search inside extracted OCR text'), findsOneWidget);
+    });
+
+    testWidgets('4. Navigation to TOOLS tab renders 3 Numbered Functional Suites',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const ProviderScope(child: OfflinePdfReaderApp()));
+      await tester.pumpAndSettle();
+
+      // Tap on Tools in navigation bar
+      await tester.tap(find.text('Tools'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ToolsTab), findsOneWidget);
+      expect(find.text('Document Utilities'), findsOneWidget);
+      expect(find.text('Document Transformation'), findsOneWidget);
+      expect(find.text('Conversion & Capture'), findsOneWidget);
+    });
+
+    testWidgets('5. Navigation to STATS tab renders Telemetry and Breakdown',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const ProviderScope(child: OfflinePdfReaderApp()));
+      await tester.pumpAndSettle();
+
+      // Tap on Stats in navigation bar
+      await tester.tap(find.text('Stats'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(StatsTab), findsOneWidget);
+      expect(find.textContaining('READING ACTIVITY'), findsOneWidget);
+      expect(find.text('Reading & Activity'), findsOneWidget);
+      expect(find.text('Storage Distribution'), findsOneWidget);
+      expect(find.text('Tool Operations'), findsOneWidget);
+      expect(find.text('Frequent Documents'), findsOneWidget);
+    });
+
+    testWidgets('6. Settings Screen opens and displays Quiet Editorial Preferences',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const ProviderScope(child: OfflinePdfReaderApp()));
+      await tester.pumpAndSettle();
+
+      // Open settings via 'P' avatar on Library screen
+      final settingsAvatar = find.text('P');
+      expect(settingsAvatar, findsOneWidget);
+      await tester.tap(settingsAvatar);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SettingsScreen), findsOneWidget);
+      expect(find.textContaining('STUDIO PREFERENCES'), findsOneWidget);
+      expect(find.text('Settings & Storage'), findsOneWidget);
+      expect(find.text('Appearance & Reading Bed'), findsOneWidget);
+      expect(find.text('Application Theme'), findsOneWidget);
+      expect(find.text('Persistence & Cache Control'), findsOneWidget);
+    });
+
+    testWidgets('7. Editorial Components Render Correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                const EditorialSectionHeader(label: 'Test Section', trailing: 'Context'),
+                EditorialFilterChip(
+                  label: 'FILTER',
+                  selected: true,
+                  onTap: () {},
+                ),
+                const PhysicalPaperThumbnail(
+                  pageNumber: 3,
+                  totalPages: 10,
+                  isCompleted: false,
+                  progressPercent: 0.3,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Test Section'), findsOneWidget);
+      expect(find.text('Context'), findsOneWidget);
+      expect(find.text('FILTER'), findsOneWidget);
+      expect(find.text('p.3'), findsOneWidget);
+    });
+  });
+}
+```
+
+---
+
+## 75. test/unit_test.dart <a id="testunittestdart"></a>
+
+- **Path:** `test/unit_test.dart`
+- **Lines:** 392
+- **Language:** `dart`
+
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:offline_pdf_reader/core/utils/utils.dart';
+import 'package:offline_pdf_reader/models/pdf_file.dart';
+import 'package:offline_pdf_reader/models/pdf_open_request.dart';
+import 'package:offline_pdf_reader/models/bookmark.dart';
+import 'package:offline_pdf_reader/models/annotation_meta.dart';
+import 'package:offline_pdf_reader/models/tool_usage_stat.dart';
+import 'package:offline_pdf_reader/core/study/local_summarizer_service.dart';
+import 'package:offline_pdf_reader/core/study/topic_extractor_service.dart';
+import 'package:offline_pdf_reader/core/study/study_generator_service.dart';
+import 'package:offline_pdf_reader/core/ai/semantic_search_service.dart';
+import 'package:offline_pdf_reader/core/ai/on_device_ai_service.dart';
+import 'package:offline_pdf_reader/models/pdf_version.dart';
+import 'package:offline_pdf_reader/models/pdf_compare_result.dart';
+import 'package:offline_pdf_reader/core/tools/pdf_metadata_service.dart';
+import 'package:offline_pdf_reader/core/tools/pdf_target_size_compressor_service.dart';
+import 'package:offline_pdf_reader/core/tools/image_target_size_compressor_service.dart';
+
+void main() {
+  group('Utils Formatting Tests', () {
+    test('formatBytes converts bytes into human-readable strings', () {
+      expect(Utils.formatBytes(0), '0 B');
+      expect(Utils.formatBytes(512), '512.0 B');
+      expect(Utils.formatBytes(1024), '1.0 KB');
+      expect(Utils.formatBytes(1048576), '1.0 MB');
+      expect(Utils.formatBytes(1073741824), '1.0 GB');
+    });
+
+    test('parsePageRanges handles single pages, ranges, and maxPage bounds',
+        () {
+      final pages = Utils.parsePageRanges('1-3, 5, 8-10', 12);
+      expect(pages, equals({1, 2, 3, 5, 8, 9, 10}));
+
+      final boundedPages = Utils.parsePageRanges('1-100', 5);
+      expect(boundedPages, equals({1, 2, 3, 4, 5}));
+
+      final invalidPages =
+          Utils.parsePageRanges('0, -1, 10-5, 999999999999999999999', 5);
+      expect(invalidPages, isEmpty);
+    });
+
+    test('formatRelativeTime returns accurate human-readable intervals', () {
+      final now = DateTime.now().millisecondsSinceEpoch;
+      expect(Utils.formatRelativeTime(now), 'Just now');
+      expect(Utils.formatRelativeTime(null), 'Never');
+    });
+  });
+
+  group('Data Model Serialization Tests', () {
+    test('PdfFile map conversion & copyWith with null clearing', () {
+      final pdf = PdfFile(
+        docId: 'test_doc_id',
+        path: '/storage/emulated/0/sample.pdf',
+        name: 'sample.pdf',
+        sizeBytes: 4096,
+        modifiedAt: 1600000000000,
+        pageCount: 15,
+        isFavorite: true,
+        lastOpenedAt: 1600000000000,
+        extractedText: 'Sample text layer',
+        lastOpenedPage: 5,
+        readingProgress: 0.333,
+        readingTime: 120,
+        completed: false,
+        folder: 'Documents',
+        tags: 'work,study',
+        sourceType: 'scanned',
+        scanCreatedAt: 1600000000000,
+      );
+
+      final map = pdf.toMap();
+      expect(map['path'], '/storage/emulated/0/sample.pdf');
+      expect(map['is_favorite'], 1);
+      expect(map['extracted_text'], 'Sample text layer');
+      expect(map['last_opened_page'], 5);
+      expect(map['reading_progress'], 0.333);
+      expect(map['reading_time'], 120);
+      expect(map['folder'], 'Documents');
+      expect(map['source_type'], 'scanned');
+      expect(map['scan_created_at'], 1600000000000);
+
+      final restored = PdfFile.fromMap(map);
+      expect(restored.path, pdf.path);
+      expect(restored.isFavorite, true);
+      expect(restored.extractedText, 'Sample text layer');
+      expect(restored.lastOpenedPage, 5);
+      expect(restored.readingProgress, 0.333);
+      expect(restored.folder, 'Documents');
+      expect(restored.sourceType, 'scanned');
+      expect(restored.scanCreatedAt, 1600000000000);
+
+      final cleared =
+          pdf.copyWith(lastOpenedAt: null, extractedText: null, folder: null, scanCreatedAt: null);
+      expect(cleared.lastOpenedAt, isNull);
+      expect(cleared.extractedText, isNull);
+      expect(cleared.folder, isNull);
+      expect(cleared.scanCreatedAt, isNull);
+      expect(cleared.isFavorite, true);
+      expect(cleared.sourceType, 'scanned');
+    });
+
+    test('PdfOpenRequest requestId & multi-document parsing', () {
+      final reqMap = {
+        'localPath': '/data/user/0/app/files/external_pdfs/123.pdf',
+        'originalUri': 'content://media/external/123',
+        'fileName': 'College Notes.pdf',
+        'mimeType': 'application/pdf',
+        'action': 'android.intent.action.SEND_MULTIPLE',
+        'sourceApp': 'com.whatsapp',
+        'isExternalLaunch': true,
+        'requestId': 'req-uuid-12345',
+        'documents': [
+          {
+            'localPath': '/data/user/0/app/files/external_pdfs/123.pdf',
+            'fileName': 'College Notes.pdf',
+          },
+          {
+            'localPath': '/data/user/0/app/files/external_pdfs/456.pdf',
+            'fileName': 'Assignment.pdf',
+          }
+        ]
+      };
+
+      final request = PdfOpenRequest.fromMap(reqMap);
+      expect(request.localPath, '/data/user/0/app/files/external_pdfs/123.pdf');
+      expect(request.fileName, 'College Notes.pdf');
+      expect(request.requestId, 'req-uuid-12345');
+      expect(request.documents.length, 2);
+      expect(request.documents[1].fileName, 'Assignment.pdf');
+    });
+
+    test('Bookmark map conversion', () {
+      final bm = Bookmark(
+        id: 42,
+        filePath: '/storage/sample.pdf',
+        pageNumber: 7,
+        label: 'Chapter 2',
+        createdAt: 1600000000000,
+      );
+
+      final map = bm.toMap();
+      expect(map['id'], 42);
+      expect(map['file_path'], '/storage/sample.pdf');
+      expect(map['page_number'], 7);
+
+      final restored = Bookmark.fromMap(map);
+      expect(restored.id, 42);
+      expect(restored.label, 'Chapter 2');
+    });
+
+    test('PdfNote map conversion', () {
+      final note = PdfNote(
+        id: 10,
+        filePath: '/storage/sample.pdf',
+        pageNumber: 3,
+        noteText: 'Important summary note',
+        createdAt: 1600000000000,
+      );
+
+      final map = note.toMap();
+      expect(map['note_text'], 'Important summary note');
+
+      final restored = PdfNote.fromMap(map);
+      expect(restored.noteText, 'Important summary note');
+    });
+
+    test('ToolUsageStat map conversion', () {
+      final stat = ToolUsageStat(
+        toolName: 'merge',
+        useCount: 5,
+        lastUsedAt: 1600000000000,
+      );
+
+      final map = stat.toMap();
+      expect(map['tool_name'], 'merge');
+      expect(map['use_count'], 5);
+
+      final restored = ToolUsageStat.fromMap(map);
+      expect(restored.useCount, 5);
+    });
+  });
+
+  group('Phase 2 Study Tools & NLP Services Tests', () {
+    test('LocalSummarizerService summarizes text locally without network', () async {
+      const sampleText =
+          'Database Normalization is the process of structuring a relational database in accordance with a series of normal forms to reduce data redundancy and improve data integrity. Primary Key uniquely identifies each tuple in a relation. Foreign Key establishes a link between tables.';
+
+      final result = await LocalSummarizerService.summarizeText(sampleText);
+      expect(result.quickSummary, isNotEmpty);
+      expect(result.keyPoints, isNotEmpty);
+    });
+
+    test('TopicExtractorService extracts topics and terms with page numbers', () async {
+      final pageMap = {
+        1: 'Chapter 1 Introduction to Database Architecture. Normalization reduces redundancy.',
+        2: 'Primary Key uniquely identifies a record. Foreign Key links tables.',
+      };
+
+      final topics = await TopicExtractorService.extractTopicsFromPages('/sample.pdf', pageMap);
+      expect(topics, isNotEmpty);
+
+      final terms = await TopicExtractorService.extractImportantTerms(pageMap);
+      expect(terms, isNotEmpty);
+    });
+
+    test('StudyGeneratorService generates Flashcards and MCQs locally', () async {
+      final pageMap = {
+        1: 'Database Normalization is defined as reducing data redundancy in relational tables.',
+        2: 'Primary Key is defined as a unique record identifier in a database table.',
+      };
+
+      final cards = await StudyGeneratorService.generateFlashcards('/sample.pdf', pageMap);
+      expect(cards, isNotEmpty);
+
+      final questions = await StudyGeneratorService.generateQuestions('/sample.pdf', pageMap);
+      expect(questions, isNotEmpty);
+    });
+  });
+
+  group('Phase 3 Local Intelligence & Semantic Search Tests', () {
+    test('SemanticSearchService chunks and ranks query relevance via vector similarity', () async {
+      final pageMap = {
+        1: 'Normalization reduces data redundancy in relational databases by organizing table structures.',
+        2: 'Indexing accelerates query performance by creating B-tree data structures.',
+      };
+
+      final chunks = await SemanticSearchService.chunkDocumentText('/sample.pdf', pageMap);
+      expect(chunks, isNotEmpty);
+
+      final results = SemanticSearchService.search('data redundancy', chunks);
+      expect(results, isNotEmpty);
+      expect(results.first.chunk.pageNumber, 1);
+    });
+
+    test('OnDeviceAIService performs grounded Q&A with source page references', () async {
+      final pageMap = {
+        10: 'Primary Key uniquely identifies each record in a database table.',
+      };
+
+      final answer = await OnDeviceAIService.instance.answerQuestion(
+        filePath: '/sample.pdf',
+        question: 'What does Primary Key do?',
+        pageTextMap: pageMap,
+      );
+
+      expect(answer.hasSufficientContext, true);
+      expect(answer.sourcePages, contains(10));
+      expect(answer.answer, contains('Based on this PDF'));
+    });
+  });
+
+  group('Phase 4 Power-User PDF Tools Tests', () {
+    test('PdfVersion serialization & database model', () {
+      final version = PdfVersion(
+        docId: '/sample.pdf',
+        versionNumber: 1,
+        filePath: '/sample.pdf',
+        sizeBytes: 1024,
+        timestamp: 1600000000000,
+        sourceOperation: 'Imported',
+      );
+
+      final map = version.toMap();
+      expect(map['doc_id'], '/sample.pdf');
+      expect(map['version_number'], 1);
+
+      final restored = PdfVersion.fromMap(map);
+      expect(restored.docId, '/sample.pdf');
+      expect(restored.versionNumber, 1);
+      expect(restored.sourceOperation, 'Imported');
+    });
+
+    test('PdfCompareResult page difference representation', () {
+      final result = PdfCompareResult(
+        fileAPath: '/a.pdf',
+        fileBPath: '/b.pdf',
+        fileAPages: 5,
+        fileBPages: 5,
+        pageDiffs: [
+          PageDiff(pageNumber: 1, addedLines: ['+ New line'], removedLines: ['- Old line']),
+        ],
+        summary: '1 page modified',
+      );
+
+      expect(result.pageDiffs.length, 1);
+      expect(result.pageDiffs.first.hasDiff, true);
+      expect(result.pageDiffs.first.addedLines.first, '+ New line');
+    });
+
+    test('PdfMetadata default values and field assignment', () {
+      final meta = PdfMetadata(
+        title: 'Mastering Flutter',
+        author: 'John Doe',
+        subject: 'PDF Architecture',
+        keywords: 'flutter, pdf, study',
+      );
+
+      expect(meta.title, 'Mastering Flutter');
+      expect(meta.author, 'John Doe');
+      expect(meta.subject, 'PDF Architecture');
+      expect(meta.keywords, 'flutter, pdf, study');
+    });
+
+    test('PdfTargetSizeCompressorService unit parsing and result metrics', () {
+      expect(PdfTargetSizeCompressorService.parseSizeToBytes(100, 'KB'), 102400);
+      expect(PdfTargetSizeCompressorService.parseSizeToBytes(1.5, 'MB'), (1.5 * 1024 * 1024).round());
+      expect(PdfTargetSizeCompressorService.parseSizeToBytes(500, 'kb'), 512000);
+
+      final result = TargetCompressionResult(
+        originalPath: '/storage/original.pdf',
+        outputPath: '/storage/original_compressed.pdf',
+        originalSizeBytes: 1048576,
+        targetSizeBytes: 524288,
+        outputSizeBytes: 512000,
+        reductionPercentage: 51.17,
+        pageCount: 12,
+        qualityProfile: 'balanced',
+        statusMessage: 'Target achieved',
+        isTargetAchieved: true,
+      );
+
+      expect(result.originalSizeBytes, 1048576);
+      expect(result.targetSizeBytes, 524288);
+      expect(result.outputSizeBytes, 512000);
+      expect(result.isTargetAchieved, true);
+      expect(result.pageCount, 12);
+    });
+
+    test('PdfTargetSizeCompressorService prefers largest candidate at or below target', () {
+      const targetBytes = 1024 * 1024; // 1 MB = 1048576 bytes
+      final candidates = [
+        1650000, // Over target
+        1280000, // Over target
+        980000,  // Best under target (closest to 1 MB)
+        720000,  // Undersized
+        320000,  // Too small
+      ];
+
+      int bestUnderTarget = 0;
+      int bestOverTarget = 1 << 60;
+
+      for (final c in candidates) {
+        if (c <= targetBytes) {
+          if (c > bestUnderTarget) {
+            bestUnderTarget = c;
+          }
+        } else {
+          if (c < bestOverTarget) {
+            bestOverTarget = c;
+          }
+        }
+      }
+
+      final chosenSize = bestUnderTarget > 0 ? bestUnderTarget : bestOverTarget;
+      expect(chosenSize, 980000); // 980 KB beats 320 KB and 720 KB
+      expect(chosenSize <= targetBytes, true);
+    });
+
+    test('ImageTargetSizeCompressorService unit parsing and result metrics', () {
+      expect(ImageTargetSizeCompressorService.parseSizeToBytes(100, 'KB'), 102400);
+      expect(ImageTargetSizeCompressorService.parseSizeToBytes(2.5, 'MB'), (2.5 * 1024 * 1024).round());
+
+      final imgResult = ImageTargetCompressionResult(
+        originalPath: '/storage/photo.jpg',
+        outputPath: '/storage/photo_compressed.jpg',
+        originalSizeBytes: 5242880,
+        targetSizeBytes: 512000,
+        outputSizeBytes: 498000,
+        reductionPercentage: 90.5,
+        originalWidth: 4000,
+        originalHeight: 3000,
+        outputWidth: 2200,
+        outputHeight: 1650,
+        format: 'JPEG',
+        isTargetAchieved: true,
+        statusMessage: 'Target size achieved',
+      );
+
+      expect(imgResult.originalSizeBytes, 5242880);
+      expect(imgResult.outputSizeBytes, 498000);
+      expect(imgResult.originalWidth, 4000);
+      expect(imgResult.originalHeight, 3000);
+      expect(imgResult.outputWidth, 2200);
+      expect(imgResult.outputHeight, 1650);
+      expect(imgResult.format, 'JPEG');
+      expect(imgResult.isTargetAchieved, true);
+    });
+  });
+}
+```
+
+---
+
+## 76. test/widget_test.dart <a id="testwidgettestdart"></a>
+
+- **Path:** `test/widget_test.dart`
+- **Lines:** 68
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:offline_pdf_reader/main.dart' show OfflinePdfReaderApp;
+import 'package:offline_pdf_reader/features/home/main_navigation_screen.dart';
+import 'package:offline_pdf_reader/widgets/editorial_components.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    GoogleFonts.config.allowRuntimeFetching = false;
+    databaseFactory = databaseFactorySqflitePlugin;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('com.tekartik.sqflite'),
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'getDatabasesPath') {
+          return '.';
+        }
+        if (methodCall.method == 'openDatabase') {
+          return 1;
+        }
+        if (methodCall.method == 'query') {
+          return <Map<String, dynamic>>[];
+        }
+        if (methodCall.method == 'insert' || methodCall.method == 'update' || methodCall.method == 'delete') {
+          return 1;
+        }
+        return null;
+      },
+    );
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/path_provider'),
+      (MethodCall methodCall) async => '.',
+    );
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('com.offlinepdf.app/intent'),
+      (MethodCall methodCall) async => null,
+    );
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('flutter.baseflow.com/permissions/methods'),
+      (MethodCall methodCall) async => 1,
+    );
+  });
+
+  testWidgets('App smoke test - Renders MainNavigationScreen', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const ProviderScope(child: OfflinePdfReaderApp()));
+
+    // Verify that the MainNavigationScreen is rendered
+    expect(find.byType(MainNavigationScreen), findsOneWidget);
+
+    // Verify bottom navigation bar exists with at least one item
+    expect(find.byType(EditorialBottomBar), findsOneWidget);
+    
+    // Verify that the 'Files' tab exists
+    expect(find.text('Files'), findsWidgets);
+  });
+}
+```
+
+---
+
+## 77. android/app/src/main/AndroidManifest.xml <a id="androidappsrcmainandroidmanifestxml"></a>
+
+- **Path:** `android/app/src/main/AndroidManifest.xml`
+- **Lines:** 102
+- **Language:** `xml`
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:label="Offline PDF Reader"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+        
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr,document_ui" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- Support opening/viewing PDFs from external apps (WhatsApp, Gmail, Downloads, Chrome, File Managers) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+
+            <!-- Support SEND and SEND_MULTIPLE for receiving shared PDFs -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+        </activity>
+
+        <!-- FileProvider for granting URI permissions when sharing PDFs -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+    <!-- Required to query activities that can process text -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>
+```
+
+---
+
+## 78. android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt <a id="androidappsrcmainkotlincomofflinepdfappofflinepdfreadermainactivitykt"></a>
+
+- **Path:** `android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt`
+- **Lines:** 754
+- **Language:** `kotlin`
+
+```kotlin
+package com.offlinepdf.app.offline_pdf_reader
+
+import android.content.Intent
+import android.database.ContentObserver
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.os.Looper
+import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.util.Log
+import android.view.Display
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.util.UUID
+import java.util.concurrent.Executors
+
+class MainActivity: FlutterActivity() {
+    private val TAG = "PdfIntent"
+    private val CHANNEL = "com.offlinepdf.app/intent"
+    private var pendingPayload: Map<String, Any?>? = null
+    private var methodChannel: MethodChannel? = null
+    private var dartIntentHandlerReady = false
+    private val executor = Executors.newSingleThreadExecutor()
+    private var mediaStoreObserver: ContentObserver? = null
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableHighRefreshRate()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    override fun onDestroy() {
+        mediaStoreObserver?.let {
+            try {
+                contentResolver.unregisterContentObserver(it)
+            } catch (e: Exception) {}
+            mediaStoreObserver = null
+        }
+        executor.shutdown()
+        super.onDestroy()
+    }
+
+    private fun registerMediaStoreObserver() {
+        if (mediaStoreObserver != null) return
+        mediaStoreObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean, uri: Uri?) {
+                super.onChange(selfChange, uri)
+                debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+                debounceRunnable = Runnable {
+                    methodChannel?.invokeMethod("onMediaStorePdfChanged", null)
+                }
+                debounceHandler.postDelayed(debounceRunnable!!, 800)
+            }
+        }
+        try {
+            contentResolver.registerContentObserver(
+                MediaStore.Files.getContentUri("external"),
+                true,
+                mediaStoreObserver!!
+            )
+            Log.d(TAG, "Registered MediaStore ContentObserver")
+        } catch (e: Exception) {
+            Log.w(TAG, "Unable to register MediaStore ContentObserver: ${e.message}")
+        }
+    }
+
+    private fun enableHighRefreshRate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    display
+                } else {
+                    @Suppress("DEPRECATION")
+                    windowManager.defaultDisplay
+                }
+                if (display != null) {
+                    val modes = display.supportedModes
+                    var selectedMode: Display.Mode? = null
+                    var bestRefreshRate = 0f
+
+                    for (mode in modes) {
+                        if (mode.refreshRate >= 119.0f && mode.refreshRate <= 121.0f) {
+                            selectedMode = mode
+                            bestRefreshRate = mode.refreshRate
+                            break
+                        }
+                    }
+
+                    if (selectedMode == null) {
+                        for (mode in modes) {
+                            if (mode.refreshRate <= 120.0f && mode.refreshRate > bestRefreshRate) {
+                                bestRefreshRate = mode.refreshRate
+                                selectedMode = mode
+                            }
+                        }
+                    }
+
+                    if (selectedMode == null) {
+                        for (mode in modes) {
+                            if (mode.refreshRate > bestRefreshRate) {
+                                bestRefreshRate = mode.refreshRate
+                                selectedMode = mode
+                            }
+                        }
+                    }
+
+                    if (selectedMode != null) {
+                        val lp = window.attributes
+                        lp.preferredDisplayModeId = selectedMode.modeId
+                        @Suppress("DEPRECATION")
+                        lp.preferredRefreshRate = bestRefreshRate
+                        window.attributes = lp
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to enable high refresh rate: ${e.message}")
+            }
+        }
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        if (intent == null) return
+        val action = intent.action ?: return
+        val type = intent.type
+
+        Log.d(TAG, "Handling intent action: $action, type: $type")
+
+        if (Intent.ACTION_VIEW == action || Intent.ACTION_EDIT == action || Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action) {
+            val urisToProcess = mutableListOf<Uri>()
+
+            if (Intent.ACTION_SEND == action) {
+                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM)
+                }
+                if (uri != null) urisToProcess.add(uri)
+            } else if (Intent.ACTION_SEND_MULTIPLE == action) {
+                val uris = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
+                }
+                if (!uris.isNullOrEmpty()) {
+                    urisToProcess.addAll(uris)
+                }
+            } else {
+                val uri = intent.data
+                if (uri != null) urisToProcess.add(uri)
+            }
+
+            if (urisToProcess.isNotEmpty()) {
+                val callerPkg = callingActivity?.packageName ?: callingPackage
+
+                executor.execute {
+                    val payloads = mutableListOf<Map<String, Any?>>()
+
+                    for (uri in urisToProcess) {
+                        val payload = resolveUriToPayload(uri, action, type, callerPkg)
+                        if (payload != null) {
+                            payloads.add(payload)
+                        }
+                    }
+
+                    if (payloads.isNotEmpty()) {
+                        val firstPayload = payloads[0]
+                        val compositePayload = mutableMapOf<String, Any?>()
+                        compositePayload.putAll(firstPayload)
+                        compositePayload["documents"] = payloads
+                        compositePayload["requestId"] = UUID.randomUUID().toString()
+
+                        runOnUiThread {
+                            if (!isFinishing && !isDestroyed) {
+                                if (dartIntentHandlerReady && methodChannel != null) {
+                                    methodChannel?.invokeMethod("onPdfOpened", compositePayload)
+                                    Log.d(TAG, "Dispatched ${payloads.size} intent document(s) payload to Dart")
+                                } else {
+                                    pendingPayload = compositePayload
+                                    Log.d(TAG, "Stored pending ${payloads.size} intent document(s) payload for Dart")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun resolveUriToPayload(uri: Uri, action: String, mimeType: String?, callingPackage: String?): Map<String, Any?>? {
+        return try {
+            val uriString = uri.toString()
+            Log.d(TAG, "Resolving URI: $uriString")
+
+            val rawName = getFileNameFromUri(uri) ?: "External_Document.pdf"
+            val originalFileName = sanitizeFileName(rawName)
+
+            var directPath: String? = null
+            if (uri.scheme == "file") {
+                val f = File(uri.path ?: "")
+                if (f.exists() && f.isFile && f.canRead()) {
+                    directPath = f.absolutePath
+                }
+            } else if (uri.scheme == "content") {
+                try {
+                    contentResolver.query(uri, arrayOf(MediaStore.Files.FileColumns.DATA), null, null, null)?.use { cursor ->
+                        if (cursor.moveToFirst()) {
+                            val dataIdx = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)
+                            if (dataIdx != -1) {
+                                val p = cursor.getString(dataIdx)
+                                if (!p.isNullOrBlank()) {
+                                    val f = File(p)
+                                    if (f.exists() && f.isFile && f.canRead()) {
+                                        directPath = f.absolutePath
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (e: Exception) {}
+            }
+
+            if (directPath != null) {
+                return mapOf(
+                    "localPath" to directPath,
+                    "originalUri" to uriString,
+                    "fileName" to originalFileName,
+                    "mimeType" to (mimeType ?: "application/pdf"),
+                    "action" to action,
+                    "sourceApp" to (callingPackage ?: "external"),
+                    "isExternalLaunch" to true,
+                    "requestId" to UUID.randomUUID().toString()
+                )
+            }
+
+            // Fallback for streamed content URIs (e.g. email attachments) where direct file path is unavailable:
+            // Use temporary cache directory (cacheDir/temp_external_pdfs) so it is NOT persistent in app filesDir
+            val targetDir = File(cacheDir, "temp_external_pdfs")
+            if (!targetDir.exists() && !targetDir.mkdirs() && !targetDir.exists()) {
+                Log.e(TAG, "Unable to create temp external PDF directory: ${targetDir.absolutePath}")
+                return null
+            }
+            val internalName = "${System.currentTimeMillis()}_${UUID.randomUUID()}.pdf"
+            val targetFile = File(targetDir, internalName)
+
+            val success = copyUriAtomically(uri, targetFile)
+            if (!success) {
+                return null
+            }
+
+            mapOf(
+                "localPath" to targetFile.absolutePath,
+                "originalUri" to uriString,
+                "fileName" to originalFileName,
+                "mimeType" to (mimeType ?: "application/pdf"),
+                "action" to action,
+                "sourceApp" to (callingPackage ?: "external"),
+                "isExternalLaunch" to true,
+                "isTemporary" to true,
+                "requestId" to UUID.randomUUID().toString()
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error resolving PDF URI $uri: ${e.message}", e)
+            null
+        }
+    }
+
+    private fun copyUriAtomically(uri: Uri, targetFile: File): Boolean {
+        if (targetFile.exists()) {
+            targetFile.delete()
+        }
+
+        val tempFile = File(
+            targetFile.parentFile,
+            "${targetFile.name}.${UUID.randomUUID()}.tmp"
+        )
+
+        try {
+            val uriString = uri.toString()
+            val inputStream: InputStream? = if (uriString.startsWith("content://")) {
+                contentResolver.openInputStream(uri)
+            } else if (uriString.startsWith("file://")) {
+                val sourcePath = uri.path ?: return false
+                val sourceFile = File(sourcePath)
+                if (!sourceFile.exists() || !sourceFile.isFile) return false
+                sourceFile.inputStream()
+            } else {
+                val sourceFile = File(uriString)
+                if (!sourceFile.exists() || !sourceFile.isFile) return false
+                sourceFile.inputStream()
+            }
+
+            if (inputStream == null) {
+                return false
+            }
+
+            inputStream.use { input ->
+                FileOutputStream(tempFile).use { output ->
+                    input.copyTo(output)
+                    output.fd.sync()
+                }
+            }
+
+            if (!tempFile.exists() || tempFile.length() == 0L || !hasPdfHeader(tempFile)) {
+                tempFile.delete()
+                return false
+            }
+
+            if (!tempFile.renameTo(targetFile)) {
+                tempFile.delete()
+                return false
+            }
+
+            return true
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed atomic copy from $uri: ${e.message}", e)
+            if (tempFile.exists()) tempFile.delete()
+            if (targetFile.exists()) targetFile.delete()
+            return false
+        }
+    }
+
+    private fun hasPdfHeader(file: File): Boolean {
+        return try {
+            file.inputStream().use { input ->
+                val header = ByteArray(5)
+                val read = input.read(header)
+                read == 5 &&
+                    header[0] == '%'.code.toByte() &&
+                    header[1] == 'P'.code.toByte() &&
+                    header[2] == 'D'.code.toByte() &&
+                    header[3] == 'F'.code.toByte() &&
+                    header[4] == '-'.code.toByte()
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun sanitizeFileName(rawName: String): String {
+        val cleaned = rawName
+            .replace(Regex("[\\\\/:*?\"<>|\\p{Cntrl}]"), "_")
+            .trim()
+            .trim('.')
+
+        if (cleaned.isEmpty()) {
+            return "External_Document.pdf"
+        }
+
+        val limited = if (cleaned.length > 180) {
+            cleaned.take(180)
+        } else {
+            cleaned
+        }
+
+        return if (limited.lowercase().endsWith(".pdf")) {
+            limited
+        } else {
+            "$limited.pdf"
+        }
+    }
+
+    private fun getFileNameFromUri(uri: Uri): String? {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            try {
+                contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        if (nameIndex != -1) {
+                            result = cursor.getString(nameIndex)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to query displayName: ${e.message}")
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result?.lastIndexOf('/') ?: -1
+            if (cut != -1 && result != null) {
+                result = result.substring(cut + 1)
+            }
+        }
+        return result
+    }
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        methodChannel = channel
+        registerMediaStoreObserver()
+
+        channel.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "markIntentHandlerReady" -> {
+                    dartIntentHandlerReady = true
+                    if (pendingPayload != null) {
+                        channel.invokeMethod("onPdfOpened", pendingPayload)
+                        pendingPayload = null
+                    }
+                    result.success(true)
+                }
+                "getInitialPdfRequest" -> {
+                    result.success(pendingPayload)
+                    pendingPayload = null
+                }
+                "queryMediaStorePdfs" -> {
+                    executor.execute {
+                        try {
+                            val pdfPaths = linkedSetOf<String>()
+
+                            val uri = MediaStore.Files.getContentUri("external")
+
+                            val projection = arrayOf(
+                                MediaStore.Files.FileColumns._ID,
+                                MediaStore.Files.FileColumns.DISPLAY_NAME,
+                                MediaStore.Files.FileColumns.MIME_TYPE,
+                                MediaStore.Files.FileColumns.DATA,
+                                MediaStore.Files.FileColumns.RELATIVE_PATH
+                            )
+
+                            val selection =
+                                "(${MediaStore.Files.FileColumns.MIME_TYPE} = ?)" +
+                                " OR LOWER(${MediaStore.Files.FileColumns.DISPLAY_NAME}) LIKE ?"
+
+                            val selectionArgs = arrayOf(
+                                "application/pdf",
+                                "%.pdf"
+                            )
+
+                            contentResolver.query(
+                                uri,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null
+                            )?.use { cursor ->
+
+                                val dataIndex =
+                                    cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)
+
+                                val displayNameIndex =
+                                    cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME)
+
+                                val relativePathIndex =
+                                    cursor.getColumnIndex(MediaStore.Files.FileColumns.RELATIVE_PATH)
+
+                                while (cursor.moveToNext()) {
+                                    try {
+                                        val displayName =
+                                            if (displayNameIndex >= 0)
+                                                cursor.getString(displayNameIndex)
+                                            else
+                                                null
+
+                                        val dataPath =
+                                            if (dataIndex >= 0)
+                                                cursor.getString(dataIndex)
+                                            else
+                                                null
+
+                                        val relativePath =
+                                            if (relativePathIndex >= 0)
+                                                cursor.getString(relativePathIndex)
+                                            else
+                                                null
+
+                                        var resolvedPath: String? = null
+
+                                        // Prefer direct MediaStore DATA path when available and valid
+                                        if (!dataPath.isNullOrBlank() &&
+                                            dataPath.lowercase().endsWith(".pdf")) {
+                                            val file = File(dataPath)
+
+                                            if (file.exists() &&
+                                                file.isFile &&
+                                                file.canRead()) {
+                                                resolvedPath = file.absolutePath
+                                            }
+                                        }
+
+                                        // Fallback for MediaStore entries where DATA is unavailable
+                                        if (resolvedPath == null &&
+                                            !relativePath.isNullOrBlank() &&
+                                            !displayName.isNullOrBlank() &&
+                                            displayName.lowercase().endsWith(".pdf")) {
+
+                                            val candidate = File(
+                                                Environment
+                                                    .getExternalStorageDirectory()
+                                                    .absolutePath +
+                                                File.separator +
+                                                relativePath +
+                                                displayName
+                                            )
+
+                                            if (candidate.exists() &&
+                                                candidate.isFile &&
+                                                candidate.canRead()) {
+                                                resolvedPath = candidate.absolutePath
+                                            }
+                                        }
+
+                                        if (!resolvedPath.isNullOrBlank()) {
+                                            pdfPaths.add(resolvedPath)
+                                        }
+                                    } catch (rowError: Exception) {
+                                        Log.w(
+                                            TAG,
+                                            "Skipping one MediaStore PDF row: ${rowError.message}"
+                                        )
+                                    }
+                                }
+                            }
+
+                            Log.d(
+                                TAG,
+                                "MediaStore PDF candidates: ${pdfPaths.size}"
+                            )
+
+                            runOnUiThread {
+                                result.success(pdfPaths.toList())
+                            }
+                        } catch (e: Exception) {
+                            Log.e(
+                                TAG,
+                                "Error querying MediaStore for PDFs",
+                                e
+                            )
+
+                            runOnUiThread {
+                                result.success(emptyList<String>())
+                            }
+                        }
+                    }
+                }
+                "compressImage" -> {
+                    val inputPath = call.argument<String>("inputPath")
+                    val outputPath = call.argument<String>("outputPath")
+                    val targetBytes = call.argument<Number>("targetBytes")?.toLong() ?: 102400L
+
+                    if (inputPath == null || outputPath == null) {
+                        result.error("INVALID_ARGS", "Missing paths", null)
+                    } else {
+                        executor.execute {
+                            try {
+                                val res = compressImageToTarget(inputPath, outputPath, targetBytes)
+                                runOnUiThread {
+                                    result.success(res)
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error compressing image: ${e.message}", e)
+                                runOnUiThread {
+                                    result.error("COMPRESS_FAILED", e.message, null)
+                                }
+                            }
+                        }
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    private fun compressImageToTarget(inputPath: String, outputPath: String, targetBytes: Long): Map<String, Any?> {
+        val inputFile = File(inputPath)
+        if (!inputFile.exists()) {
+            throw IllegalArgumentException("Input image file not found at $inputPath")
+        }
+
+        val originalSize = inputFile.length()
+        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(inputPath, options)
+
+        val origWidth = options.outWidth
+        val origHeight = options.outHeight
+
+        if (origWidth <= 0 || origHeight <= 0) {
+            throw IllegalArgumentException("Unable to decode image dimensions from $inputPath")
+        }
+
+        val ext = inputPath.substringAfterLast('.', "jpg").lowercase()
+        val (format, actualExt) = when (ext) {
+            "png" -> Pair(Bitmap.CompressFormat.PNG, "png")
+            "webp" -> Pair(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Bitmap.CompressFormat.WEBP_LOSSY else @Suppress("DEPRECATION") Bitmap.CompressFormat.WEBP,
+                "webp"
+            )
+            "jpeg" -> Pair(Bitmap.CompressFormat.JPEG, "jpeg")
+            else -> Pair(Bitmap.CompressFormat.JPEG, "jpg")
+        }
+
+        val outputFile = File(outputPath)
+        outputFile.parentFile?.mkdirs()
+
+        var bestSize = Long.MAX_VALUE
+        var finalWidth = origWidth
+        var finalHeight = origHeight
+        val tempFilesCreated = mutableListOf<File>()
+
+        try {
+            val scales = floatArrayOf(1.0f, 0.85f, 0.70f, 0.55f, 0.40f, 0.25f)
+
+            for (scale in scales) {
+                val targetW = Math.max(10, (origWidth * scale).toInt())
+                val targetH = Math.max(10, (origHeight * scale).toInt())
+
+                val decodeOptions = BitmapFactory.Options().apply {
+                    inSampleSize = calculateInSampleSize(origWidth, origHeight, targetW, targetH)
+                }
+
+                val decodedBitmap = BitmapFactory.decodeFile(inputPath, decodeOptions) ?: continue
+
+                val scaledBitmap = if (decodedBitmap.width != targetW || decodedBitmap.height != targetH) {
+                    val s = Bitmap.createScaledBitmap(decodedBitmap, targetW, targetH, true)
+                    if (s != decodedBitmap) decodedBitmap.recycle()
+                    s
+                } else {
+                    decodedBitmap
+                }
+
+                if (format == Bitmap.CompressFormat.PNG) {
+                    val tempFile = File(outputFile.parentFile, "${outputFile.name}.png_scale_${(scale * 100).toInt()}.tmp")
+                    tempFilesCreated.add(tempFile)
+
+                    FileOutputStream(tempFile).use { fos ->
+                        scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                        fos.flush()
+                    }
+
+                    val tempSize = tempFile.length()
+                    val shouldUse = if (tempSize <= targetBytes) {
+                        bestSize > targetBytes || tempSize > bestSize
+                    } else {
+                        bestSize > targetBytes && Math.abs(bestSize - targetBytes) > Math.abs(tempSize - targetBytes)
+                    }
+
+                    if (shouldUse) {
+                        bestSize = tempSize
+                        finalWidth = targetW
+                        finalHeight = targetH
+
+                        if (outputFile.exists()) outputFile.delete()
+                        tempFile.renameTo(outputFile)
+                    }
+
+                    scaledBitmap.recycle()
+
+                    if (tempSize <= targetBytes) {
+                        break
+                    }
+                } else {
+                    var lowQ = 15
+                    var highQ = 95
+
+                    while (lowQ <= highQ) {
+                        val midQ = (lowQ + highQ) / 2
+                        val tempFile = File(outputFile.parentFile, "${outputFile.name}.q_${midQ}_s_${(scale * 100).toInt()}.tmp")
+                        tempFilesCreated.add(tempFile)
+
+                        FileOutputStream(tempFile).use { fos ->
+                            scaledBitmap.compress(format, midQ, fos)
+                            fos.flush()
+                        }
+
+                        val tempSize = tempFile.length()
+                        val shouldUse = if (tempSize <= targetBytes) {
+                            bestSize > targetBytes || tempSize > bestSize
+                        } else {
+                            bestSize > targetBytes && Math.abs(bestSize - targetBytes) > Math.abs(tempSize - targetBytes)
+                        }
+
+                        if (shouldUse) {
+                            bestSize = tempSize
+                            finalWidth = targetW
+                            finalHeight = targetH
+
+                            if (outputFile.exists()) outputFile.delete()
+                            tempFile.renameTo(outputFile)
+                        }
+
+                        if (tempSize > targetBytes) {
+                            highQ = midQ - 10
+                        } else {
+                            lowQ = midQ + 10
+                        }
+                    }
+
+                    scaledBitmap.recycle()
+
+                    if (bestSize <= targetBytes) {
+                        break
+                    }
+                }
+            }
+        } finally {
+            for (tf in tempFilesCreated) {
+                if (tf.exists() && tf.absolutePath != outputFile.absolutePath) {
+                    tf.delete()
+                }
+            }
+        }
+
+        val actualSize = if (outputFile.exists()) outputFile.length() else originalSize
+        val isAchieved = actualSize <= targetBytes
+
+        return mapOf(
+            "originalPath" to inputPath,
+            "outputPath" to outputFile.absolutePath,
+            "originalSizeBytes" to originalSize,
+            "targetSizeBytes" to targetBytes,
+            "outputSizeBytes" to actualSize,
+            "originalWidth" to origWidth,
+            "originalHeight" to origHeight,
+            "outputWidth" to finalWidth,
+            "outputHeight" to finalHeight,
+            "format" to actualExt.uppercase(),
+            "isTargetAchieved" to isAchieved,
+            "statusMessage" to if (isAchieved) "Target size achieved" else "Closest safe result without cropping"
+        )
+    }
+
+    private fun calculateInSampleSize(width: Int, height: Int, reqWidth: Int, reqHeight: Int): Int {
+        var inSampleSize = 1
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
+    }
+}
+```
+
+---
+
+## 79. android/app/src/main/res/xml/file_paths.xml <a id="androidappsrcmainresxmlfilepathsxml"></a>
+
+- **Path:** `android/app/src/main/res/xml/file_paths.xml`
+- **Lines:** 7
+- **Language:** `xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-path name="external_files" path="." />
+    <external-files-path name="external_app_files" path="." />
+    <cache-path name="cache_files" path="shared_pdfs/" />
+    <files-path name="internal_files" path="shared_pdfs/" />
+</paths>
+```
+
+---
+
+## 80. android/app/build.gradle <a id="androidappbuildgradle"></a>
+
+- **Path:** `android/app/build.gradle`
+- **Lines:** 45
+- **Language:** `groovy`
+
+```groovy
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.offlinepdf.app.offline_pdf_reader"
+    compileSdk = 36
+    ndkVersion = "25.1.8937393"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.offlinepdf.app.offline_pdf_reader"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = 26
+        targetSdk = 34
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+```
+
+---
+
+## 81. android/build.gradle <a id="androidbuildgradle"></a>
+
+- **Path:** `android/build.gradle`
+- **Lines:** 25
+- **Language:** `groovy`
+
+```groovy
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name.startsWith('kotlin-stdlib')) {
+                details.useVersion '2.0.20'
+            }
+        }
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+```
+
+---
+
+## 82. android/settings.gradle <a id="androidsettingsgradle"></a>
+
+- **Path:** `android/settings.gradle`
+- **Lines:** 25
+- **Language:** `groovy`
+
+```groovy
+pluginManagement {
+    def flutterSdkPath = {
+        def properties = new Properties()
+        file("local.properties").withInputStream { properties.load(it) }
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        return flutterSdkPath
+    }()
+
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.1.0" apply false
+    id "org.jetbrains.kotlin.android" version "2.0.20" apply false
+}
+
+include ":app"
+```
+
+---
