@@ -2,7 +2,7 @@
 
 > **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
 > **Total Source Files:** 82
-> **Total Source Lines:** 25506
+> **Total Source Lines:** 25532
 > **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
 
 ---
@@ -11,7 +11,7 @@
 
 | # | File Path | Language | Lines |
 |---|-----------|----------|-------|
-| 1 | [`pubspec.yaml`](#pubspecyaml) | yaml | 91 |
+| 1 | [`pubspec.yaml`](#pubspecyaml) | yaml | 94 |
 | 2 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 41 |
 | 3 | [`lib/core/ai/local_ai_provider.dart`](#libcoreailocalaiproviderdart) | dart | 43 |
 | 4 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 241 |
@@ -52,7 +52,7 @@
 | 39 | [`lib/features/ocr/ocr_screen.dart`](#libfeaturesocrocrscreendart) | dart | 744 |
 | 40 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 1028 |
 | 41 | [`lib/features/search/search_tab.dart`](#libfeaturessearchsearchtabdart) | dart | 453 |
-| 42 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 404 |
+| 42 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 426 |
 | 43 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 833 |
 | 44 | [`lib/features/stats/stats_tab.dart`](#libfeaturesstatsstatstabdart) | dart | 663 |
 | 45 | [`lib/features/study/study_mode_screen.dart`](#libfeaturesstudystudymodescreendart) | dart | 1219 |
@@ -87,7 +87,7 @@
 | 74 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 185 |
 | 75 | [`test/unit_test.dart`](#testunittestdart) | dart | 392 |
 | 76 | [`test/widget_test.dart`](#testwidgettestdart) | dart | 68 |
-| 77 | [`android/app/src/main/AndroidManifest.xml`](#androidappsrcmainandroidmanifestxml) | xml | 102 |
+| 77 | [`android/app/src/main/AndroidManifest.xml`](#androidappsrcmainandroidmanifestxml) | xml | 103 |
 | 78 | [`android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt`](#androidappsrcmainkotlincomofflinepdfappofflinepdfreadermainactivitykt) | kotlin | 754 |
 | 79 | [`android/app/src/main/res/xml/file_paths.xml`](#androidappsrcmainresxmlfilepathsxml) | xml | 7 |
 | 80 | [`android/app/build.gradle`](#androidappbuildgradle) | groovy | 45 |
@@ -99,7 +99,7 @@
 ## 1. pubspec.yaml <a id="pubspecyaml"></a>
 
 - **Path:** `pubspec.yaml`
-- **Lines:** 91
+- **Lines:** 94
 - **Language:** `yaml`
 
 ```yaml
@@ -183,6 +183,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/images/
 
   fonts:
     - family: SourceSerif4
@@ -11775,7 +11778,7 @@ class _SearchTabState extends ConsumerState<SearchTab> {
 ## 42. lib/features/settings/settings_screen.dart <a id="libfeaturessettingssettingsscreendart"></a>
 
 - **Path:** `lib/features/settings/settings_screen.dart`
-- **Lines:** 404
+- **Lines:** 426
 - **Language:** `dart`
 
 ```dart
@@ -12126,10 +12129,14 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       ListTile(
                         dense: true,
-                        leading: Icon(
-                          Icons.info_outline,
-                          size: 20,
-                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                          child: Image.asset(
+                            'assets/images/app_logo.png',
+                            width: 32,
+                            height: 32,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                         title: Text(
                           'Quiet Editorial Document Studio',
@@ -12169,7 +12176,25 @@ class SettingsScreen extends ConsumerWidget {
                           size: 18,
                           color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
                         ),
-                        onTap: () => showLicensePage(context: context),
+                        onTap: () => showLicensePage(
+                          context: context,
+                          applicationName: 'Offline PDF Reader',
+                          applicationVersion: '1.0.0 (Quiet Editorial Studio)',
+                          applicationLegalese:
+                              'Crafted for offline private document management and archival study.',
+                          applicationIcon: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              child: Image.asset(
+                                'assets/images/app_logo.png',
+                                width: 56,
+                                height: 56,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -25479,7 +25504,7 @@ void main() {
 ## 77. android/app/src/main/AndroidManifest.xml <a id="androidappsrcmainandroidmanifestxml"></a>
 
 - **Path:** `android/app/src/main/AndroidManifest.xml`
-- **Lines:** 102
+- **Lines:** 103
 - **Language:** `xml`
 
 ```xml
@@ -25496,7 +25521,8 @@ void main() {
     <application
         android:label="Offline PDF Reader"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
         
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
