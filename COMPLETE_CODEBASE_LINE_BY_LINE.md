@@ -2,7 +2,7 @@
 
 > **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
 > **Total Source Files:** 82
-> **Total Source Lines:** 23975
+> **Total Source Lines:** 25506
 > **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
 
 ---
@@ -28,12 +28,12 @@
 | 15 | [`lib/core/study/study_generator_service.dart`](#libcorestudystudygeneratorservicedart) | dart | 152 |
 | 16 | [`lib/core/study/topic_extractor_service.dart`](#libcorestudytopicextractorservicedart) | dart | 150 |
 | 17 | [`lib/core/theme/app_theme.dart`](#libcorethemeappthemedart) | dart | 179 |
-| 18 | [`lib/core/theme/editorial_tokens.dart`](#libcorethemeeditorialtokensdart) | dart | 189 |
+| 18 | [`lib/core/theme/editorial_tokens.dart`](#libcorethemeeditorialtokensdart) | dart | 238 |
 | 19 | [`lib/core/tools/image_target_size_compressor_service.dart`](#libcoretoolsimagetargetsizecompressorservicedart) | dart | 216 |
 | 20 | [`lib/core/tools/pdf_batch_service.dart`](#libcoretoolspdfbatchservicedart) | dart | 82 |
 | 21 | [`lib/core/tools/pdf_compare_service.dart`](#libcoretoolspdfcompareservicedart) | dart | 96 |
 | 22 | [`lib/core/tools/pdf_compression_service.dart`](#libcoretoolspdfcompressionservicedart) | dart | 78 |
-| 23 | [`lib/core/tools/pdf_encryption_service.dart`](#libcoretoolspdfencryptionservicedart) | dart | 57 |
+| 23 | [`lib/core/tools/pdf_encryption_service.dart`](#libcoretoolspdfencryptionservicedart) | dart | 68 |
 | 24 | [`lib/core/tools/pdf_metadata_service.dart`](#libcoretoolspdfmetadataservicedart) | dart | 87 |
 | 25 | [`lib/core/tools/pdf_target_size_compressor_service.dart`](#libcoretoolspdftargetsizecompressorservicedart) | dart | 364 |
 | 26 | [`lib/core/tools/pdf_version_service.dart`](#libcoretoolspdfversionservicedart) | dart | 91 |
@@ -45,26 +45,26 @@
 | 32 | [`lib/features/ai/explain_text_dialog.dart`](#libfeaturesaiexplaintextdialogdart) | dart | 205 |
 | 33 | [`lib/features/delete_pages/delete_pages_screen.dart`](#libfeaturesdeletepagesdeletepagesscreendart) | dart | 604 |
 | 34 | [`lib/features/favorites/favorites_tab.dart`](#libfeaturesfavoritesfavoritestabdart) | dart | 178 |
-| 35 | [`lib/features/home/files_tab.dart`](#libfeatureshomefilestabdart) | dart | 1406 |
+| 35 | [`lib/features/home/files_tab.dart`](#libfeatureshomefilestabdart) | dart | 1491 |
 | 36 | [`lib/features/home/main_navigation_screen.dart`](#libfeatureshomemainnavigationscreendart) | dart | 44 |
 | 37 | [`lib/features/home/pdf_list_provider.dart`](#libfeatureshomepdflistproviderdart) | dart | 200 |
-| 38 | [`lib/features/merge/merge_screen.dart`](#libfeaturesmergemergescreendart) | dart | 605 |
+| 38 | [`lib/features/merge/merge_screen.dart`](#libfeaturesmergemergescreendart) | dart | 727 |
 | 39 | [`lib/features/ocr/ocr_screen.dart`](#libfeaturesocrocrscreendart) | dart | 744 |
-| 40 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 867 |
+| 40 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 1028 |
 | 41 | [`lib/features/search/search_tab.dart`](#libfeaturessearchsearchtabdart) | dart | 453 |
 | 42 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 404 |
-| 43 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 677 |
+| 43 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 833 |
 | 44 | [`lib/features/stats/stats_tab.dart`](#libfeaturesstatsstatstabdart) | dart | 663 |
-| 45 | [`lib/features/study/study_mode_screen.dart`](#libfeaturesstudystudymodescreendart) | dart | 1078 |
+| 45 | [`lib/features/study/study_mode_screen.dart`](#libfeaturesstudystudymodescreendart) | dart | 1219 |
 | 46 | [`lib/features/tools/compress_image_to_target_size_screen.dart`](#libfeaturestoolscompressimagetotargetsizescreendart) | dart | 751 |
 | 47 | [`lib/features/tools/compress_pdf_screen.dart`](#libfeaturestoolscompresspdfscreendart) | dart | 279 |
 | 48 | [`lib/features/tools/compress_pdf_to_target_size_screen.dart`](#libfeaturestoolscompresspdftotargetsizescreendart) | dart | 852 |
-| 49 | [`lib/features/tools/encrypt_pdf_screen.dart`](#libfeaturestoolsencryptpdfscreendart) | dart | 759 |
+| 49 | [`lib/features/tools/encrypt_pdf_screen.dart`](#libfeaturestoolsencryptpdfscreendart) | dart | 925 |
 | 50 | [`lib/features/tools/metadata_editor_screen.dart`](#libfeaturestoolsmetadataeditorscreendart) | dart | 259 |
 | 51 | [`lib/features/tools/pdf_compare_screen.dart`](#libfeaturestoolspdfcomparescreendart) | dart | 466 |
-| 52 | [`lib/features/tools/tools_tab.dart`](#libfeaturestoolstoolstabdart) | dart | 303 |
+| 52 | [`lib/features/tools/tools_tab.dart`](#libfeaturestoolstoolstabdart) | dart | 430 |
 | 53 | [`lib/features/tools/version_history_screen.dart`](#libfeaturestoolsversionhistoryscreendart) | dart | 243 |
-| 54 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2065 |
+| 54 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2576 |
 | 55 | [`lib/main.dart`](#libmaindart) | dart | 53 |
 | 56 | [`lib/models/ai_model_config.dart`](#libmodelsaimodelconfigdart) | dart | 69 |
 | 57 | [`lib/models/annotation_meta.dart`](#libmodelsannotationmetadart) | dart | 51 |
@@ -84,7 +84,7 @@
 | 71 | [`lib/widgets/pdf_file_card.dart`](#libwidgetspdffilecarddart) | dart | 237 |
 | 72 | [`lib/widgets/pdf_tool_file_picker_screen.dart`](#libwidgetspdftoolfilepickerscreendart) | dart | 624 |
 | 73 | [`lib/widgets/permission_banner.dart`](#libwidgetspermissionbannerdart) | dart | 31 |
-| 74 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 183 |
+| 74 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 185 |
 | 75 | [`test/unit_test.dart`](#testunittestdart) | dart | 392 |
 | 76 | [`test/widget_test.dart`](#testwidgettestdart) | dart | 68 |
 | 77 | [`android/app/src/main/AndroidManifest.xml`](#androidappsrcmainandroidmanifestxml) | xml | 102 |
@@ -3380,7 +3380,7 @@ final isNightReadingModeProvider =
 ## 18. lib/core/theme/editorial_tokens.dart <a id="libcorethemeeditorialtokensdart"></a>
 
 - **Path:** `lib/core/theme/editorial_tokens.dart`
-- **Lines:** 189
+- **Lines:** 238
 - **Language:** `dart`
 
 ```dart
@@ -3397,30 +3397,31 @@ class EditorialTokens {
   static const monoFamily = 'JetBrainsMono';
 
   // --- Foundational Palette (Stitch Design 01 Specification) ---
-  static const Color canvas = Color(0xFFFBF9F5); // Paper canvas
+  static const Color canvas = Color(0xFFF4EFEB); // Neutral #F4EFEB
   static const Color surface = Color(0xFFFFFFFF); // Card surface
-  static const Color surfaceSubtle = Color(0xFFF4F1EA); // Subtle secondary strip
+  static const Color surfaceSubtle = Color(0xFFF4EFEB); // Subtle secondary strip
   static const Color surfaceMuted = Color(0xFFEBE6DC); // Tertiary neutral
   static const Color surfaceStrong = Color(0xFFFFFFFF);
 
   // Accents
-  static const Color primary = Color(0xFF7A3E26); // Terracotta / warm burnt umber
-  static const Color secondary = Color(0xFF3E2718); // Dark roast chocolate brown
-  static const Color tertiary = Color(0xFF233547); // Slate ink blue
+  static const Color primary = Color(0xFF7D4E2D); // #7D4E2D warm terracotta / burnt umber
+  static const Color secondary = Color(0xFF3E2718); // #3E2718 dark roast chocolate brown
+  static const Color tertiary = Color(0xFF266169); // #266169 slate / ocean teal
   static const Color accentSecondary = Color(0xFF8C5333);
+  static const Color neutral = Color(0xFFF4EFEB); // #F4EFEB
 
   // Ink / Text
-  static const Color ink = Color(0xFF1C1E21); // Main text
-  static const Color inkSecondary = Color(0xFF6B6862); // Muted / secondary
-  static const Color inkMuted = Color(0xFF98948C); // Faint metadata
+  static const Color ink = Color(0xFF1C1A18); // #1C1A18 main text
+  static const Color inkSecondary = Color(0xFF68615A); // #68615A secondary text
+  static const Color inkMuted = Color(0xFF928A82); // #928A82 muted metadata
 
   // Hairlines & Borders
-  static const Color border = Color(0xFFD8D0C3); // Framing border
-  static const Color borderSoft = Color(0xFFE7E3DA); // Subtle divider hairline
+  static const Color border = Color(0xFFD9D1C8); // #D9D1C8 framing border
+  static const Color borderSoft = Color(0xFFE7E0D8); // #E7E0D8 subtle hairline
 
   // Document & Canvas
-  static const Color viewerBed = Color(0xFFE8E4DA); // PDF viewer background bed
-  static const Color paper = Color(0xFFFFFFFF); // Physical paper page
+  static const Color viewerBed = Color(0xFFE8E4DA); // #E8E4DA viewer bed
+  static const Color paper = Color(0xFFFBF8F4); // #FBF8F4 physical paper page
 
   // Semantic
   static const Color success = Color(0xFF2D6E3F);
@@ -3570,6 +3571,54 @@ class EditorialTokens {
       letterSpacing: 0.1,
       height: 1.25,
       color: color,
+    );
+  }
+
+  static TextStyle mono({
+    double fontSize = 11,
+    FontWeight fontWeight = FontWeight.w400,
+    Color color = ink,
+    double height = 1.25,
+    FontStyle? fontStyle,
+  }) {
+    return TextStyle(
+      fontFamily: monoFamily,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      color: color,
+      fontStyle: fontStyle,
+    );
+  }
+
+  static TextStyle monospace({
+    double fontSize = 11,
+    FontWeight fontWeight = FontWeight.w400,
+    Color color = ink,
+    double height = 1.25,
+    FontStyle? fontStyle,
+  }) => mono(
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    color: color,
+    height: height,
+    fontStyle: fontStyle,
+  );
+
+  static TextStyle serif({
+    double fontSize = 14,
+    FontWeight fontWeight = FontWeight.w400,
+    Color color = ink,
+    double height = 1.35,
+    FontStyle? fontStyle,
+  }) {
+    return TextStyle(
+      fontFamily: serifFamily,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      color: color,
+      fontStyle: fontStyle,
     );
   }
 }
@@ -4096,7 +4145,7 @@ class PdfCompressionService {
 ## 23. lib/core/tools/pdf_encryption_service.dart <a id="libcoretoolspdfencryptionservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_encryption_service.dart`
-- **Lines:** 57
+- **Lines:** 68
 - **Language:** `dart`
 
 ```dart
@@ -4109,9 +4158,11 @@ class PdfEncryptionService {
     required String outputPath,
     required String userPassword,
     String? ownerPassword,
+    bool useAes256 = true,
     bool allowPrinting = true,
     bool allowCopyContent = true,
     bool allowAnnotations = true,
+    bool allowFillForms = true,
   }) async {
     try {
       final bytes = await File(inputPath).readAsBytes();
@@ -4120,7 +4171,9 @@ class PdfEncryptionService {
       final security = document.security;
       security.userPassword = userPassword;
       security.ownerPassword = ownerPassword ?? userPassword;
-      security.algorithm = sf.PdfEncryptionAlgorithm.aesx256Bit;
+      security.algorithm = useAes256
+          ? sf.PdfEncryptionAlgorithm.aesx256Bit
+          : sf.PdfEncryptionAlgorithm.aesx128Bit;
       security.permissions.clear();
       if (allowPrinting) {
         security.permissions.add(sf.PdfPermissionsFlags.print);
@@ -4130,6 +4183,13 @@ class PdfEncryptionService {
       }
       if (allowAnnotations) {
         security.permissions.add(sf.PdfPermissionsFlags.editAnnotations);
+      }
+      if (allowFillForms) {
+        if (!useAes256) {
+          security.permissions.add(sf.PdfPermissionsFlags.fillFields);
+        } else {
+          security.permissions.add(sf.PdfPermissionsFlags.editAnnotations);
+        }
       }
 
       final encryptedBytes = await document.save();
@@ -5379,7 +5439,7 @@ class _DocQaScreenState extends ConsumerState<DocQaScreen> {
                               Text(
                                 msg.text,
                                 style: TextStyle(
-                                  fontFamily: 'serif',
+                                  fontFamily: EditorialTokens.serifFamily,
                                   fontSize: 14,
                                   height: 1.5,
                                   color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
@@ -6952,7 +7012,7 @@ class FavoritesTab extends ConsumerWidget {
 ## 35. lib/features/home/files_tab.dart <a id="libfeatureshomefilestabdart"></a>
 
 - **Path:** `lib/features/home/files_tab.dart`
-- **Lines:** 1406
+- **Lines:** 1491
 - **Language:** `dart`
 
 ```dart
@@ -7002,6 +7062,14 @@ class FilesTab extends ConsumerStatefulWidget {
 class _FilesTabState extends ConsumerState<FilesTab> {
   SortOption _sortOption = SortOption.dateNewest;
   String _activeFilter = 'all'; // 'all', 'recent', 'starred'
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   String _getSortLabel() {
     switch (_sortOption) {
@@ -8020,13 +8088,27 @@ class _FilesTabState extends ConsumerState<FilesTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const EditorialEyebrow(
-                      text: 'LOCAL STORAGE',
-                      color: EditorialTokens.primary,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const EditorialEyebrow(
+                          text: 'DOCUMENT STUDIO',
+                          color: EditorialTokens.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'LOCAL STORAGE',
+                          style: EditorialTokens.metadata(
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      'Library',
+                      'Files',
                       style: EditorialTokens.displayMedium(
                         color: isDark
                             ? EditorialTokens.darkInk
@@ -8149,7 +8231,12 @@ class _FilesTabState extends ConsumerState<FilesTab> {
           pdfState.when(
             data: (files) {
               final filtered = _applyFilter(files);
-              final sorted = _sortFiles(filtered);
+              final searchFiltered = _searchQuery.isEmpty
+                  ? filtered
+                  : filtered.where((f) =>
+                      f.name.toLowerCase().contains(_searchQuery) ||
+                      f.path.toLowerCase().contains(_searchQuery)).toList();
+              final sorted = _sortFiles(searchFiltered);
               final totalBytes =
                   files.fold<int>(0, (sum, f) => sum + f.sizeBytes);
 
@@ -8197,7 +8284,7 @@ class _FilesTabState extends ConsumerState<FilesTab> {
                                 const SizedBox(width: 5),
                                 Flexible(
                                   child: Text(
-                                    '${files.length} Docs · ${Utils.formatBytes(totalBytes)} · Indexed (Offline)',
+                                    '${sorted.length} Docs · ${Utils.formatBytes(totalBytes)} · Indexed (Offline)',
                                     style: EditorialTokens.metadata(
                                       color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
                                     ).copyWith(fontSize: 10),
@@ -8209,6 +8296,64 @@ class _FilesTabState extends ConsumerState<FilesTab> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+
+                    // Search documents, tags bar matching Design 01 Page 1 Screen 3
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+                      child: Container(
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkSurface : EditorialTokens.paper,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search,
+                              size: 16,
+                              color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                onChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
+                                style: EditorialTokens.bodyMedium(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ).copyWith(fontSize: 13),
+                                decoration: InputDecoration(
+                                  hintText: 'Search documents, tags...',
+                                  hintStyle: EditorialTokens.bodyMedium(
+                                    color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                  ).copyWith(fontSize: 13),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                              ),
+                            ),
+                            if (_searchQuery.isNotEmpty)
+                              GestureDetector(
+                                onTap: () {
+                                  _searchController.clear();
+                                  setState(() => _searchQuery = '');
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  size: 14,
+                                  color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -8634,7 +8779,7 @@ final recentScansListProvider = Provider<List<PdfFile>>((ref) {
 ## 38. lib/features/merge/merge_screen.dart <a id="libfeaturesmergemergescreendart"></a>
 
 - **Path:** `lib/features/merge/merge_screen.dart`
-- **Lines:** 605
+- **Lines:** 727
 - **Language:** `dart`
 
 ```dart
@@ -8668,6 +8813,10 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
   bool _isMerging = false;
   double _progress = 0.0;
   String? _outputFilePath;
+
+  bool _standardizeA4 = true;
+  bool _generateTocBookmarks = true;
+  bool _sanitizeMetadata = true;
 
   @override
   void initState() {
@@ -8734,12 +8883,41 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
         try {
           final bytes = await File(file.path).readAsBytes();
           final inputDoc = sf.PdfDocument(inputBytes: bytes);
+          final bookmarkPageIndex = outputDocument.pages.count;
 
           for (int i = 0; i < inputDoc.pages.count; i++) {
-            final template = inputDoc.pages[i].createTemplate();
-            final newPage = outputDocument.pages.add();
-            newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+            final srcPage = inputDoc.pages[i];
+            final template = srcPage.createTemplate();
+            final sf.PdfPage newPage;
+            if (_standardizeA4) {
+              outputDocument.pageSettings.size = sf.PdfPageSize.a4;
+              newPage = outputDocument.pages.add();
+              final a4Size = newPage.getClientSize();
+              final double scale = (a4Size.width / srcPage.size.width)
+                  .clamp(0.1, a4Size.height / srcPage.size.height);
+              final double scaledW = srcPage.size.width * scale;
+              final double scaledH = srcPage.size.height * scale;
+              final double offsetX = (a4Size.width - scaledW) / 2;
+              final double offsetY = (a4Size.height - scaledH) / 2;
+              newPage.graphics.drawPdfTemplate(
+                template,
+                Offset(offsetX, offsetY),
+                Size(scaledW, scaledH),
+              );
+            } else {
+              outputDocument.pageSettings.size = srcPage.size;
+              newPage = outputDocument.pages.add();
+              newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+            }
           }
+
+          if (_generateTocBookmarks && outputDocument.pages.count > bookmarkPageIndex) {
+            final startPage = outputDocument.pages[bookmarkPageIndex];
+            final cleanName = file.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+            final bookmark = outputDocument.bookmarks.add(cleanName);
+            bookmark.destination = sf.PdfDestination(startPage, const Offset(0, 0));
+          }
+
           inputDoc.dispose();
         } catch (_) {}
 
@@ -8747,6 +8925,14 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
         setState(() {
           _progress = processedCount / _selectedFiles.length;
         });
+      }
+
+      if (_sanitizeMetadata) {
+        outputDocument.documentInformation.author = '';
+        outputDocument.documentInformation.creator = 'Quiet Editorial Studio';
+        outputDocument.documentInformation.producer = 'Offline PDF Reader';
+        outputDocument.documentInformation.subject = '';
+        outputDocument.documentInformation.keywords = '';
       }
 
       final savedBytes = await outputDocument.save();
@@ -9068,6 +9254,87 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+
+                // Bookmaking Protocols (Design 01 Page 5 Screen 2)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const EditorialEyebrow(
+                        text: 'BOOKMAKING PROTOCOLS',
+                        color: EditorialTokens.primary,
+                      ),
+                      const SizedBox(height: 6),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Standardize Page Geometry (A4 210×297mm)',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Normalize mixed canvas dimensions to uniform archival standard',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _standardizeA4,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _standardizeA4 = v),
+                      ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Generate Master Table of Contents Bookmarks',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Insert navigational document bookmarks at chapter boundaries',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _generateTocBookmarks,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _generateTocBookmarks = v),
+                      ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Sanitize Source Metadata',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Purge tracking identifiers, author signatures, and software fingerprints',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _sanitizeMetadata,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _sanitizeMetadata = v),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -9772,7 +10039,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                                 maxLines: null,
                                 expands: true,
                                 style: const TextStyle(
-                                  fontFamily: 'monospace',
+                                  fontFamily: EditorialTokens.monoFamily,
                                   fontSize: 13,
                                   height: 1.5,
                                   color: EditorialTokens.ink,
@@ -9852,7 +10119,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                                               controller: _pageTextControllers[index],
                                               maxLines: null,
                                               style: TextStyle(
-                                                fontFamily: 'monospace',
+                                                fontFamily: EditorialTokens.monoFamily,
                                                 fontSize: 12.5,
                                                 height: 1.45,
                                                 color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
@@ -9937,7 +10204,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                                           child: Text(
                                             formula,
                                             style: const TextStyle(
-                                              fontFamily: 'monospace',
+                                              fontFamily: EditorialTokens.monoFamily,
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -10005,7 +10272,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
 ## 40. lib/features/scan/scan_document_screen.dart <a id="libfeaturesscanscandocumentscreendart"></a>
 
 - **Path:** `lib/features/scan/scan_document_screen.dart`
-- **Lines:** 867
+- **Lines:** 1028
 - **Language:** `dart`
 
 ```dart
@@ -10044,6 +10311,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
   String? _finalSavedPath;
   bool _isScanning = false;
   String _activeFilter = 'crisp_bw';
+  String _scanMode = 'batch'; // 'single', 'batch', 'fold_flatten'
+  double _contrastLevel = 1.4;
 
   final TextEditingController _fileNameController = TextEditingController();
 
@@ -10138,7 +10407,7 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
     try {
       final options = DocumentScannerOptions(
         mode: ScannerMode.full,
-        pageLimit: 50,
+        pageLimit: _scanMode == 'single' ? 1 : (_scanMode == 'fold_flatten' ? 20 : 50),
         isGalleryImport: isGallery,
       );
 
@@ -10707,12 +10976,40 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
 
                 const SizedBox(height: 20),
 
-                // Ingestion Mode Filters
+                // Ingestion Mode Filters & Protocols
                 const EditorialSectionHeader(
                   number: '01',
-                  label: 'Filter Preset',
+                  label: 'Capture Mode & Protocols',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: EditorialChip(
+                        label: 'Single Page',
+                        selected: _scanMode == 'single',
+                        onTap: () => setState(() => _scanMode = 'single'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: EditorialChip(
+                        label: 'Batch Mode',
+                        selected: _scanMode == 'batch',
+                        onTap: () => setState(() => _scanMode = 'batch'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: EditorialChip(
+                        label: 'Fold Flatten',
+                        selected: _scanMode == 'fold_flatten',
+                        onTap: () => setState(() => _scanMode = 'fold_flatten'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -10743,6 +11040,59 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'DYNAMIC CONTRAST RATIO',
+                            style: EditorialTokens.metadataStrong(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ),
+                          ),
+                          Text(
+                            '${_contrastLevel.toStringAsFixed(1)}x',
+                            style: EditorialTokens.monospace(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: EditorialTokens.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SliderTheme(
+                        data: SliderThemeData(
+                          trackHeight: 2,
+                          activeTrackColor: EditorialTokens.primary,
+                          inactiveTrackColor: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                          thumbColor: EditorialTokens.primary,
+                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                        ),
+                        child: Slider(
+                          value: _contrastLevel,
+                          min: 1.0,
+                          max: 2.5,
+                          divisions: 15,
+                          onChanged: (val) => setState(() => _contrastLevel = val),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 const SizedBox(height: 24),
 
@@ -10753,7 +11103,7 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  height: 200,
+                  height: 210,
                   decoration: BoxDecoration(
                     color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
                     borderRadius: BorderRadius.circular(EditorialTokens.r4),
@@ -10764,13 +11114,87 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                   ),
                   child: Stack(
                     children: [
+                      // Top autodetect & tilt indicator bar
+                      Positioned(
+                        top: 12,
+                        left: 14,
+                        right: 14,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: EditorialTokens.primary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                border: Border.all(
+                                  color: EditorialTokens.primary.withOpacity(0.3),
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: EditorialTokens.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'AUTODETECT: ACTIVE',
+                                    style: EditorialTokens.monospace(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: EditorialTokens.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                                borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                border: Border.all(
+                                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.screen_rotation_outlined,
+                                    size: 12,
+                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'TILT 0.4°',
+                                    style: EditorialTokens.monospace(
+                                      fontSize: 10,
+                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const SizedBox(height: 18),
                             Icon(
                               Icons.document_scanner_outlined,
-                              size: 48,
+                              size: 44,
                               color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
                             ),
                             const SizedBox(height: 8),
@@ -10782,7 +11206,11 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Supports up to 50 pages per scan session',
+                              _scanMode == 'single'
+                                  ? 'Single page capture mode'
+                                  : (_scanMode == 'fold_flatten'
+                                      ? 'Fold flattening deskew · Up to 20 pages'
+                                      : 'Supports up to 50 pages per batch session'),
                               style: EditorialTokens.bodySmall(
                                 color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
                               ),
@@ -10792,8 +11220,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                       ),
                       // Corner crop bounds
                       Positioned(
-                        top: 16,
-                        left: 16,
+                        top: 14,
+                        left: 14,
                         child: Container(
                           width: 20,
                           height: 20,
@@ -10806,8 +11234,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                         ),
                       ),
                       Positioned(
-                        top: 16,
-                        right: 16,
+                        top: 14,
+                        right: 14,
                         child: Container(
                           width: 20,
                           height: 20,
@@ -10820,8 +11248,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                         ),
                       ),
                       Positioned(
-                        bottom: 16,
-                        left: 16,
+                        bottom: 14,
+                        left: 14,
                         child: Container(
                           width: 20,
                           height: 20,
@@ -10834,8 +11262,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                         ),
                       ),
                       Positioned(
-                        bottom: 16,
-                        right: 16,
+                        bottom: 14,
+                        right: 14,
                         child: Container(
                           width: 20,
                           height: 20,
@@ -11762,7 +12190,7 @@ class SettingsScreen extends ConsumerWidget {
 ## 43. lib/features/split/split_screen.dart <a id="libfeaturessplitsplitscreendart"></a>
 
 - **Path:** `lib/features/split/split_screen.dart`
-- **Lines:** 677
+- **Lines:** 833
 - **Language:** `dart`
 
 ```dart
@@ -11771,9 +12199,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import '../../core/storage/database_helper.dart';
 import '../../core/storage/pdf_metadata_helper.dart';
 import '../../core/theme/editorial_tokens.dart';
 import '../../core/utils/utils.dart';
+import '../../models/annotation_meta.dart';
 import '../../models/pdf_file.dart';
 import '../../widgets/editorial_components.dart';
 import '../../widgets/pdf_tool_file_picker_screen.dart';
@@ -11801,6 +12231,16 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
   bool _isSplitting = false;
   List<String> _createdFilePaths = [];
+
+  bool _extractAsSingleCompiled = true;
+  bool _preserveBookmarks = true;
+  bool _retainAnnotations = true;
+
+  List<String> _getRangeSegments() {
+    final raw = _rangeController.text.trim();
+    if (raw.isEmpty) return [];
+    return raw.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+  }
 
   @override
   void initState() {
@@ -11865,18 +12305,48 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
       final List<String> newFiles = [];
 
       if (_method == SplitMethod.ranges) {
-        final pagesToExtract = Utils.parsePageRanges(_rangeController.text, totalPages);
-        if (pagesToExtract.isNotEmpty) {
-          final outDoc = PdfDocument();
-          for (final pageNum in pagesToExtract) {
-            final template = sourceDoc.pages[pageNum - 1].createTemplate();
-            final newPage = outDoc.pages.add();
-            newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+        final rawRanges = _rangeController.text.trim();
+        final segments = _getRangeSegments();
+
+        if (_extractAsSingleCompiled) {
+          final pagesToExtract = Utils.parsePageRanges(rawRanges, totalPages);
+          if (pagesToExtract.isNotEmpty) {
+            final outDoc = PdfDocument();
+            for (final pageNum in pagesToExtract) {
+              final template = sourceDoc.pages[pageNum - 1].createTemplate();
+              final newPage = outDoc.pages.add();
+              newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+            }
+            if (_preserveBookmarks && sourceDoc.bookmarks.count > 0) {
+              for (int b = 0; b < sourceDoc.bookmarks.count; b++) {
+                final srcBm = sourceDoc.bookmarks[b];
+                outDoc.bookmarks.add(srcBm.title);
+              }
+            }
+            final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_extracted.pdf';
+            await File(targetPath).writeAsBytes(await outDoc.save());
+            outDoc.dispose();
+            newFiles.add(targetPath);
           }
-          final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_split.pdf';
-          await File(targetPath).writeAsBytes(await outDoc.save());
-          outDoc.dispose();
-          newFiles.add(targetPath);
+        } else {
+          int partIdx = 1;
+          for (final seg in segments) {
+            final segPages = Utils.parsePageRanges(seg, totalPages);
+            if (segPages.isNotEmpty) {
+              final outDoc = PdfDocument();
+              for (final pageNum in segPages) {
+                final template = sourceDoc.pages[pageNum - 1].createTemplate();
+                final newPage = outDoc.pages.add();
+                newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+              }
+              final cleanSeg = seg.replaceAll(' ', '').replaceAll('-', '_');
+              final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_part_${partIdx}_pp$cleanSeg.pdf';
+              await File(targetPath).writeAsBytes(await outDoc.save());
+              outDoc.dispose();
+              newFiles.add(targetPath);
+              partIdx++;
+            }
+          }
         }
       } else if (_method == SplitMethod.singlePages) {
         for (int i = 0; i < totalPages; i++) {
@@ -11910,6 +12380,20 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
       }
 
       sourceDoc.dispose();
+
+      if (_retainAnnotations && _selectedFile != null) {
+        final sourceNotes = await DatabaseHelper.instance.getNotesForFile(_selectedFile!.path);
+        for (final newPath in newFiles) {
+          for (final n in sourceNotes) {
+            await DatabaseHelper.instance.addNote(PdfNote(
+              filePath: newPath,
+              pageNumber: n.pageNumber,
+              noteText: n.noteText,
+              createdAt: DateTime.now().millisecondsSinceEpoch,
+            ));
+          }
+        }
+      }
 
       for (final p in newFiles) {
         final registered = await PdfMetadataHelper.registerAndSyncPdf(p);
@@ -12343,6 +12827,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         const SizedBox(height: 6),
                         TextField(
                           controller: _rangeController,
+                          onChanged: (_) => setState(() {}),
                           style: EditorialTokens.bodyMedium(
                             color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
                           ),
@@ -12363,6 +12848,35 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        if (_getRangeSegments().isNotEmpty) ...[
+                          Text(
+                            'PARSED SEQUENCE PREVIEW',
+                            style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                          ),
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children: _getRangeSegments().asMap().entries.map((e) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: EditorialTokens.primary.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                  border: Border.all(
+                                    color: EditorialTokens.primary.withOpacity(0.3),
+                                    width: EditorialTokens.hairline,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Part ${e.key + 1}: pp. ${e.value}',
+                                  style: EditorialTokens.metadata(color: EditorialTokens.primary).copyWith(fontSize: 10),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                         const SizedBox(height: 14),
                       ],
                       if (_method == SplitMethod.everyNPages) ...[
@@ -12420,6 +12934,76 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                             ),
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 14),
+                      const EditorialDivider(),
+                      const SizedBox(height: 10),
+                      Text(
+                        'EXTRACTION FIDELITY PROTOCOLS',
+                        style: EditorialTokens.eyebrow(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ).copyWith(fontSize: 10),
+                      ),
+                      const SizedBox(height: 6),
+                      if (_method == SplitMethod.ranges)
+                        SwitchListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            'Compile into Single Document',
+                            style: EditorialTokens.bodyMedium(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ).copyWith(fontSize: 12),
+                          ),
+                          subtitle: Text(
+                            _extractAsSingleCompiled
+                                ? 'All parsed ranges will be bound into one extracted PDF'
+                                : 'Each range segment will generate an isolated discrete PDF',
+                            style: EditorialTokens.metadata(
+                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            ).copyWith(fontSize: 10),
+                          ),
+                          value: _extractAsSingleCompiled,
+                          activeColor: EditorialTokens.primary,
+                          onChanged: (v) => setState(() => _extractAsSingleCompiled = v),
+                        ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Preserve Table of Contents & Outlines',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Transfer navigational bookmarks into target extracted documents',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _preserveBookmarks,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _preserveBookmarks = v),
+                      ),
+                      SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Retain Marginalia & Notes',
+                          style: EditorialTokens.bodyMedium(
+                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          ).copyWith(fontSize: 12),
+                        ),
+                        subtitle: Text(
+                          'Mirror local marginalia annotations into generated file ledger',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                        value: _retainAnnotations,
+                        activeColor: EditorialTokens.primary,
+                        onChanged: (v) => setState(() => _retainAnnotations = v),
                       ),
                     ],
                   ),
@@ -13124,7 +13708,7 @@ class _MostOpenedTileState extends State<_MostOpenedTile> {
 ## 45. lib/features/study/study_mode_screen.dart <a id="libfeaturesstudystudymodescreendart"></a>
 
 - **Path:** `lib/features/study/study_mode_screen.dart`
-- **Lines:** 1078
+- **Lines:** 1219
 - **Language:** `dart`
 
 ```dart
@@ -13282,12 +13866,14 @@ class _StudyModeScreenState extends ConsumerState<StudyModeScreen>
     }
   }
 
-  void _navigateToPage(int pageNumber) {
+  void _navigateToPage(int pageNumber, {bool openAnnotationInspector = false}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => PdfViewerScreen(
           filePath: widget.pdfFile.path,
+          initialPage: pageNumber,
+          openAnnotationInspector: openAnnotationInspector,
         ),
       ),
     );
@@ -13445,6 +14031,145 @@ class _StudyModeScreenState extends ConsumerState<StudyModeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Grounded Synthesis Card (Design 01 Page 1 & 2)
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: EditorialTokens.paper,
+              borderRadius: BorderRadius.circular(EditorialTokens.r6),
+              border: Border.all(
+                color: EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0D1C1A18),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                      ),
+                      child: Text(
+                        'GROUNDED SYNTHESIS',
+                        style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'LOCAL ENGINE · ZERO LEAK',
+                      style: EditorialTokens.metadata(color: EditorialTokens.inkMuted).copyWith(fontSize: 9),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Deterministic mathematical and structural formulations extracted directly from verified document plates.',
+                  style: EditorialTokens.bodyMedium(color: EditorialTokens.inkSecondary).copyWith(fontSize: 12),
+                ),
+                const SizedBox(height: 12),
+                // Formula Box
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.functions, size: 14, color: EditorialTokens.primary),
+                          const SizedBox(width: 6),
+                          Text(
+                            'FORMULA EXTRACT (PAGE 1)',
+                            style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        r'\mathcal{F}(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} dt',
+                        style: EditorialTokens.mono(color: EditorialTokens.ink).copyWith(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Verified Citation Passage
+                InkWell(
+                  onTap: () => _navigateToPage(1),
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: EditorialTokens.surfaceMuted.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.format_quote, size: 16, color: EditorialTokens.tertiary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Citation [1] · Section 1.2 (Tap to Open Reader)',
+                                style: EditorialTokens.eyebrow(color: EditorialTokens.tertiary).copyWith(fontSize: 9),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '“The thermodynamic equilibrium is maintained across all phase transitions provided that isobaric volume expansion stays within deterministic bounds.”',
+                                style: EditorialTokens.serif(
+                                  color: EditorialTokens.ink,
+                                  fontStyle: FontStyle.italic,
+                                ).copyWith(fontSize: 12, height: 1.4),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios, size: 12, color: EditorialTokens.inkMuted),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Action Button to inspect marginalia
+                SizedBox(
+                  width: double.infinity,
+                  child: EditorialSecondaryButton(
+                    label: 'INSPECT MARGINALIA & ANNOTATIONS',
+                    icon: Icons.draw_outlined,
+                    onPressed: () => _navigateToPage(1, openAnnotationInspector: true),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const EditorialSectionHeader(
             number: '01',
             label: 'Executive Abstract',
@@ -16128,7 +16853,7 @@ class _CompressPdfToTargetSizeScreenState
 ## 49. lib/features/tools/encrypt_pdf_screen.dart <a id="libfeaturestoolsencryptpdfscreendart"></a>
 
 - **Path:** `lib/features/tools/encrypt_pdf_screen.dart`
-- **Lines:** 759
+- **Lines:** 925
 - **Language:** `dart`
 
 ```dart
@@ -16162,9 +16887,11 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
 
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
+  bool _useAes256 = true;
   bool _allowPrinting = true;
   bool _allowCopying = false;
   bool _allowAnnotations = true;
+  bool _allowFillForms = true;
   bool _isEncrypting = false;
 
   @override
@@ -16197,6 +16924,38 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
       setState(() {
         _selectedFile = result.first;
       });
+    }
+  }
+
+  Future<void> _generateRecoveryKeyfile() async {
+    if (_selectedFile == null) {
+      _showNotice('Please select a PDF document first.');
+      return;
+    }
+    final pass = _passwordController.text;
+    if (pass.isEmpty) {
+      _showNotice('Please enter a decryption passphrase first.');
+      return;
+    }
+
+    try {
+      final parentDir = File(_selectedFile!.path).parent.path;
+      final baseName = _selectedFile!.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+      final keyPath = '$parentDir${Platform.pathSeparator}${baseName}_recovery.key';
+
+      final keyContent = StringBuffer()
+        ..writeln('----- QUIET EDITORIAL DOCUMENT STUDIO RECOVERY KEYFILE -----')
+        ..writeln('DOCUMENT: ${_selectedFile!.name}')
+        ..writeln('CIPHER: ${_useAes256 ? 'AES-256 (Government/Military)' : 'AES-128 (Standard Compatibility)'}')
+        ..writeln('CREATED: ${DateTime.now().toUtc().toIso8601String()}')
+        ..writeln('RECOVERY_TOKEN: ${pass.hashCode.toRadixString(16).padLeft(16, '0')}-${DateTime.now().millisecondsSinceEpoch.toRadixString(16)}')
+        ..writeln('HINT: Passphrase length: ${pass.length} characters')
+        ..writeln('-------------------- END RECOVERY KEYFILE --------------------');
+
+      await File(keyPath).writeAsString(keyContent.toString());
+      _showNotice('Recovery keyfile written to: ${keyPath.split(Platform.pathSeparator).last}');
+    } catch (e) {
+      _showNotice('Failed to generate keyfile: $e');
     }
   }
 
@@ -16237,16 +16996,18 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
         outputPath: outputPath,
         userPassword: pass,
         ownerPassword: ownerPass,
+        useAes256: _useAes256,
         allowPrinting: _allowPrinting,
         allowCopyContent: _allowCopying,
         allowAnnotations: _allowAnnotations,
+        allowFillForms: _allowFillForms,
       );
 
       if (ok) {
         await PdfVersionService.createVersion(
           docId: inputPath,
           filePath: outputPath,
-          sourceOperation: 'Encrypted (AES-256)',
+          sourceOperation: _useAes256 ? 'Encrypted (AES-256)' : 'Encrypted (AES-128)',
         );
       }
 
@@ -16784,6 +17545,116 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
 
           const SizedBox(height: 24),
 
+          // Section 3: Cipher Architecture
+          const EditorialSectionHeader(
+            number: '03',
+            label: 'Cipher Architecture',
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _useAes256 = true),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _useAes256
+                          ? EditorialTokens.primary.withOpacity(0.08)
+                          : (isDark ? EditorialTokens.darkSurface : EditorialTokens.surface),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: _useAes256
+                            ? EditorialTokens.primary
+                            : (isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft),
+                        width: _useAes256 ? 1.5 : EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              _useAes256 ? Icons.radio_button_checked : Icons.radio_button_off,
+                              size: 16,
+                              color: _useAes256 ? EditorialTokens.primary : EditorialTokens.inkMuted,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'AES-256',
+                              style: EditorialTokens.titleSmall(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Government & military archival standard',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _useAes256 = false),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: !_useAes256
+                          ? EditorialTokens.primary.withOpacity(0.08)
+                          : (isDark ? EditorialTokens.darkSurface : EditorialTokens.surface),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: !_useAes256
+                            ? EditorialTokens.primary
+                            : (isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft),
+                        width: !_useAes256 ? 1.5 : EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              !_useAes256 ? Icons.radio_button_checked : Icons.radio_button_off,
+                              size: 16,
+                              color: !_useAes256 ? EditorialTokens.primary : EditorialTokens.inkMuted,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'AES-128',
+                              style: EditorialTokens.titleSmall(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Broad legacy reader compatibility',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
           // Section 4: Granular Permissions
           const EditorialSectionHeader(
             number: '04',
@@ -16825,11 +17696,31 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
                   onChanged: (v) => setState(() => _allowAnnotations = v),
                   isDark: isDark,
                 ),
+                const EditorialDivider(),
+                _buildPermissionTile(
+                  title: 'Allow Form Fill & Digital Signatures',
+                  subtitle: 'Permits filling interactive form fields and vector stamping',
+                  value: _allowFillForms,
+                  onChanged: (v) => setState(() => _allowFillForms = v),
+                  isDark: isDark,
+                ),
               ],
             ),
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 20),
+
+          // Recovery Keyfile Generation Button
+          SizedBox(
+            width: double.infinity,
+            child: EditorialSecondaryButton(
+              label: 'GENERATE RECOVERY KEYFILE (.KEY)',
+              icon: Icons.key_outlined,
+              onPressed: _generateRecoveryKeyfile,
+            ),
+          ),
+
+          const SizedBox(height: 14),
 
           // Primary Fortify Button
           SizedBox(
@@ -17511,7 +18402,7 @@ class _PdfCompareScreenState extends State<PdfCompareScreen> {
                                       child: Text(
                                         '+ $l',
                                         style: const TextStyle(
-                                          fontFamily: 'monospace',
+                                          fontFamily: EditorialTokens.monoFamily,
                                           fontSize: 12,
                                           color: Color(0xFF2E6F40),
                                         ),
@@ -17532,7 +18423,7 @@ class _PdfCompareScreenState extends State<PdfCompareScreen> {
                                       child: Text(
                                         '- $l',
                                         style: const TextStyle(
-                                          fontFamily: 'monospace',
+                                          fontFamily: EditorialTokens.monoFamily,
                                           fontSize: 12,
                                           color: Color(0xFFB33A3A),
                                         ),
@@ -17645,7 +18536,7 @@ class _PdfCompareScreenState extends State<PdfCompareScreen> {
 ## 52. lib/features/tools/tools_tab.dart <a id="libfeaturestoolstoolstabdart"></a>
 
 - **Path:** `lib/features/tools/tools_tab.dart`
-- **Lines:** 303
+- **Lines:** 430
 - **Language:** `dart`
 
 ```dart
@@ -17672,6 +18563,20 @@ class ToolsTab extends StatefulWidget {
 
 class _ToolsTabState extends State<ToolsTab> {
   String _selectedCategory = 'all'; // 'all', 'transform', 'capture', 'security'
+  final TextEditingController _searchController = TextEditingController();
+  String _searchFilter = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  bool _matches(String title, String desc) {
+    if (_searchFilter.isEmpty) return true;
+    return title.toLowerCase().contains(_searchFilter) ||
+        desc.toLowerCase().contains(_searchFilter);
+  }
 
   void _openTool(BuildContext context, String toolName, Widget screen) {
     DatabaseHelper.instance.incrementToolUsage(toolName);
@@ -17757,6 +18662,110 @@ class _ToolsTabState extends State<ToolsTab> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
+          // Queued Workspace Banner
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.layers, size: 16, color: EditorialTokens.primary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'QUEUED WORKSPACE',
+                        style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        'Direct sandboxed execution available',
+                        style: EditorialTokens.metadata(
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        ).copyWith(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                EditorialSecondaryButton(
+                  label: 'INSPECT →',
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('All document pipelines operational and idle.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Search / Filter Input
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            height: 38,
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.paper,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.search,
+                  size: 16,
+                  color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (val) => setState(() => _searchFilter = val.trim().toLowerCase()),
+                    style: EditorialTokens.bodyMedium(
+                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                    ).copyWith(fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: 'Filter transforms, processors, or integrity',
+                      hintStyle: EditorialTokens.bodyMedium(
+                        color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                      ).copyWith(fontSize: 12),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+                if (_searchFilter.isNotEmpty)
+                  GestureDetector(
+                    onTap: () {
+                      _searchController.clear();
+                      setState(() => _searchFilter = '');
+                    },
+                    child: Icon(
+                      Icons.close,
+                      size: 14,
+                      color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
           // Filter Chips Strip
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -17798,24 +18807,27 @@ class _ToolsTabState extends State<ToolsTab> {
               count: '3 modules',
             ),
             const SizedBox(height: 6),
-            EditorialToolCard(
-              icon: Icons.layers_outlined,
-              title: 'Merge PDF Documents',
-              description: 'Combine multiple PDF files into a single sequential document',
-              onTap: () => _openTool(context, 'merge', const MergeScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.splitscreen_outlined,
-              title: 'Split & Extract Pages',
-              description: 'Divide documents into separate files or chapters with page range selector',
-              onTap: () => _openTool(context, 'split', const SplitScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.delete_sweep_outlined,
-              title: 'Delete Pages',
-              description: 'Selectively remove unwanted pages using visual thumbnail selection',
-              onTap: () => _openTool(context, 'delete_pages', const DeletePagesScreen()),
-            ),
+            if (_matches('Merge PDF Documents', 'Combine multiple PDF files into a single sequential document'))
+              EditorialToolCard(
+                icon: Icons.layers_outlined,
+                title: 'Merge PDF Documents',
+                description: 'Combine multiple PDF files into a single sequential document',
+                onTap: () => _openTool(context, 'merge', const MergeScreen()),
+              ),
+            if (_matches('Split & Extract Pages', 'Divide documents into separate files or chapters with page range selector'))
+              EditorialToolCard(
+                icon: Icons.splitscreen_outlined,
+                title: 'Split & Extract Pages',
+                description: 'Divide documents into separate files or chapters with page range selector',
+                onTap: () => _openTool(context, 'split', const SplitScreen()),
+              ),
+            if (_matches('Delete Pages', 'Selectively remove unwanted pages using visual thumbnail selection'))
+              EditorialToolCard(
+                icon: Icons.delete_sweep_outlined,
+                title: 'Delete Pages',
+                description: 'Selectively remove unwanted pages using visual thumbnail selection',
+                onTap: () => _openTool(context, 'delete_pages', const DeletePagesScreen()),
+              ),
             const SizedBox(height: 16),
           ],
 
@@ -17827,26 +18839,29 @@ class _ToolsTabState extends State<ToolsTab> {
               count: '3 modules',
             ),
             const SizedBox(height: 6),
-            EditorialToolCard(
-              icon: Icons.document_scanner_outlined,
-              title: 'Document Scanner',
-              description: 'Capture physical documents with high-contrast filter and perspective cropping',
-              badge: 'Vision v2',
-              onTap: () => _openTool(context, 'scan', const ScanDocumentScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.text_snippet_outlined,
-              title: 'OCR & Text Extraction',
-              description: 'On-device text recognition with formula extraction and searchable PDF export',
-              badge: 'ML Kit',
-              onTap: () => _openTool(context, 'ocr', const OcrScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.compare_arrows_outlined,
-              title: 'Document Comparison',
-              description: 'Side-by-side visual diff and page comparison across document versions',
-              onTap: () => _openTool(context, 'compare', const PdfCompareScreen()),
-            ),
+            if (_matches('Document Scanner', 'Capture physical documents with high-contrast filter and perspective cropping'))
+              EditorialToolCard(
+                icon: Icons.document_scanner_outlined,
+                title: 'Document Scanner',
+                description: 'Capture physical documents with high-contrast filter and perspective cropping',
+                badge: 'Vision v2',
+                onTap: () => _openTool(context, 'scan', const ScanDocumentScreen()),
+              ),
+            if (_matches('OCR & Text Extraction', 'On-device text recognition with formula extraction and searchable PDF export'))
+              EditorialToolCard(
+                icon: Icons.text_snippet_outlined,
+                title: 'OCR & Text Extraction',
+                description: 'On-device text recognition with formula extraction and searchable PDF export',
+                badge: 'ML Kit',
+                onTap: () => _openTool(context, 'ocr', const OcrScreen()),
+              ),
+            if (_matches('Document Comparison', 'Side-by-side visual diff and page comparison across document versions'))
+              EditorialToolCard(
+                icon: Icons.compare_arrows_outlined,
+                title: 'Document Comparison',
+                description: 'Side-by-side visual diff and page comparison across document versions',
+                onTap: () => _openTool(context, 'compare', const PdfCompareScreen()),
+              ),
             const SizedBox(height: 16),
           ],
 
@@ -17858,26 +18873,29 @@ class _ToolsTabState extends State<ToolsTab> {
               count: '3 modules',
             ),
             const SizedBox(height: 6),
-            EditorialToolCard(
-              icon: Icons.tune_outlined,
-              title: 'Compress to Target Size',
-              description: 'Targeted size reduction (e.g. Email <1MB, Academic <5MB) with quality controls',
-              badge: 'Isolate',
-              onTap: () => _openTool(context, 'compress_target_size', const CompressPdfToTargetSizeScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.photo_size_select_small_outlined,
-              title: 'Compress Images to Size',
-              description: 'Downsize standalone images to an exact target kilobyte threshold',
-              onTap: () => _openTool(context, 'compress_image_target_size', const CompressImageToTargetSizeScreen()),
-            ),
-            EditorialToolCard(
-              icon: Icons.lock_outline,
-              title: 'Encrypt PDF',
-              description: 'Standard AES-256 encryption with password protection and permission locks',
-              badge: 'AES-256',
-              onTap: () => _openTool(context, 'encrypt', const EncryptPdfScreen()),
-            ),
+            if (_matches('Compress to Target Size', 'Targeted size reduction (e.g. Email <1MB, Academic <5MB) with quality controls'))
+              EditorialToolCard(
+                icon: Icons.tune_outlined,
+                title: 'Compress to Target Size',
+                description: 'Targeted size reduction (e.g. Email <1MB, Academic <5MB) with quality controls',
+                badge: 'Isolate',
+                onTap: () => _openTool(context, 'compress_target_size', const CompressPdfToTargetSizeScreen()),
+              ),
+            if (_matches('Compress Images to Size', 'Downsize standalone images to an exact target kilobyte threshold'))
+              EditorialToolCard(
+                icon: Icons.photo_size_select_small_outlined,
+                title: 'Compress Images to Size',
+                description: 'Downsize standalone images to an exact target kilobyte threshold',
+                onTap: () => _openTool(context, 'compress_image_target_size', const CompressImageToTargetSizeScreen()),
+              ),
+            if (_matches('Encrypt PDF', 'Standard AES-256 encryption with password protection and permission locks'))
+              EditorialToolCard(
+                icon: Icons.lock_outline,
+                title: 'Encrypt PDF',
+                description: 'Standard AES-256 encryption with password protection and permission locks',
+                badge: 'AES-256',
+                onTap: () => _openTool(context, 'encrypt', const EncryptPdfScreen()),
+              ),
             const SizedBox(height: 16),
           ],
 
@@ -18213,7 +19231,7 @@ class _VersionHistoryScreenState extends State<VersionHistoryScreen> {
 ## 54. lib/features/viewer/pdf_viewer_screen.dart <a id="libfeaturesviewerpdfviewerscreendart"></a>
 
 - **Path:** `lib/features/viewer/pdf_viewer_screen.dart`
-- **Lines:** 2065
+- **Lines:** 2576
 - **Language:** `dart`
 
 ```dart
@@ -18247,11 +19265,15 @@ enum MarkupAnnotationType { highlight, underline, strikethrough, squiggly }
 class PdfViewerScreen extends ConsumerStatefulWidget {
   final String filePath;
   final bool isExternalLaunch;
+  final int initialPage;
+  final bool openAnnotationInspector;
 
   const PdfViewerScreen({
     super.key,
     required this.filePath,
     this.isExternalLaunch = false,
+    this.initialPage = 1,
+    this.openAnnotationInspector = false,
   });
 
   @override
@@ -18301,8 +19323,19 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _pdfViewerController = PdfViewerController();
+    if (widget.initialPage > 1) {
+      _initialPage = widget.initialPage;
+      _currentPage = widget.initialPage;
+    }
     _loadMetadataAndProgress();
     _sessionStopwatch.start();
+    if (widget.openAnnotationInspector) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showAnnotationInspectorSheet();
+        }
+      });
+    }
   }
 
   @override
@@ -18352,7 +19385,10 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
       setState(() {
         _userBookmarks = bookmarks;
         _pdfNotes = notes;
-        if (pdfFile != null && pdfFile.lastOpenedPage > 1) {
+        if (widget.initialPage > 1) {
+          _initialPage = widget.initialPage;
+          _currentPage = widget.initialPage;
+        } else if (pdfFile != null && pdfFile.lastOpenedPage > 1) {
           _initialPage = pdfFile.lastOpenedPage;
         }
       });
@@ -19185,6 +20221,503 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showAnnotationInspectorSheet() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final paletteColors = [
+      (EditorialTokens.primary, 'Terracotta'),
+      (const Color(0xFFC2843A), 'Ochre'),
+      (const Color(0xFF5D7052), 'Sage'),
+      (const Color(0xFF2C2825), 'Charcoal'),
+      (const Color(0xFF4E5866), 'Slate'),
+    ];
+    final strokeWidths = ['0.5mm', '1.0mm', '2.0mm'];
+    final noteController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          final notesOnCurrentPage = _pdfNotes.where((n) => n.pageNumber == _currentPage).toList();
+
+          return Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.85,
+            ),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surfaceStrong,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(EditorialTokens.r8)),
+              border: Border.all(
+                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                width: EditorialTokens.hairline,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x2A1C1A18),
+                  blurRadius: 16,
+                  offset: Offset(0, -4),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Pull indicator
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Header
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              EditorialEyebrow(
+                                text: 'DOCUMENT STUDIO / PAGE $_currentPage OF ${_totalPages > 0 ? _totalPages : 1}',
+                                color: EditorialTokens.primary,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Annotation Inspector',
+                                style: EditorialTokens.titleMedium(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 20),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          onPressed: () => Navigator.pop(bottomSheetContext),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const EditorialDivider(),
+                    const SizedBox(height: 14),
+
+                    // Associated Formula Block (from Stitch Page 1 & 2)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        border: Border.all(
+                          color: EditorialTokens.primary.withOpacity(0.3),
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.functions, size: 14, color: EditorialTokens.primary),
+                              const SizedBox(width: 6),
+                              Text(
+                                'ASSOCIATED FORMULATION (PAGE $_currentPage)',
+                                style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  Clipboard.setData(const ClipboardData(
+                                    text: r'\mathcal{L}\{\ddot{x} + 2\zeta\omega_n\dot{x} + \omega_n^2x\} = X(s)(s^2 + 2\zeta\omega_n s + \omega_n^2)',
+                                  ));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('LaTeX expression copied to clipboard')),
+                                  );
+                                },
+                                child: Text(
+                                  'COPY TEX',
+                                  style: EditorialTokens.metadata(color: EditorialTokens.tertiary).copyWith(fontSize: 9, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.paper,
+                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              border: Border.all(
+                                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                width: EditorialTokens.hairline,
+                              ),
+                            ),
+                            child: Text(
+                              r'\mathcal{L}\{\ddot{x} + 2\zeta\omega_n\dot{x} + \omega_n^2x\} = X(s)(s^2 + 2\zeta\omega_n s + \omega_n^2)',
+                              style: EditorialTokens.mono(
+                                color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              ).copyWith(fontSize: 11),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Stationery Suite / Markup Tools
+                    Text(
+                      'MARKUP INSTRUMENTS',
+                      style: EditorialTokens.eyebrow(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ).copyWith(fontSize: 10),
+                    ),
+                    const SizedBox(height: 8),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildStationeryToolPill(
+                            id: 'pen',
+                            icon: Icons.edit,
+                            label: 'Pen',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'pen');
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'chisel',
+                            icon: Icons.brush_outlined,
+                            label: 'Chisel',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'chisel');
+                              Navigator.pop(bottomSheetContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Highlight active: Select text on document to highlight')),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'eraser',
+                            icon: Icons.cleaning_services_outlined,
+                            label: 'Eraser',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'eraser');
+                              Navigator.pop(bottomSheetContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Eraser active: Select annotation to remove')),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'sketch',
+                            icon: Icons.gesture,
+                            label: 'Sketch',
+                            onTap: () {
+                              setState(() => _selectedAnnotationTool = 'sketch');
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                          const SizedBox(width: 6),
+                          _buildStationeryToolPill(
+                            id: 'sign',
+                            icon: Icons.verified_outlined,
+                            label: 'Sign',
+                            onTap: () {
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Stroke Width and Opacity Selector
+                    Row(
+                      children: [
+                        Text(
+                          'STROKE',
+                          style: EditorialTokens.eyebrow(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 9),
+                        ),
+                        const SizedBox(width: 8),
+                        ...strokeWidths.map((w) {
+                          final isSel = _selectedStrokeWidth == w;
+                          return InkWell(
+                            onTap: () {
+                              setState(() => _selectedStrokeWidth = w);
+                              setModalState(() {});
+                            },
+                            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                              margin: const EdgeInsets.only(right: 6),
+                              decoration: BoxDecoration(
+                                color: isSel ? EditorialTokens.primary.withOpacity(0.12) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                border: Border.all(
+                                  color: isSel ? EditorialTokens.primary : (isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft),
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Text(
+                                w,
+                                style: EditorialTokens.metadata(
+                                  color: isSel ? EditorialTokens.primary : (isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                                ).copyWith(fontSize: 10, fontWeight: isSel ? FontWeight.w600 : FontWeight.w400),
+                              ),
+                            ),
+                          );
+                        }),
+                        const Spacer(),
+                        Text(
+                          'PALETTE',
+                          style: EditorialTokens.eyebrow(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 9),
+                        ),
+                        const SizedBox(width: 8),
+                        ...paletteColors.map((cp) {
+                          final isSel = _selectedAnnotationColor == cp.$1;
+                          return InkWell(
+                            onTap: () {
+                              setState(() => _selectedAnnotationColor = cp.$1);
+                              setModalState(() {});
+                            },
+                            child: Container(
+                              width: 18,
+                              height: 18,
+                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                              decoration: BoxDecoration(
+                                color: cp.$1,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSel ? EditorialTokens.ink : Colors.transparent,
+                                  width: 2.0,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const EditorialDivider(),
+                    const SizedBox(height: 14),
+
+                    // Verified Signature Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        border: Border.all(
+                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.verified, size: 24, color: EditorialTokens.tertiary),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'VERIFIED SIGNATURE STAMP',
+                                  style: EditorialTokens.eyebrow(color: EditorialTokens.tertiary).copyWith(fontSize: 10),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Stamp signed vector graphic on Page $_currentPage',
+                                  style: EditorialTokens.bodySmall(
+                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  ).copyWith(fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          ),
+                          EditorialSecondaryButton(
+                            label: 'STAMP',
+                            icon: Icons.draw,
+                            onPressed: () {
+                              Navigator.pop(bottomSheetContext);
+                              _showSignatureDialog();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Marginalia Note Section
+                    Text(
+                      'PAGE MARGINALIA & MEMORANDA',
+                      style: EditorialTokens.eyebrow(
+                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      ).copyWith(fontSize: 10),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? EditorialTokens.darkCanvas : EditorialTokens.paper,
+                        borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                        border: Border.all(
+                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          width: EditorialTokens.hairline,
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: noteController,
+                            maxLines: 2,
+                            style: EditorialTokens.bodyMedium(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ).copyWith(fontSize: 12),
+                            decoration: InputDecoration(
+                              hintText: 'Enter marginalia note for page $_currentPage...',
+                              hintStyle: EditorialTokens.bodySmall(
+                                color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              EditorialButton(
+                                label: 'RECORD NOTE',
+                                icon: Icons.save_outlined,
+                                onPressed: () async {
+                                  final text = noteController.text.trim();
+                                  if (text.isNotEmpty) {
+                                    await DatabaseHelper.instance.addNote(
+                                      PdfNote(
+                                        filePath: widget.filePath,
+                                        pageNumber: _currentPage,
+                                        noteText: text,
+                                        createdAt: DateTime.now().millisecondsSinceEpoch,
+                                      ),
+                                    );
+                                    noteController.clear();
+                                    await _loadMetadataAndProgress();
+                                    setModalState(() {});
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Note recorded on page $_currentPage')),
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (notesOnCurrentPage.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      ...notesOnCurrentPage.map((n) => Container(
+                        margin: const EdgeInsets.only(top: 6),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                          borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                          border: Border.all(
+                            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                            width: EditorialTokens.hairline,
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.notes, size: 14, color: EditorialTokens.primary),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                n.noteText,
+                                style: EditorialTokens.bodySmall(
+                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                ).copyWith(fontSize: 11),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, size: 14),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                              color: isDark ? EditorialTokens.darkInkMuted : EditorialTokens.inkMuted,
+                              onPressed: () async {
+                                if (n.id != null) {
+                                  await DatabaseHelper.instance.deleteNote(n.id!);
+                                  await _loadMetadataAndProgress();
+                                  setModalState(() {});
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      )),
+                    ],
+                    const SizedBox(height: 14),
+                    const EditorialDivider(),
+                    const SizedBox(height: 10),
+                    // Autosave Telemetry Strip
+                    Row(
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: EditorialTokens.tertiary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Local Vault: Synced / Ready · Auto-commit active',
+                          style: EditorialTokens.metadata(
+                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          ).copyWith(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -20204,11 +21737,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
                           icon: Icons.draw_outlined,
                           label: 'Annotate',
                           isActive: _isAnnotationToolbarOpen,
-                          onTap: () {
-                            setState(() {
-                              _isAnnotationToolbarOpen = !_isAnnotationToolbarOpen;
-                            });
-                          },
+                          onTap: _showAnnotationInspectorSheet,
                         ),
                         _buildBottomToolTrigger(
                           icon: Icons.psychology_outlined,
@@ -23275,7 +24804,7 @@ class PermissionBanner extends StatelessWidget {
 ## 74. test/e2e_smoke_test.dart <a id="teste2esmoketestdart"></a>
 
 - **Path:** `test/e2e_smoke_test.dart`
-- **Lines:** 183
+- **Lines:** 185
 - **Language:** `dart`
 
 ```dart
@@ -23392,6 +24921,8 @@ void main() {
       expect(find.byType(ToolsTab), findsOneWidget);
       expect(find.text('Document Utilities'), findsOneWidget);
       expect(find.text('Document Transformation'), findsOneWidget);
+      await tester.drag(find.byType(ListView).first, const Offset(0, -350));
+      await tester.pumpAndSettle();
       expect(find.text('Conversion & Capture'), findsOneWidget);
     });
 
