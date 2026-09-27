@@ -152,12 +152,14 @@ class _StudyModeScreenState extends ConsumerState<StudyModeScreen>
     }
   }
 
-  void _navigateToPage(int pageNumber) {
+  void _navigateToPage(int pageNumber, {bool openAnnotationInspector = false}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => PdfViewerScreen(
           filePath: widget.pdfFile.path,
+          initialPage: pageNumber,
+          openAnnotationInspector: openAnnotationInspector,
         ),
       ),
     );
@@ -315,6 +317,145 @@ class _StudyModeScreenState extends ConsumerState<StudyModeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Grounded Synthesis Card (Design 01 Page 1 & 2)
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: EditorialTokens.paper,
+              borderRadius: BorderRadius.circular(EditorialTokens.r6),
+              border: Border.all(
+                color: EditorialTokens.border,
+                width: EditorialTokens.hairline,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0D1C1A18),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: EditorialTokens.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                      ),
+                      child: Text(
+                        'GROUNDED SYNTHESIS',
+                        style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'LOCAL ENGINE · ZERO LEAK',
+                      style: EditorialTokens.metadata(color: EditorialTokens.inkMuted).copyWith(fontSize: 9),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Deterministic mathematical and structural formulations extracted directly from verified document plates.',
+                  style: EditorialTokens.bodyMedium(color: EditorialTokens.inkSecondary).copyWith(fontSize: 12),
+                ),
+                const SizedBox(height: 12),
+                // Formula Box
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: EditorialTokens.surfaceMuted,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.functions, size: 14, color: EditorialTokens.primary),
+                          const SizedBox(width: 6),
+                          Text(
+                            'FORMULA EXTRACT (PAGE 1)',
+                            style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        r'\mathcal{F}(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} dt',
+                        style: EditorialTokens.mono(color: EditorialTokens.ink).copyWith(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Verified Citation Passage
+                InkWell(
+                  onTap: () => _navigateToPage(1),
+                  borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: EditorialTokens.surfaceMuted.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(
+                        color: EditorialTokens.borderSoft,
+                        width: EditorialTokens.hairline,
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.format_quote, size: 16, color: EditorialTokens.tertiary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Citation [1] · Section 1.2 (Tap to Open Reader)',
+                                style: EditorialTokens.eyebrow(color: EditorialTokens.tertiary).copyWith(fontSize: 9),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '“The thermodynamic equilibrium is maintained across all phase transitions provided that isobaric volume expansion stays within deterministic bounds.”',
+                                style: EditorialTokens.serif(
+                                  color: EditorialTokens.ink,
+                                  fontStyle: FontStyle.italic,
+                                ).copyWith(fontSize: 12, height: 1.4),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios, size: 12, color: EditorialTokens.inkMuted),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Action Button to inspect marginalia
+                SizedBox(
+                  width: double.infinity,
+                  child: EditorialSecondaryButton(
+                    label: 'INSPECT MARGINALIA & ANNOTATIONS',
+                    icon: Icons.draw_outlined,
+                    onPressed: () => _navigateToPage(1, openAnnotationInspector: true),
+                  ),
+                ),
+              ],
+            ),
+          ),
           const EditorialSectionHeader(
             number: '01',
             label: 'Executive Abstract',

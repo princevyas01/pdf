@@ -33,6 +33,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
   String? _finalSavedPath;
   bool _isScanning = false;
   String _activeFilter = 'crisp_bw';
+  String _scanMode = 'batch'; // 'single', 'batch', 'fold_flatten'
+  double _contrastLevel = 1.4;
 
   final TextEditingController _fileNameController = TextEditingController();
 
@@ -127,7 +129,7 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
     try {
       final options = DocumentScannerOptions(
         mode: ScannerMode.full,
-        pageLimit: 50,
+        pageLimit: _scanMode == 'single' ? 1 : (_scanMode == 'fold_flatten' ? 20 : 50),
         isGalleryImport: isGallery,
       );
 
@@ -696,12 +698,40 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
 
                 const SizedBox(height: 20),
 
-                // Ingestion Mode Filters
+                // Ingestion Mode Filters & Protocols
                 const EditorialSectionHeader(
                   number: '01',
-                  label: 'Filter Preset',
+                  label: 'Capture Mode & Protocols',
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: EditorialChip(
+                        label: 'Single Page',
+                        selected: _scanMode == 'single',
+                        onTap: () => setState(() => _scanMode = 'single'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: EditorialChip(
+                        label: 'Batch Mode',
+                        selected: _scanMode == 'batch',
+                        onTap: () => setState(() => _scanMode = 'batch'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: EditorialChip(
+                        label: 'Fold Flatten',
+                        selected: _scanMode == 'fold_flatten',
+                        onTap: () => setState(() => _scanMode = 'fold_flatten'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -732,6 +762,59 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'DYNAMIC CONTRAST RATIO',
+                            style: EditorialTokens.metadataStrong(
+                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            ),
+                          ),
+                          Text(
+                            '${_contrastLevel.toStringAsFixed(1)}x',
+                            style: EditorialTokens.monospace(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: EditorialTokens.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SliderTheme(
+                        data: SliderThemeData(
+                          trackHeight: 2,
+                          activeTrackColor: EditorialTokens.primary,
+                          inactiveTrackColor: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                          thumbColor: EditorialTokens.primary,
+                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                        ),
+                        child: Slider(
+                          value: _contrastLevel,
+                          min: 1.0,
+                          max: 2.5,
+                          divisions: 15,
+                          onChanged: (val) => setState(() => _contrastLevel = val),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 const SizedBox(height: 24),
 
@@ -742,7 +825,7 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  height: 200,
+                  height: 210,
                   decoration: BoxDecoration(
                     color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
                     borderRadius: BorderRadius.circular(EditorialTokens.r4),
@@ -753,13 +836,87 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                   ),
                   child: Stack(
                     children: [
+                      // Top autodetect & tilt indicator bar
+                      Positioned(
+                        top: 12,
+                        left: 14,
+                        right: 14,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: EditorialTokens.primary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                border: Border.all(
+                                  color: EditorialTokens.primary.withOpacity(0.3),
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: EditorialTokens.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'AUTODETECT: ACTIVE',
+                                    style: EditorialTokens.monospace(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: EditorialTokens.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                                borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                border: Border.all(
+                                  color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.screen_rotation_outlined,
+                                    size: 12,
+                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'TILT 0.4°',
+                                    style: EditorialTokens.monospace(
+                                      fontSize: 10,
+                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const SizedBox(height: 18),
                             Icon(
                               Icons.document_scanner_outlined,
-                              size: 48,
+                              size: 44,
                               color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
                             ),
                             const SizedBox(height: 8),
@@ -771,7 +928,11 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Supports up to 50 pages per scan session',
+                              _scanMode == 'single'
+                                  ? 'Single page capture mode'
+                                  : (_scanMode == 'fold_flatten'
+                                      ? 'Fold flattening deskew · Up to 20 pages'
+                                      : 'Supports up to 50 pages per batch session'),
                               style: EditorialTokens.bodySmall(
                                 color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
                               ),
@@ -781,8 +942,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                       ),
                       // Corner crop bounds
                       Positioned(
-                        top: 16,
-                        left: 16,
+                        top: 14,
+                        left: 14,
                         child: Container(
                           width: 20,
                           height: 20,
@@ -795,8 +956,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                         ),
                       ),
                       Positioned(
-                        top: 16,
-                        right: 16,
+                        top: 14,
+                        right: 14,
                         child: Container(
                           width: 20,
                           height: 20,
@@ -809,8 +970,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                         ),
                       ),
                       Positioned(
-                        bottom: 16,
-                        left: 16,
+                        bottom: 14,
+                        left: 14,
                         child: Container(
                           width: 20,
                           height: 20,
@@ -823,8 +984,8 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
                         ),
                       ),
                       Positioned(
-                        bottom: 16,
-                        right: 16,
+                        bottom: 14,
+                        right: 14,
                         child: Container(
                           width: 20,
                           height: 20,
