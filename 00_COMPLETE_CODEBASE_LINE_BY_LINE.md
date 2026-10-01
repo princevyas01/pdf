@@ -1,8 +1,7 @@
 # Offline PDF Reader — Complete Codebase Source of Truth
-
 > **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
-> **Total Source Files:** 82
-> **Total Source Lines:** 25532
+> **Total Source Files:** 92
+> **Total Source Lines:** 26662
 > **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
 
 ---
@@ -11,95 +10,105 @@
 
 | # | File Path | Language | Lines |
 |---|-----------|----------|-------|
-| 1 | [`pubspec.yaml`](#pubspecyaml) | yaml | 94 |
-| 2 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 41 |
-| 3 | [`lib/core/ai/local_ai_provider.dart`](#libcoreailocalaiproviderdart) | dart | 43 |
-| 4 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 241 |
-| 5 | [`lib/core/ai/semantic_search_service.dart`](#libcoreaisemanticsearchservicedart) | dart | 192 |
-| 6 | [`lib/core/config/app_config.dart`](#libcoreconfigappconfigdart) | dart | 9 |
-| 7 | [`lib/core/permissions/permissions_service.dart`](#libcorepermissionspermissionsservicedart) | dart | 67 |
-| 8 | [`lib/core/services/external_pdf_intent_service.dart`](#libcoreservicesexternalpdfintentservicedart) | dart | 188 |
-| 9 | [`lib/core/storage/database_helper.dart`](#libcorestoragedatabasehelperdart) | dart | 830 |
-| 10 | [`lib/core/storage/file_scanner.dart`](#libcorestoragefilescannerdart) | dart | 537 |
-| 11 | [`lib/core/storage/ocr_cache_service.dart`](#libcorestorageocrcacheservicedart) | dart | 78 |
-| 12 | [`lib/core/storage/pdf_metadata_helper.dart`](#libcorestoragepdfmetadatahelperdart) | dart | 44 |
-| 13 | [`lib/core/storage/thumbnail_cache_service.dart`](#libcorestoragethumbnailcacheservicedart) | dart | 137 |
-| 14 | [`lib/core/study/local_summarizer_service.dart`](#libcorestudylocalsummarizerservicedart) | dart | 115 |
-| 15 | [`lib/core/study/study_generator_service.dart`](#libcorestudystudygeneratorservicedart) | dart | 152 |
-| 16 | [`lib/core/study/topic_extractor_service.dart`](#libcorestudytopicextractorservicedart) | dart | 150 |
-| 17 | [`lib/core/theme/app_theme.dart`](#libcorethemeappthemedart) | dart | 179 |
-| 18 | [`lib/core/theme/editorial_tokens.dart`](#libcorethemeeditorialtokensdart) | dart | 238 |
-| 19 | [`lib/core/tools/image_target_size_compressor_service.dart`](#libcoretoolsimagetargetsizecompressorservicedart) | dart | 216 |
-| 20 | [`lib/core/tools/pdf_batch_service.dart`](#libcoretoolspdfbatchservicedart) | dart | 82 |
-| 21 | [`lib/core/tools/pdf_compare_service.dart`](#libcoretoolspdfcompareservicedart) | dart | 96 |
-| 22 | [`lib/core/tools/pdf_compression_service.dart`](#libcoretoolspdfcompressionservicedart) | dart | 78 |
-| 23 | [`lib/core/tools/pdf_encryption_service.dart`](#libcoretoolspdfencryptionservicedart) | dart | 68 |
-| 24 | [`lib/core/tools/pdf_metadata_service.dart`](#libcoretoolspdfmetadataservicedart) | dart | 87 |
-| 25 | [`lib/core/tools/pdf_target_size_compressor_service.dart`](#libcoretoolspdftargetsizecompressorservicedart) | dart | 364 |
-| 26 | [`lib/core/tools/pdf_version_service.dart`](#libcoretoolspdfversionservicedart) | dart | 91 |
-| 27 | [`lib/core/tts/tts_service.dart`](#libcorettsttsservicedart) | dart | 163 |
-| 28 | [`lib/core/utils/storage_location_helper.dart`](#libcoreutilsstoragelocationhelperdart) | dart | 94 |
-| 29 | [`lib/core/utils/utils.dart`](#libcoreutilsutilsdart) | dart | 76 |
-| 30 | [`lib/features/ai/doc_qa_screen.dart`](#libfeaturesaidocqascreendart) | dart | 395 |
-| 31 | [`lib/features/ai/exam_mode_screen.dart`](#libfeaturesaiexammodescreendart) | dart | 410 |
-| 32 | [`lib/features/ai/explain_text_dialog.dart`](#libfeaturesaiexplaintextdialogdart) | dart | 205 |
-| 33 | [`lib/features/delete_pages/delete_pages_screen.dart`](#libfeaturesdeletepagesdeletepagesscreendart) | dart | 604 |
-| 34 | [`lib/features/favorites/favorites_tab.dart`](#libfeaturesfavoritesfavoritestabdart) | dart | 178 |
-| 35 | [`lib/features/home/files_tab.dart`](#libfeatureshomefilestabdart) | dart | 1491 |
-| 36 | [`lib/features/home/main_navigation_screen.dart`](#libfeatureshomemainnavigationscreendart) | dart | 44 |
-| 37 | [`lib/features/home/pdf_list_provider.dart`](#libfeatureshomepdflistproviderdart) | dart | 200 |
-| 38 | [`lib/features/merge/merge_screen.dart`](#libfeaturesmergemergescreendart) | dart | 727 |
-| 39 | [`lib/features/ocr/ocr_screen.dart`](#libfeaturesocrocrscreendart) | dart | 744 |
-| 40 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 1028 |
-| 41 | [`lib/features/search/search_tab.dart`](#libfeaturessearchsearchtabdart) | dart | 453 |
-| 42 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 426 |
-| 43 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 833 |
-| 44 | [`lib/features/stats/stats_tab.dart`](#libfeaturesstatsstatstabdart) | dart | 663 |
-| 45 | [`lib/features/study/study_mode_screen.dart`](#libfeaturesstudystudymodescreendart) | dart | 1219 |
-| 46 | [`lib/features/tools/compress_image_to_target_size_screen.dart`](#libfeaturestoolscompressimagetotargetsizescreendart) | dart | 751 |
-| 47 | [`lib/features/tools/compress_pdf_screen.dart`](#libfeaturestoolscompresspdfscreendart) | dart | 279 |
-| 48 | [`lib/features/tools/compress_pdf_to_target_size_screen.dart`](#libfeaturestoolscompresspdftotargetsizescreendart) | dart | 852 |
-| 49 | [`lib/features/tools/encrypt_pdf_screen.dart`](#libfeaturestoolsencryptpdfscreendart) | dart | 925 |
-| 50 | [`lib/features/tools/metadata_editor_screen.dart`](#libfeaturestoolsmetadataeditorscreendart) | dart | 259 |
-| 51 | [`lib/features/tools/pdf_compare_screen.dart`](#libfeaturestoolspdfcomparescreendart) | dart | 466 |
-| 52 | [`lib/features/tools/tools_tab.dart`](#libfeaturestoolstoolstabdart) | dart | 430 |
-| 53 | [`lib/features/tools/version_history_screen.dart`](#libfeaturestoolsversionhistoryscreendart) | dart | 243 |
-| 54 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2576 |
-| 55 | [`lib/main.dart`](#libmaindart) | dart | 53 |
-| 56 | [`lib/models/ai_model_config.dart`](#libmodelsaimodelconfigdart) | dart | 69 |
-| 57 | [`lib/models/annotation_meta.dart`](#libmodelsannotationmetadart) | dart | 51 |
-| 58 | [`lib/models/bookmark.dart`](#libmodelsbookmarkdart) | dart | 51 |
-| 59 | [`lib/models/exam_session.dart`](#libmodelsexamsessiondart) | dart | 47 |
-| 60 | [`lib/models/ocr_cache_entry.dart`](#libmodelsocrcacheentrydart) | dart | 35 |
-| 61 | [`lib/models/pdf_compare_result.dart`](#libmodelspdfcompareresultdart) | dart | 41 |
-| 62 | [`lib/models/pdf_file.dart`](#libmodelspdffiledart) | dart | 151 |
-| 63 | [`lib/models/pdf_open_request.dart`](#libmodelspdfopenrequestdart) | dart | 49 |
-| 64 | [`lib/models/pdf_version.dart`](#libmodelspdfversiondart) | dart | 47 |
-| 65 | [`lib/models/semantic_chunk.dart`](#libmodelssemanticchunkdart) | dart | 44 |
-| 66 | [`lib/models/study_item.dart`](#libmodelsstudyitemdart) | dart | 196 |
-| 67 | [`lib/models/study_session.dart`](#libmodelsstudysessiondart) | dart | 91 |
-| 68 | [`lib/models/tool_usage_stat.dart`](#libmodelstoolusagestatdart) | dart | 27 |
-| 69 | [`lib/widgets/editorial_components.dart`](#libwidgetseditorialcomponentsdart) | dart | 881 |
-| 70 | [`lib/widgets/empty_state.dart`](#libwidgetsemptystatedart) | dart | 52 |
-| 71 | [`lib/widgets/pdf_file_card.dart`](#libwidgetspdffilecarddart) | dart | 237 |
-| 72 | [`lib/widgets/pdf_tool_file_picker_screen.dart`](#libwidgetspdftoolfilepickerscreendart) | dart | 624 |
-| 73 | [`lib/widgets/permission_banner.dart`](#libwidgetspermissionbannerdart) | dart | 31 |
-| 74 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 185 |
-| 75 | [`test/unit_test.dart`](#testunittestdart) | dart | 392 |
-| 76 | [`test/widget_test.dart`](#testwidgettestdart) | dart | 68 |
-| 77 | [`android/app/src/main/AndroidManifest.xml`](#androidappsrcmainandroidmanifestxml) | xml | 103 |
-| 78 | [`android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt`](#androidappsrcmainkotlincomofflinepdfappofflinepdfreadermainactivitykt) | kotlin | 754 |
-| 79 | [`android/app/src/main/res/xml/file_paths.xml`](#androidappsrcmainresxmlfilepathsxml) | xml | 7 |
-| 80 | [`android/app/build.gradle`](#androidappbuildgradle) | groovy | 45 |
-| 81 | [`android/build.gradle`](#androidbuildgradle) | groovy | 25 |
-| 82 | [`android/settings.gradle`](#androidsettingsgradle) | groovy | 25 |
+| 1 | [`pubspec.yaml`](#pubspecyaml) | yaml | 96 |
+| 2 | [`analysis_options.yaml`](#analysisoptionsyaml) | yaml | 28 |
+| 3 | [`README.md`](#readmemd) | text | 44 |
+| 4 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 104 |
+| 5 | [`lib/core/ai/local_ai_provider.dart`](#libcoreailocalaiproviderdart) | dart | 43 |
+| 6 | [`lib/core/ai/local_llm_service.dart`](#libcoreailocalllmservicedart) | dart | 115 |
+| 7 | [`lib/core/ai/local_model_downloader.dart`](#libcoreailocalmodeldownloaderdart) | dart | 160 |
+| 8 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 193 |
+| 9 | [`lib/core/ai/semantic_search_service.dart`](#libcoreaisemanticsearchservicedart) | dart | 192 |
+| 10 | [`lib/core/config/app_config.dart`](#libcoreconfigappconfigdart) | dart | 9 |
+| 11 | [`lib/core/permissions/permissions_service.dart`](#libcorepermissionspermissionsservicedart) | dart | 67 |
+| 12 | [`lib/core/pet/dragon_pet_controller.dart`](#libcorepetdragonpetcontrollerdart) | dart | 54 |
+| 13 | [`lib/core/services/external_pdf_intent_service.dart`](#libcoreservicesexternalpdfintentservicedart) | dart | 188 |
+| 14 | [`lib/core/storage/database_helper.dart`](#libcorestoragedatabasehelperdart) | dart | 830 |
+| 15 | [`lib/core/storage/file_scanner.dart`](#libcorestoragefilescannerdart) | dart | 537 |
+| 16 | [`lib/core/storage/ocr_cache_service.dart`](#libcorestorageocrcacheservicedart) | dart | 78 |
+| 17 | [`lib/core/storage/pdf_metadata_helper.dart`](#libcorestoragepdfmetadatahelperdart) | dart | 44 |
+| 18 | [`lib/core/storage/thumbnail_cache_service.dart`](#libcorestoragethumbnailcacheservicedart) | dart | 137 |
+| 19 | [`lib/core/study/local_summarizer_service.dart`](#libcorestudylocalsummarizerservicedart) | dart | 115 |
+| 20 | [`lib/core/study/study_generator_service.dart`](#libcorestudystudygeneratorservicedart) | dart | 152 |
+| 21 | [`lib/core/study/topic_extractor_service.dart`](#libcorestudytopicextractorservicedart) | dart | 150 |
+| 22 | [`lib/core/theme/app_theme.dart`](#libcorethemeappthemedart) | dart | 179 |
+| 23 | [`lib/core/theme/editorial_tokens.dart`](#libcorethemeeditorialtokensdart) | dart | 238 |
+| 24 | [`lib/core/tools/image_target_size_compressor_service.dart`](#libcoretoolsimagetargetsizecompressorservicedart) | dart | 216 |
+| 25 | [`lib/core/tools/pdf_batch_service.dart`](#libcoretoolspdfbatchservicedart) | dart | 82 |
+| 26 | [`lib/core/tools/pdf_compare_service.dart`](#libcoretoolspdfcompareservicedart) | dart | 96 |
+| 27 | [`lib/core/tools/pdf_compression_service.dart`](#libcoretoolspdfcompressionservicedart) | dart | 78 |
+| 28 | [`lib/core/tools/pdf_encryption_service.dart`](#libcoretoolspdfencryptionservicedart) | dart | 68 |
+| 29 | [`lib/core/tools/pdf_metadata_service.dart`](#libcoretoolspdfmetadataservicedart) | dart | 87 |
+| 30 | [`lib/core/tools/pdf_target_size_compressor_service.dart`](#libcoretoolspdftargetsizecompressorservicedart) | dart | 364 |
+| 31 | [`lib/core/tools/pdf_version_service.dart`](#libcoretoolspdfversionservicedart) | dart | 91 |
+| 32 | [`lib/core/tts/tts_service.dart`](#libcorettsttsservicedart) | dart | 163 |
+| 33 | [`lib/core/utils/storage_location_helper.dart`](#libcoreutilsstoragelocationhelperdart) | dart | 94 |
+| 34 | [`lib/core/utils/utils.dart`](#libcoreutilsutilsdart) | dart | 76 |
+| 35 | [`lib/features/ai/doc_qa_screen.dart`](#libfeaturesaidocqascreendart) | dart | 395 |
+| 36 | [`lib/features/ai/exam_mode_screen.dart`](#libfeaturesaiexammodescreendart) | dart | 410 |
+| 37 | [`lib/features/ai/explain_text_dialog.dart`](#libfeaturesaiexplaintextdialogdart) | dart | 205 |
+| 38 | [`lib/features/delete_pages/delete_pages_screen.dart`](#libfeaturesdeletepagesdeletepagesscreendart) | dart | 604 |
+| 39 | [`lib/features/favorites/favorites_tab.dart`](#libfeaturesfavoritesfavoritestabdart) | dart | 178 |
+| 40 | [`lib/features/home/files_tab.dart`](#libfeatureshomefilestabdart) | dart | 1491 |
+| 41 | [`lib/features/home/main_navigation_screen.dart`](#libfeatureshomemainnavigationscreendart) | dart | 44 |
+| 42 | [`lib/features/home/pdf_list_provider.dart`](#libfeatureshomepdflistproviderdart) | dart | 200 |
+| 43 | [`lib/features/merge/merge_screen.dart`](#libfeaturesmergemergescreendart) | dart | 727 |
+| 44 | [`lib/features/ocr/ocr_screen.dart`](#libfeaturesocrocrscreendart) | dart | 744 |
+| 45 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 1028 |
+| 46 | [`lib/features/search/search_tab.dart`](#libfeaturessearchsearchtabdart) | dart | 453 |
+| 47 | [`lib/features/settings/local_ai_models_screen.dart`](#libfeaturessettingslocalaimodelsscreendart) | dart | 211 |
+| 48 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 460 |
+| 49 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 833 |
+| 50 | [`lib/features/stats/stats_tab.dart`](#libfeaturesstatsstatstabdart) | dart | 663 |
+| 51 | [`lib/features/study/study_mode_screen.dart`](#libfeaturesstudystudymodescreendart) | dart | 1219 |
+| 52 | [`lib/features/tools/compress_image_to_target_size_screen.dart`](#libfeaturestoolscompressimagetotargetsizescreendart) | dart | 751 |
+| 53 | [`lib/features/tools/compress_pdf_screen.dart`](#libfeaturestoolscompresspdfscreendart) | dart | 279 |
+| 54 | [`lib/features/tools/compress_pdf_to_target_size_screen.dart`](#libfeaturestoolscompresspdftotargetsizescreendart) | dart | 852 |
+| 55 | [`lib/features/tools/encrypt_pdf_screen.dart`](#libfeaturestoolsencryptpdfscreendart) | dart | 925 |
+| 56 | [`lib/features/tools/metadata_editor_screen.dart`](#libfeaturestoolsmetadataeditorscreendart) | dart | 259 |
+| 57 | [`lib/features/tools/pdf_compare_screen.dart`](#libfeaturestoolspdfcomparescreendart) | dart | 466 |
+| 58 | [`lib/features/tools/tools_tab.dart`](#libfeaturestoolstoolstabdart) | dart | 430 |
+| 59 | [`lib/features/tools/version_history_screen.dart`](#libfeaturestoolsversionhistoryscreendart) | dart | 243 |
+| 60 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2651 |
+| 61 | [`lib/main.dart`](#libmaindart) | dart | 53 |
+| 62 | [`lib/models/ai_model_config.dart`](#libmodelsaimodelconfigdart) | dart | 69 |
+| 63 | [`lib/models/annotation_meta.dart`](#libmodelsannotationmetadart) | dart | 51 |
+| 64 | [`lib/models/bookmark.dart`](#libmodelsbookmarkdart) | dart | 51 |
+| 65 | [`lib/models/exam_session.dart`](#libmodelsexamsessiondart) | dart | 47 |
+| 66 | [`lib/models/ocr_cache_entry.dart`](#libmodelsocrcacheentrydart) | dart | 35 |
+| 67 | [`lib/models/pdf_compare_result.dart`](#libmodelspdfcompareresultdart) | dart | 41 |
+| 68 | [`lib/models/pdf_file.dart`](#libmodelspdffiledart) | dart | 151 |
+| 69 | [`lib/models/pdf_open_request.dart`](#libmodelspdfopenrequestdart) | dart | 49 |
+| 70 | [`lib/models/pdf_version.dart`](#libmodelspdfversiondart) | dart | 47 |
+| 71 | [`lib/models/semantic_chunk.dart`](#libmodelssemanticchunkdart) | dart | 44 |
+| 72 | [`lib/models/study_item.dart`](#libmodelsstudyitemdart) | dart | 196 |
+| 73 | [`lib/models/study_session.dart`](#libmodelsstudysessiondart) | dart | 91 |
+| 74 | [`lib/models/tool_usage_stat.dart`](#libmodelstoolusagestatdart) | dart | 27 |
+| 75 | [`lib/widgets/dragon_pet_menu.dart`](#libwidgetsdragonpetmenudart) | dart | 66 |
+| 76 | [`lib/widgets/dragon_pet_widget.dart`](#libwidgetsdragonpetwidgetdart) | dart | 140 |
+| 77 | [`lib/widgets/editorial_components.dart`](#libwidgetseditorialcomponentsdart) | dart | 881 |
+| 78 | [`lib/widgets/empty_state.dart`](#libwidgetsemptystatedart) | dart | 52 |
+| 79 | [`lib/widgets/pdf_file_card.dart`](#libwidgetspdffilecarddart) | dart | 237 |
+| 80 | [`lib/widgets/pdf_tool_file_picker_screen.dart`](#libwidgetspdftoolfilepickerscreendart) | dart | 624 |
+| 81 | [`lib/widgets/permission_banner.dart`](#libwidgetspermissionbannerdart) | dart | 31 |
+| 82 | [`test/dragon_pet_test.dart`](#testdragonpettestdart) | dart | 162 |
+| 83 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 185 |
+| 84 | [`test/unit_test.dart`](#testunittestdart) | dart | 395 |
+| 85 | [`test/widget_test.dart`](#testwidgettestdart) | dart | 68 |
+| 86 | [`android/app/src/main/AndroidManifest.xml`](#androidappsrcmainandroidmanifestxml) | xml | 104 |
+| 87 | [`android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt`](#androidappsrcmainkotlincomofflinepdfappofflinepdfreadermainactivitykt) | kotlin | 754 |
+| 88 | [`android/app/src/main/res/xml/file_paths.xml`](#androidappsrcmainresxmlfilepathsxml) | xml | 7 |
+| 89 | [`android/app/build.gradle`](#androidappbuildgradle) | groovy | 45 |
+| 90 | [`android/app/proguard-rules.pro`](#androidappproguardrulespro) | properties | 20 |
+| 91 | [`android/build.gradle`](#androidbuildgradle) | groovy | 25 |
+| 92 | [`android/settings.gradle`](#androidsettingsgradle) | groovy | 25 |
 
 ---
 
 ## 1. pubspec.yaml <a id="pubspecyaml"></a>
 
 - **Path:** `pubspec.yaml`
-- **Lines:** 94
+- **Lines:** 96
 - **Language:** `yaml`
 
 ```yaml
@@ -161,6 +170,7 @@ dependencies:
   intl: ^0.19.0
   shared_preferences: ^2.3.2
   google_fonts: ^6.3.0
+  llama_flutter_android: ^0.2.6
 
 dev_dependencies:
   flutter_test:
@@ -186,6 +196,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/dragon/
 
   fonts:
     - family: SourceSerif4
@@ -201,59 +212,216 @@ flutter:
 
 ---
 
-## 2. lib/core/ai/ai_model_manager.dart <a id="libcoreaiaimodelmanagerdart"></a>
+## 2. analysis_options.yaml <a id="analysisoptionsyaml"></a>
+
+- **Path:** `analysis_options.yaml`
+- **Lines:** 28
+- **Language:** `yaml`
+
+```yaml
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at https://dart.dev/lints.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+```
+
+---
+
+## 3. README.md <a id="readmemd"></a>
+
+- **Path:** `README.md`
+- **Lines:** 44
+- **Language:** `text`
+
+```text
+# Offline PDF Reader & Study Companion
+
+A private, distraction-free document reader and archival study studio designed for Android. Built with Flutter, featuring a responsive white dragon study companion and 100% on-device local GGUF AI inference.
+
+---
+
+## Key Features
+
+### 1. Quiet Editorial Document Studio
+- **Distraction-Free Reading:** Continuous scroll and single-page display tuned with warm editorial palettes (Terracotta, Slate Teal, Cream).
+- **Rich Annotations:** Highlights, underlines, strikethroughs, freehand drawing, handwritten signatures, and sticky notes saved to private SQLite storage.
+- **Bookmarks & Navigation:** Interactive page thumbnail scrubber, jump-to-page, and instant full-text search.
+- **Text-to-Speech (TTS):** Offline read-aloud support with speech rate control and background playback.
+- **On-Device OCR:** Optical character recognition powered by Google ML Kit Latin models for scanned documents and images.
+
+### 2. White Dragon Study Companion (`Chiku`)
+- **Lightweight Interactive Overlay:** Smooth 56px floating companion positioned above the bottom toolbar without obstructing document reading gestures.
+- **Dynamic Animation States:** 12 expressive transparent states including idle breathing, periodic blinking, reading, thinking, curious, explaining, and sleeping.
+- **Quick Action Sheet:** Tap the companion to access document Q&A, explain selected text, launch Study Mode, summarize the current page, or manage offline models.
+
+### 3. True On-Device Local LLM Intelligence
+- **Private Offline Inference:** High-performance local language model inference powered by `llama.cpp` and `llama_flutter_android`. Zero telemetry or cloud requests.
+- **Grounded Document Q&A:** RAG-grounded answers citing exact source pages. Falls back to deterministic extraction if evidence is insufficient or when models are uninstalled.
+- **Downloadable GGUF Models:**
+  - **Qwen3 1.7B Q4_K_M (Primary):** ~1.28 GB, 2048 context window. High quality explanations, revision notes, and exam question generation.
+  - **Qwen3 0.6B Q4_0 (Quick Option):** ~429 MB, 1024/2048 context window. Lower-memory model suited for lightweight devices.
+- **Security & Integrity:** Resumable chunked downloads verified against strict SHA-256 digests before installation. Automatic model unloading to preserve device RAM.
+
+### 4. Power-User PDF Tools
+- **Document Manipulations:** Merge multiple PDFs, split documents, extract or delete page ranges.
+- **Compression & Optimization:** Target-size PDF compression and image compressor.
+- **Security & Metadata:** PDF encryption with password protection and metadata inspector/editor.
+- **Version History & Diff:** Track document revisions with side-by-side comparison.
+
+---
+
+## Technical Specifications
+
+- **Framework:** Flutter 3.24 (Dart 3.5)
+- **Min Android SDK:** 26 (Android 8.0 Oreo)
+- **Target Android SDK:** 34 / 36
+- **Android NDK:** 27.0.12077973
+- **Inference Backend:** llama.cpp Vulkan / CPU (ARM64-v8a, armeabi-v7a, x86_64)
+- **Database Schema:** SQLite Version 7 (`DatabaseHelper`)
+```
+
+---
+
+## 4. lib/core/ai/ai_model_manager.dart <a id="libcoreaiaimodelmanagerdart"></a>
 
 - **Path:** `lib/core/ai/ai_model_manager.dart`
-- **Lines:** 41
+- **Lines:** 104
 - **Language:** `dart`
 
 ```dart
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/ai_model_config.dart';
-import '../storage/database_helper.dart';
 
 class AiModelManager {
   static final AiModelManager instance = AiModelManager._init();
+  static const _modelIdKey = 'local_ai_model_id';
+  static const _enabledKey = 'local_ai_enabled';
+  static const _autoUnloadKey = 'local_ai_auto_unload';
+  static const _contextKey = 'local_ai_context';
+  static const _temperatureKey = 'local_ai_temperature';
 
   AiModelConfig _config = AiModelConfig(
-    isInstalled: true,
+    isInstalled: false,
     isEnabled: true,
-    modelName: 'Offline-Local-NLP-Engine-v1',
-    sizeMb: 12.5,
-    statusMessage: 'Ready (On-Device Local Engine Active)',
+    modelName: '',
+    sizeMb: 0,
+    statusMessage: 'No local model installed.',
   );
+
+  String? _installedModelId;
+  bool _initialized = false;
 
   AiModelManager._init();
 
   AiModelConfig get config => _config;
+  String? get installedModelId => _installedModelId;
+  bool get initialized => _initialized;
 
-  void toggleEnabled(bool enabled) {
+  Future<void> initialize() async {
+    if (_initialized) return;
+    final prefs = await SharedPreferences.getInstance();
+    _installedModelId = prefs.getString(_modelIdKey);
+    final enabled = prefs.getBool(_enabledKey) ?? true;
+    final autoUnload = prefs.getBool(_autoUnloadKey) ?? true;
+    final context = prefs.getInt(_contextKey) ?? 2048;
+    final temperature = prefs.getDouble(_temperatureKey) ?? 0.35;
+
     _config = _config.copyWith(
+      isInstalled: _installedModelId != null,
       isEnabled: enabled,
-      statusMessage: enabled ? 'Ready (On-Device Local Engine Active)' : 'Disabled by User',
+      modelName: _installedModelId ?? '',
+      statusMessage: _installedModelId != null
+          ? 'Installed local model ready.'
+          : 'No local model installed.',
+      maxContextLength: context,
+      temperature: temperature,
+      autoUnload: autoUnload,
+    );
+    _initialized = true;
+  }
+
+  Future<void> setInstalledModel({
+    required String modelId,
+    required String modelName,
+    required double sizeMb,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_modelIdKey, modelId);
+    _installedModelId = modelId;
+    _config = _config.copyWith(
+      isInstalled: true,
+      modelName: modelName,
+      sizeMb: sizeMb,
+      statusMessage: 'Installed local model ready.',
     );
   }
 
-  void updateSettings({int? maxContext, double? temp, bool? autoUnload}) {
+  Future<void> clearInstalledModel() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_modelIdKey);
+    _installedModelId = null;
+    _config = _config.copyWith(
+      isInstalled: false,
+      modelName: '',
+      sizeMb: 0,
+      statusMessage: 'No local model installed.',
+    );
+  }
+
+  Future<void> toggleEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_enabledKey, enabled);
+    _config = _config.copyWith(
+      isEnabled: enabled,
+      statusMessage: !enabled
+          ? 'Local AI disabled by user.'
+          : (_config.isInstalled
+              ? 'Installed local model ready.'
+              : 'No local model installed.'),
+    );
+  }
+
+  Future<void> updateSettings({int? maxContext, double? temp, bool? autoUnload}) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (maxContext != null) await prefs.setInt(_contextKey, maxContext);
+    if (temp != null) await prefs.setDouble(_temperatureKey, temp);
+    if (autoUnload != null) await prefs.setBool(_autoUnloadKey, autoUnload);
     _config = _config.copyWith(
       maxContextLength: maxContext ?? _config.maxContextLength,
       temperature: temp ?? _config.temperature,
       autoUnload: autoUnload ?? _config.autoUnload,
     );
   }
-
-  Future<String?> getCachedResponse(String cacheKey) async {
-    return await DatabaseHelper.instance.getCachedAiResponse(cacheKey);
-  }
-
-  Future<void> cacheResponse(String cacheKey, String response, String filePath) async {
-    await DatabaseHelper.instance.cacheAiResponse(cacheKey, response, filePath);
-  }
 }
 ```
 
 ---
 
-## 3. lib/core/ai/local_ai_provider.dart <a id="libcoreailocalaiproviderdart"></a>
+## 5. lib/core/ai/local_ai_provider.dart <a id="libcoreailocalaiproviderdart"></a>
 
 - **Path:** `lib/core/ai/local_ai_provider.dart`
 - **Lines:** 43
@@ -307,13 +475,311 @@ abstract class LocalAIProvider {
 
 ---
 
-## 4. lib/core/ai/on_device_ai_service.dart <a id="libcoreaiondeviceaiservicedart"></a>
+## 6. lib/core/ai/local_llm_service.dart <a id="libcoreailocalllmservicedart"></a>
 
-- **Path:** `lib/core/ai/on_device_ai_service.dart`
-- **Lines:** 241
+- **Path:** `lib/core/ai/local_llm_service.dart`
+- **Lines:** 115
+- **Language:** `dart`
+
+````dart
+import 'dart:async';
+import 'dart:io';
+import 'package:llama_flutter_android/llama_flutter_android.dart';
+import 'ai_model_manager.dart';
+import 'local_model_downloader.dart';
+
+class LocalLlmService {
+  static final LocalLlmService instance = LocalLlmService._init();
+  LocalLlmService._init();
+
+  LlamaController? _controller;
+  StreamSubscription<String>? _generationSubscription;
+  bool _loaded = false;
+  String? _loadedModelId;
+
+  bool get isLoaded => _loaded;
+
+  Future<File?> _resolveInstalledModel() async {
+    final id = AiModelManager.instance.installedModelId;
+    if (id == null) return null;
+    LocalModelDescriptor? model;
+    for (final candidate in LocalModelDownloader.models) {
+      if (candidate.id == id) {
+        model = candidate;
+        break;
+      }
+    }
+    if (model == null) return null;
+    final file = await LocalModelDownloader.modelFile(model);
+    if (!await file.exists()) return null;
+    return file;
+  }
+
+  Future<void> load() async {
+    await AiModelManager.instance.initialize();
+    final file = await _resolveInstalledModel();
+    if (file == null) throw StateError('No verified local model is installed.');
+    if (_loaded && _loadedModelId == AiModelManager.instance.installedModelId) return;
+    await unload();
+    final controller = LlamaController();
+    final gpu = await controller.detectGpu();
+    await controller.loadModel(
+      modelPath: file.path,
+      threads: 4,
+      contextSize: AiModelManager.instance.config.maxContextLength,
+      gpuLayers: gpu.recommendedGpuLayers,
+    );
+    _controller = controller;
+    _loaded = true;
+    _loadedModelId = AiModelManager.instance.installedModelId;
+  }
+
+  Future<String> generate({
+    required String systemPrompt,
+    required String userPrompt,
+    int? maxTokens,
+    double? temperature,
+  }) async {
+    await load();
+    final controller = _controller!;
+    final chunks = <String>[];
+
+    await _generationSubscription?.cancel();
+    final done = Completer<void>();
+    _generationSubscription = controller.generateChat(
+      messages: [
+        ChatMessage(role: 'system', content: systemPrompt),
+        ChatMessage(role: 'user', content: userPrompt),
+      ],
+      template: 'chatml',
+      temperature: temperature ?? AiModelManager.instance.config.temperature,
+      maxTokens: maxTokens ?? 512,
+      topP: 0.9,
+      topK: 40,
+      minP: 0.05,
+      repeatPenalty: 1.12,
+      repeatLastN: 64,
+      mirostat: 0,
+    ).listen(
+      chunks.add,
+      onError: (Object error, StackTrace stack) {
+        if (!done.isCompleted) done.completeError(error, stack);
+      },
+      onDone: () {
+        if (!done.isCompleted) done.complete();
+      },
+    );
+    await done.future;
+    final raw = chunks.join();
+    return _cleanModelText(raw);
+  }
+
+  Future<void> stop() async {
+    await _controller?.stop();
+    await _generationSubscription?.cancel();
+    _generationSubscription = null;
+  }
+
+  Future<void> unload() async {
+    await stop();
+    final controller = _controller;
+    _controller = null;
+    _loaded = false;
+    _loadedModelId = null;
+    await controller?.dispose();
+  }
+
+  String _cleanModelText(String text) {
+    var value = text.replaceAll('\r\n', '\n').trim();
+    value = value.replaceAll(RegExp(r'<think>[\s\S]*?</think>', multiLine: true), '').trim();
+    value = value.replaceAll(RegExp(r'^```(?:json|text)?\s*', caseSensitive: false), '');
+    value = value.replaceAll(RegExp(r'\s*```$'), '');
+    return value.trim();
+  }
+}
+````
+
+---
+
+## 7. lib/core/ai/local_model_downloader.dart <a id="libcoreailocalmodeldownloaderdart"></a>
+
+- **Path:** `lib/core/ai/local_model_downloader.dart`
+- **Lines:** 160
 - **Language:** `dart`
 
 ```dart
+import 'dart:io';
+import 'package:crypto/crypto.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+class LocalModelDescriptor {
+  final String id;
+  final String name;
+  final String fileName;
+  final String url;
+  final int sizeBytes;
+  final String sha256;
+  final String license;
+  final String description;
+
+  const LocalModelDescriptor({
+    required this.id,
+    required this.name,
+    required this.fileName,
+    required this.url,
+    required this.sizeBytes,
+    required this.sha256,
+    required this.license,
+    required this.description,
+  });
+
+  double get sizeMb => sizeBytes / (1024 * 1024);
+}
+
+class LocalModelDownloadException implements Exception {
+  final String message;
+  const LocalModelDownloadException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class LocalModelDownloader {
+  static const models = <LocalModelDescriptor>[
+    LocalModelDescriptor(
+      id: 'qwen3-1.7b-q4km',
+      name: 'Qwen3 1.7B Q4_K_M',
+      fileName: 'Qwen3-1.7B-Q4_K_M.gguf',
+      url:
+          'https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/daeb8e2d528a760970442092f6bf1e55c3b659eb/Qwen3-1.7B-Q4_K_M.gguf',
+      sizeBytes: 1280000000,
+      sha256:
+          'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5',
+      license: 'Apache-2.0',
+      description:
+          'Primary study model for document explanations, revision notes and exam generation.',
+    ),
+    LocalModelDescriptor(
+      id: 'qwen3-0.6b-q40',
+      name: 'Qwen3 0.6B Q4_0',
+      fileName: 'Qwen3-0.6B-Q4_0.gguf',
+      url:
+          'https://huggingface.co/ggml-org/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf',
+      sizeBytes: 429000000,
+      sha256:
+          'da2572f16c06133561ce56accaa822216f2391ef4d37fba427801cd6736417d4',
+      license: 'Apache-2.0',
+      description:
+          'Lower-memory quick model for shorter answers and lighter devices.',
+    ),
+  ];
+
+  static Future<Directory> _modelDirectory() async {
+    final root = await getApplicationSupportDirectory();
+    final dir = Directory(p.join(root.path, 'local_ai_models'));
+    if (!await dir.exists()) await dir.create(recursive: true);
+    return dir;
+  }
+
+  static Future<File> modelFile(LocalModelDescriptor model) async {
+    final dir = await _modelDirectory();
+    return File(p.join(dir.path, model.fileName));
+  }
+
+  static Future<File> partialFile(LocalModelDescriptor model) async {
+    final dir = await _modelDirectory();
+    return File(p.join(dir.path, '${model.fileName}.part'));
+  }
+
+  static Future<bool> isInstalled(LocalModelDescriptor model) async {
+    final file = await modelFile(model);
+    if (!await file.exists()) return false;
+    final stat = await file.stat();
+    return stat.size == model.sizeBytes;
+  }
+
+  static Future<void> download(
+    LocalModelDescriptor model, {
+    required void Function(int received, int total) onProgress,
+    bool Function()? isCancelled,
+  }) async {
+    final target = await modelFile(model);
+    final partial = await partialFile(model);
+    var received = await partial.exists() ? await partial.length() : 0;
+    final client = HttpClient()..connectionTimeout = const Duration(seconds: 20);
+    try {
+      final request = await client.getUrl(Uri.parse(model.url));
+      if (received > 0) {
+        request.headers.set(HttpHeaders.rangeHeader, 'bytes=$received-');
+      }
+      final response = await request.close();
+      if (received > 0 && response.statusCode != HttpStatus.partialContent) {
+        await partial.writeAsBytes(const [], flush: true);
+        received = 0;
+      }
+      if (response.statusCode != HttpStatus.ok &&
+          response.statusCode != HttpStatus.partialContent) {
+        throw LocalModelDownloadException(
+            'Model download failed: HTTP ${response.statusCode}.');
+      }
+      final contentLength = response.contentLength;
+      final total = received + (contentLength > 0 ? contentLength : 0);
+      final sink = partial.openWrite(
+          mode: received > 0 ? FileMode.append : FileMode.write);
+      var current = received;
+      await for (final chunk in response) {
+        if (isCancelled?.call() ?? false) {
+          await sink.close();
+          throw const LocalModelDownloadException(
+              'Download cancelled. Partial file retained for resume.');
+        }
+        sink.add(chunk);
+        current += chunk.length;
+        onProgress(current, total);
+      }
+      await sink.close();
+      if (current != model.sizeBytes) {
+        throw LocalModelDownloadException(
+            'Downloaded file size is $current bytes; expected ${model.sizeBytes} bytes.');
+      }
+      final digest = await _sha256(partial);
+      if (digest != model.sha256) {
+        await partial.delete();
+        throw const LocalModelDownloadException(
+            'SHA-256 verification failed. The model was deleted.');
+      }
+      if (await target.exists()) await target.delete();
+      await partial.rename(target.path);
+    } finally {
+      client.close(force: true);
+    }
+  }
+
+  static Future<String> _sha256(File file) async {
+    final digest = await file.openRead().transform(sha256).first;
+    return digest.toString();
+  }
+
+  static Future<void> delete(LocalModelDescriptor model) async {
+    final target = await modelFile(model);
+    final partial = await partialFile(model);
+    if (await target.exists()) await target.delete();
+    if (await partial.exists()) await partial.delete();
+  }
+}
+```
+
+---
+
+## 8. lib/core/ai/on_device_ai_service.dart <a id="libcoreaiondeviceaiservicedart"></a>
+
+- **Path:** `lib/core/ai/on_device_ai_service.dart`
+- **Lines:** 193
+- **Language:** `dart`
+
+```dart
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../../models/semantic_chunk.dart';
@@ -321,11 +787,35 @@ import '../../models/study_item.dart';
 import '../storage/database_helper.dart';
 import 'ai_model_manager.dart';
 import 'local_ai_provider.dart';
+import 'local_llm_service.dart';
 import 'semantic_search_service.dart';
 
 class OnDeviceAIService implements LocalAIProvider {
   static final OnDeviceAIService instance = OnDeviceAIService._init();
   OnDeviceAIService._init();
+
+  String _clip(String text, int maxChars) =>
+      text.length <= maxChars ? text : '${text.substring(0, maxChars)}...';
+
+  Future<String?> _llm({required String system, required String user, int maxTokens = 512}) async {
+    await AiModelManager.instance.initialize();
+    if (!AiModelManager.instance.config.isEnabled || !AiModelManager.instance.config.isInstalled) return null;
+    try {
+      final output = await LocalLlmService.instance.generate(
+        systemPrompt: system,
+        userPrompt: user,
+        maxTokens: maxTokens,
+        temperature: AiModelManager.instance.config.temperature,
+      );
+      return output.trim().isEmpty ? null : output.trim();
+    } catch (_) {
+      return null;
+    } finally {
+      if (AiModelManager.instance.config.autoUnload) {
+        await LocalLlmService.instance.unload();
+      }
+    }
+  }
 
   @override
   Future<GroundedAnswer> answerQuestion({
@@ -333,90 +823,61 @@ class OnDeviceAIService implements LocalAIProvider {
     required String question,
     required Map<int, String> pageTextMap,
   }) async {
-    if (!AiModelManager.instance.config.isEnabled) {
-      return GroundedAnswer(
-        answer: 'Local AI is currently disabled in AI Settings.',
-        sourcePages: [],
-        hasSufficientContext: false,
-      );
-    }
-
     if (pageTextMap.isEmpty) {
-      return GroundedAnswer(
-        answer: 'Not enough information was found in this document.',
-        sourcePages: [],
-        hasSufficientContext: false,
-      );
+      return GroundedAnswer(answer: 'Not enough information was found in this document.', sourcePages: [], hasSufficientContext: false);
     }
-
-    // 1. Fetch or generate semantic chunks
     List<SemanticChunk> chunks = [];
-    try {
-      chunks = await DatabaseHelper.instance.getSemanticChunksForFile(filePath);
-    } catch (_) {}
-
+    try { chunks = await DatabaseHelper.instance.getSemanticChunksForFile(filePath); } catch (_) {}
     if (chunks.isEmpty) {
       chunks = await SemanticSearchService.chunkDocumentText(filePath, pageTextMap);
-      try {
-        await DatabaseHelper.instance.saveSemanticChunks(chunks);
-      } catch (_) {}
+      try { await DatabaseHelper.instance.saveSemanticChunks(chunks); } catch (_) {}
     }
-
-    // 2. Perform local semantic vector search
-    final searchResults = SemanticSearchService.search(question, chunks, topK: 4);
-
-    if (searchResults.isEmpty || searchResults.first.score < 0.12) {
-      return GroundedAnswer(
-        answer: 'Not enough information was found in this document to answer your question.',
-        sourcePages: [],
-        hasSufficientContext: false,
-      );
+    final results = SemanticSearchService.search(question, chunks, topK: 4);
+    if (results.isEmpty || results.first.score < 0.12) {
+      return GroundedAnswer(answer: 'Not enough information was found in this document to answer your question.', sourcePages: [], hasSufficientContext: false);
     }
-
-    final topResults = searchResults.where((r) => r.score >= 0.10).toList();
-    final sourcePages = topResults.map((r) => r.chunk.pageNumber).toSet().toList()..sort();
-
-    final contextSnippet = topResults.map((r) => r.chunk.chunkText).join('\n\n');
-
-    // 3. Extractive Document Q&A Generation
-    final answerText = await compute(_generateExtractiveAnswer, _QAData(contextSnippet, question));
-
-    return GroundedAnswer(
-      answer: 'Based on this PDF:\n\n$answerText',
-      sourcePages: sourcePages,
-      hasSufficientContext: true,
+    final top = results.where((r) => r.score >= 0.10).toList();
+    final sourcePages = top.map((r) => r.chunk.pageNumber).toSet().toList()..sort();
+    final context = top.map((r) => '[Page ${r.chunk.pageNumber}] ${r.chunk.chunkText}').join('\n\n');
+    final answer = await _llm(
+      system: 'You are a private offline study assistant. Answer only from the supplied document context. If the context is insufficient, say so. Do not invent facts. Give a concise student-friendly answer and cite relevant pages.',
+      user: 'DOCUMENT CONTEXT:\n$context\n\nQUESTION:\n$question\n\nAnswer using only the document context.',
+      maxTokens: 600,
     );
+    if (answer != null) {
+      return GroundedAnswer(answer: 'Based on this PDF:\n\n$answer', sourcePages: sourcePages, hasSufficientContext: true);
+    }
+    final fallback = await compute(_generateExtractiveAnswer, _QAData(context, question));
+    return GroundedAnswer(answer: 'Based on this PDF:\n\n$fallback', sourcePages: sourcePages, hasSufficientContext: true);
   }
 
   @override
-  Future<String> explainText({
-    required String selectedText,
-    required String surroundingContext,
-    required ExplanationMode mode,
-  }) async {
+  Future<String> explainText({required String selectedText, required String surroundingContext, required ExplanationMode mode}) async {
     final cleanText = selectedText.trim();
     if (cleanText.isEmpty) return 'No text selected for explanation.';
-
-    switch (mode) {
-      case ExplanationMode.simple:
-        return 'Simple Explanation:\n\n"$cleanText" means the core concept or mechanism described here in the document context. It represents a fundamental building block of the topic.';
-      case ExplanationMode.detailed:
-        return 'Detailed Technical Explanation:\n\nSelected Term: "$cleanText"\n\nIn the context of the document, this concept establishes structural rules, relationships, and computational behavior. Surrounding context reference: "${surroundingContext.take(120)}"';
-      case ExplanationMode.examFocused:
-        return 'Exam-Focused Key Points:\n\n• Definition: $cleanText\n• Key Takeaway: Essential concept commonly tested in exam short-answer questions.\n• Example Context: ${surroundingContext.take(100)}';
-    }
+    final style = switch (mode) {
+      ExplanationMode.simple => 'Explain in simple language for a college student.',
+      ExplanationMode.detailed => 'Explain the concept technically, with mechanism and relationships.',
+      ExplanationMode.examFocused => 'Explain in exam-ready form with definition, key points and one example.',
+    };
+    final answer = await _llm(
+      system: 'You are an offline study tutor. $style Use only the provided text/context. Do not invent citations or facts. Do not reveal hidden reasoning.',
+      user: 'SELECTED TEXT:\n$cleanText\n\nSURROUNDING CONTEXT:\n${_clip(surroundingContext, 4000)}',
+      maxTokens: 450,
+    );
+    return answer ?? 'Explanation:\n\n$cleanText\n\nContext:\n${_clip(surroundingContext, 240)}';
   }
 
   @override
-  Future<String> summarizeSection({
-    required String text,
-    required int startPage,
-    required int endPage,
-  }) async {
+  Future<String> summarizeSection({required String text, required int startPage, required int endPage}) async {
     if (text.trim().isEmpty) return 'No text available for pages $startPage - $endPage.';
+    final answer = await _llm(
+      system: 'You are an offline study-note generator. Produce a compact factual revision summary using only the supplied document text. Include 5-8 bullet points and a short key takeaway. Do not reveal hidden reasoning.',
+      user: 'PAGES $startPage-$endPage:\n${_clip(text, 10000)}',
+      maxTokens: 500,
+    );
+    if (answer != null) return 'Summary of Pages $startPage - $endPage:\n\n$answer';
     final sentences = text.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 20).toList();
-    if (sentences.isEmpty) return text.take(200);
-
     final summary = sentences.take(min(3, sentences.length)).join(' ');
     return 'Summary of Pages $startPage - $endPage:\n\n$summary';
   }
@@ -430,14 +891,40 @@ class OnDeviceAIService implements LocalAIProvider {
     required int questionCount,
   }) async {
     if (pageTextMap.isEmpty) return [];
-
-    return compute(_generateExamQuestionsLogic, _ExamData(
-      filePath: filePath,
-      pageTextMap: pageTextMap,
-      topic: topic,
-      difficulty: difficulty,
-      questionCount: questionCount,
-    ));
+    final compact = pageTextMap.entries.map((e) => '[Page ${e.key}] ${_clip(e.value, 1200)}').join('\n');
+    final output = await _llm(
+      system: 'You generate exam questions from source text. Output ONLY valid JSON array. Each item must have: page, type, question, options, correctAnswer, explanation, marks, topic. type must be one of mcq,trueFalse,shortAnswer.',
+      user: 'TOPIC: $topic\nDIFFICULTY: $difficulty\nCOUNT: $questionCount\nSOURCE:\n$compact',
+      maxTokens: 1000,
+    );
+    if (output != null) {
+      try {
+        final cleaned = output.replaceFirst(RegExp(r'^[^\[]*'), '').replaceFirst(RegExp(r'[^\]]*$'), '');
+        final data = jsonDecode(cleaned);
+        if (data is List) {
+          final items = <StudyQuestion>[];
+          for (final raw in data) {
+            if (raw is! Map) continue;
+            final typeName = raw['type']?.toString() ?? 'mcq';
+            final type = QuestionType.values.firstWhere((e) => e.name == typeName, orElse: () => QuestionType.mcq);
+            final opts = (raw['options'] is List) ? (raw['options'] as List).map((e) => e.toString()).toList() : <String>[];
+            items.add(StudyQuestion(
+              filePath: filePath,
+              pageNumber: int.tryParse(raw['page']?.toString() ?? '') ?? 1,
+              type: type,
+              question: raw['question']?.toString() ?? '',
+              options: opts,
+              correctAnswer: raw['correctAnswer']?.toString() ?? '',
+              explanation: raw['explanation']?.toString() ?? '',
+              marks: int.tryParse(raw['marks']?.toString() ?? '') ?? 1,
+              topic: raw['topic']?.toString() ?? topic,
+            ));
+          }
+          if (items.isNotEmpty) return items.take(questionCount).toList();
+        }
+      } catch (_) {}
+    }
+    return compute(_fallbackQuestions, _FallbackQuestionData(filePath, pageTextMap, topic, difficulty, questionCount));
   }
 }
 
@@ -449,117 +936,47 @@ class _QAData {
 
 String _generateExtractiveAnswer(_QAData data) {
   final sentences = data.contextSnippet.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 15).toList();
-  final qLower = data.question.toLowerCase();
-  final keywords = qLower.split(RegExp(r'\s+')).where((k) => k.length > 2).toList();
-
-  List<String> matchedSentences = [];
-  for (final s in sentences) {
-    final sLower = s.toLowerCase();
-    int matches = 0;
-    for (final k in keywords) {
-      if (sLower.contains(k)) matches++;
-    }
-    if (matches > 0) {
-      matchedSentences.add(s);
-    }
-  }
-
-  if (matchedSentences.isNotEmpty) {
-    return matchedSentences.take(3).join(' ');
-  } else {
-    return sentences.take(2).join(' ');
-  }
+  final keywords = data.question.toLowerCase().split(RegExp(r'\s+')).where((k) => k.length > 2).toList();
+  final matched = sentences.where((s) => keywords.any((k) => s.toLowerCase().contains(k))).toList();
+  return (matched.isNotEmpty ? matched : sentences).take(3).join(' ');
 }
 
-class _ExamData {
+class _FallbackQuestionData {
   final String filePath;
-  final Map<int, String> pageTextMap;
+  final Map<int, String> pages;
   final String topic;
   final String difficulty;
-  final int questionCount;
-  _ExamData({
-    required this.filePath,
-    required this.pageTextMap,
-    required this.topic,
-    required this.difficulty,
-    required this.questionCount,
-  });
+  final int count;
+  _FallbackQuestionData(this.filePath, this.pages, this.topic, this.difficulty, this.count);
 }
 
-List<StudyQuestion> _generateExamQuestionsLogic(_ExamData data) {
-  final List<StudyQuestion> questions = [];
-  final List<MapEntry<int, String>> pages = data.pageTextMap.entries.toList();
-
-  for (int i = 0; i < data.questionCount && i < pages.length * 2; i++) {
-    final entry = pages[i % pages.length];
-    final page = entry.key;
-    final text = entry.value;
-
-    final sentences = text.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 30).toList();
-    if (sentences.isEmpty) continue;
-
-    final sentence = sentences.first.trim();
+List<StudyQuestion> _fallbackQuestions(_FallbackQuestionData data) {
+  final items = <StudyQuestion>[];
+  final entries = data.pages.entries.toList();
+  for (int i = 0; i < data.count && i < entries.length * 2; i++) {
+    final e = entries[i % entries.length];
+    final sentence = e.value.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 30).firstOrNull;
+    if (sentence == null) continue;
     final words = sentence.split(RegExp(r'\s+')).where((w) => w.length > 4).toList();
     final keyword = words.isNotEmpty ? words.first : 'Concept';
-
-    if (data.difficulty.toLowerCase() == 'easy') {
-      questions.add(
-        StudyQuestion(
-          filePath: data.filePath,
-          pageNumber: page,
-          type: QuestionType.trueFalse,
-          question: '(Easy) $sentence',
-          options: ['TRUE', 'FALSE'],
-          correctAnswer: 'TRUE',
-          explanation: 'Source Page $page: "$sentence"',
-          topic: data.topic,
-        ),
-      );
-    } else if (data.difficulty.toLowerCase() == 'medium') {
-      questions.add(
-        StudyQuestion(
-          filePath: data.filePath,
-          pageNumber: page,
-          type: QuestionType.mcq,
-          question: '(Medium) What does the document state regarding $keyword?',
-          options: [
-            sentence.take(60),
-            'It has no impact on system behavior',
-            'It is explicitly deprecated',
-            'None of the above'
-          ]..shuffle(),
-          correctAnswer: sentence.take(60),
-          explanation: 'Source Page $page: $sentence',
-          topic: data.topic,
-        ),
-      );
-    } else {
-      questions.add(
-        StudyQuestion(
-          filePath: data.filePath,
-          pageNumber: page,
-          type: QuestionType.shortAnswer,
-          question: '(Hard - 5 Marks) Critically analyze the role of $keyword as discussed on Page $page.',
-          correctAnswer: sentence,
-          explanation: 'Document Reference: $sentence',
-          marks: 5,
-          topic: data.topic,
-        ),
-      );
-    }
+    items.add(StudyQuestion(
+      filePath: data.filePath,
+      pageNumber: e.key,
+      type: QuestionType.shortAnswer,
+      question: 'Explain the role of $keyword as discussed on Page ${e.key}.',
+      correctAnswer: sentence,
+      explanation: 'Document context from Page ${e.key}',
+      marks: 2,
+      topic: data.topic,
+    ));
   }
-
-  return questions;
-}
-
-extension StringTakeExt on String {
-  String take(int n) => length <= n ? this : '${substring(0, n)}...';
+  return items;
 }
 ```
 
 ---
 
-## 5. lib/core/ai/semantic_search_service.dart <a id="libcoreaisemanticsearchservicedart"></a>
+## 9. lib/core/ai/semantic_search_service.dart <a id="libcoreaisemanticsearchservicedart"></a>
 
 - **Path:** `lib/core/ai/semantic_search_service.dart`
 - **Lines:** 192
@@ -762,7 +1179,7 @@ String _extractKeywords(String text) {
 
 ---
 
-## 6. lib/core/config/app_config.dart <a id="libcoreconfigappconfigdart"></a>
+## 10. lib/core/config/app_config.dart <a id="libcoreconfigappconfigdart"></a>
 
 - **Path:** `lib/core/config/app_config.dart`
 - **Lines:** 9
@@ -782,7 +1199,7 @@ class AppConfig {
 
 ---
 
-## 7. lib/core/permissions/permissions_service.dart <a id="libcorepermissionspermissionsservicedart"></a>
+## 11. lib/core/permissions/permissions_service.dart <a id="libcorepermissionspermissionsservicedart"></a>
 
 - **Path:** `lib/core/permissions/permissions_service.dart`
 - **Lines:** 67
@@ -860,7 +1277,72 @@ final permissionsProvider =
 
 ---
 
-## 8. lib/core/services/external_pdf_intent_service.dart <a id="libcoreservicesexternalpdfintentservicedart"></a>
+## 12. lib/core/pet/dragon_pet_controller.dart <a id="libcorepetdragonpetcontrollerdart"></a>
+
+- **Path:** `lib/core/pet/dragon_pet_controller.dart`
+- **Lines:** 54
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+
+enum DragonPetState {
+  idle,
+  blink,
+  happy,
+  reading,
+  thinking,
+  curious,
+  sleeping,
+  tired,
+  excited,
+  explaining,
+  working,
+  holdingBook,
+}
+
+class DragonPetController extends ChangeNotifier {
+  DragonPetState _state = DragonPetState.idle;
+  Timer? _returnTimer;
+  bool _active = true;
+
+  DragonPetState get state => _state;
+
+  void setState(DragonPetState value, {Duration? returnToIdleAfter}) {
+    if (!_active) return;
+    _state = value;
+    notifyListeners();
+    _returnTimer?.cancel();
+    if (returnToIdleAfter != null) {
+      _returnTimer = Timer(returnToIdleAfter, () => setState(DragonPetState.idle));
+    }
+  }
+
+  void pause() {
+    _active = false;
+    _returnTimer?.cancel();
+  }
+
+  void resume() {
+    _active = true;
+    if (_state == DragonPetState.sleeping || _state == DragonPetState.tired) {
+      _state = DragonPetState.idle;
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _returnTimer?.cancel();
+    super.dispose();
+  }
+}
+```
+
+---
+
+## 13. lib/core/services/external_pdf_intent_service.dart <a id="libcoreservicesexternalpdfintentservicedart"></a>
 
 - **Path:** `lib/core/services/external_pdf_intent_service.dart`
 - **Lines:** 188
@@ -1059,7 +1541,7 @@ class ExternalPdfIntentService {
 
 ---
 
-## 9. lib/core/storage/database_helper.dart <a id="libcorestoragedatabasehelperdart"></a>
+## 14. lib/core/storage/database_helper.dart <a id="libcorestoragedatabasehelperdart"></a>
 
 - **Path:** `lib/core/storage/database_helper.dart`
 - **Lines:** 830
@@ -1900,7 +2382,7 @@ class DatabaseHelper {
 
 ---
 
-## 10. lib/core/storage/file_scanner.dart <a id="libcorestoragefilescannerdart"></a>
+## 15. lib/core/storage/file_scanner.dart <a id="libcorestoragefilescannerdart"></a>
 
 - **Path:** `lib/core/storage/file_scanner.dart`
 - **Lines:** 537
@@ -2448,7 +2930,7 @@ class FileScanner {
 
 ---
 
-## 11. lib/core/storage/ocr_cache_service.dart <a id="libcorestorageocrcacheservicedart"></a>
+## 16. lib/core/storage/ocr_cache_service.dart <a id="libcorestorageocrcacheservicedart"></a>
 
 - **Path:** `lib/core/storage/ocr_cache_service.dart`
 - **Lines:** 78
@@ -2537,7 +3019,7 @@ class OcrCacheService {
 
 ---
 
-## 12. lib/core/storage/pdf_metadata_helper.dart <a id="libcorestoragepdfmetadatahelperdart"></a>
+## 17. lib/core/storage/pdf_metadata_helper.dart <a id="libcorestoragepdfmetadatahelperdart"></a>
 
 - **Path:** `lib/core/storage/pdf_metadata_helper.dart`
 - **Lines:** 44
@@ -2592,7 +3074,7 @@ class PdfMetadataHelper {
 
 ---
 
-## 13. lib/core/storage/thumbnail_cache_service.dart <a id="libcorestoragethumbnailcacheservicedart"></a>
+## 18. lib/core/storage/thumbnail_cache_service.dart <a id="libcorestoragethumbnailcacheservicedart"></a>
 
 - **Path:** `lib/core/storage/thumbnail_cache_service.dart`
 - **Lines:** 137
@@ -2740,7 +3222,7 @@ class ThumbnailCacheService {
 
 ---
 
-## 14. lib/core/study/local_summarizer_service.dart <a id="libcorestudylocalsummarizerservicedart"></a>
+## 19. lib/core/study/local_summarizer_service.dart <a id="libcorestudylocalsummarizerservicedart"></a>
 
 - **Path:** `lib/core/study/local_summarizer_service.dart`
 - **Lines:** 115
@@ -2866,7 +3348,7 @@ extension StringTakeExt on String {
 
 ---
 
-## 15. lib/core/study/study_generator_service.dart <a id="libcorestudystudygeneratorservicedart"></a>
+## 20. lib/core/study/study_generator_service.dart <a id="libcorestudystudygeneratorservicedart"></a>
 
 - **Path:** `lib/core/study/study_generator_service.dart`
 - **Lines:** 152
@@ -3029,7 +3511,7 @@ List<StudyQuestion> _generateQuestionsLogic(_StudyGenData data) {
 
 ---
 
-## 16. lib/core/study/topic_extractor_service.dart <a id="libcorestudytopicextractorservicedart"></a>
+## 21. lib/core/study/topic_extractor_service.dart <a id="libcorestudytopicextractorservicedart"></a>
 
 - **Path:** `lib/core/study/topic_extractor_service.dart`
 - **Lines:** 150
@@ -3190,7 +3672,7 @@ List<ImportantTerm> _extractTermsLogic(_TermsData data) {
 
 ---
 
-## 17. lib/core/theme/app_theme.dart <a id="libcorethemeappthemedart"></a>
+## 22. lib/core/theme/app_theme.dart <a id="libcorethemeappthemedart"></a>
 
 - **Path:** `lib/core/theme/app_theme.dart`
 - **Lines:** 179
@@ -3380,7 +3862,7 @@ final isNightReadingModeProvider =
 
 ---
 
-## 18. lib/core/theme/editorial_tokens.dart <a id="libcorethemeeditorialtokensdart"></a>
+## 23. lib/core/theme/editorial_tokens.dart <a id="libcorethemeeditorialtokensdart"></a>
 
 - **Path:** `lib/core/theme/editorial_tokens.dart`
 - **Lines:** 238
@@ -3629,7 +4111,7 @@ class EditorialTokens {
 
 ---
 
-## 19. lib/core/tools/image_target_size_compressor_service.dart <a id="libcoretoolsimagetargetsizecompressorservicedart"></a>
+## 24. lib/core/tools/image_target_size_compressor_service.dart <a id="libcoretoolsimagetargetsizecompressorservicedart"></a>
 
 - **Path:** `lib/core/tools/image_target_size_compressor_service.dart`
 - **Lines:** 216
@@ -3856,7 +4338,7 @@ class ImageTargetSizeCompressorService {
 
 ---
 
-## 20. lib/core/tools/pdf_batch_service.dart <a id="libcoretoolspdfbatchservicedart"></a>
+## 25. lib/core/tools/pdf_batch_service.dart <a id="libcoretoolspdfbatchservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_batch_service.dart`
 - **Lines:** 82
@@ -3949,7 +4431,7 @@ class PdfBatchService {
 
 ---
 
-## 21. lib/core/tools/pdf_compare_service.dart <a id="libcoretoolspdfcompareservicedart"></a>
+## 26. lib/core/tools/pdf_compare_service.dart <a id="libcoretoolspdfcompareservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_compare_service.dart`
 - **Lines:** 96
@@ -4056,7 +4538,7 @@ class PdfCompareService {
 
 ---
 
-## 22. lib/core/tools/pdf_compression_service.dart <a id="libcoretoolspdfcompressionservicedart"></a>
+## 27. lib/core/tools/pdf_compression_service.dart <a id="libcoretoolspdfcompressionservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_compression_service.dart`
 - **Lines:** 78
@@ -4145,7 +4627,7 @@ class PdfCompressionService {
 
 ---
 
-## 23. lib/core/tools/pdf_encryption_service.dart <a id="libcoretoolspdfencryptionservicedart"></a>
+## 28. lib/core/tools/pdf_encryption_service.dart <a id="libcoretoolspdfencryptionservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_encryption_service.dart`
 - **Lines:** 68
@@ -4224,7 +4706,7 @@ class PdfEncryptionService {
 
 ---
 
-## 24. lib/core/tools/pdf_metadata_service.dart <a id="libcoretoolspdfmetadataservicedart"></a>
+## 29. lib/core/tools/pdf_metadata_service.dart <a id="libcoretoolspdfmetadataservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_metadata_service.dart`
 - **Lines:** 87
@@ -4322,7 +4804,7 @@ class PdfMetadataService {
 
 ---
 
-## 25. lib/core/tools/pdf_target_size_compressor_service.dart <a id="libcoretoolspdftargetsizecompressorservicedart"></a>
+## 30. lib/core/tools/pdf_target_size_compressor_service.dart <a id="libcoretoolspdftargetsizecompressorservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_target_size_compressor_service.dart`
 - **Lines:** 364
@@ -4697,7 +5179,7 @@ class PdfTargetSizeCompressorService {
 
 ---
 
-## 26. lib/core/tools/pdf_version_service.dart <a id="libcoretoolspdfversionservicedart"></a>
+## 31. lib/core/tools/pdf_version_service.dart <a id="libcoretoolspdfversionservicedart"></a>
 
 - **Path:** `lib/core/tools/pdf_version_service.dart`
 - **Lines:** 91
@@ -4799,7 +5281,7 @@ class PdfVersionService {
 
 ---
 
-## 27. lib/core/tts/tts_service.dart <a id="libcorettsttsservicedart"></a>
+## 32. lib/core/tts/tts_service.dart <a id="libcorettsttsservicedart"></a>
 
 - **Path:** `lib/core/tts/tts_service.dart`
 - **Lines:** 163
@@ -4973,7 +5455,7 @@ class TtsService {
 
 ---
 
-## 28. lib/core/utils/storage_location_helper.dart <a id="libcoreutilsstoragelocationhelperdart"></a>
+## 33. lib/core/utils/storage_location_helper.dart <a id="libcoreutilsstoragelocationhelperdart"></a>
 
 - **Path:** `lib/core/utils/storage_location_helper.dart`
 - **Lines:** 94
@@ -5078,7 +5560,7 @@ class StorageLocationHelper {
 
 ---
 
-## 29. lib/core/utils/utils.dart <a id="libcoreutilsutilsdart"></a>
+## 34. lib/core/utils/utils.dart <a id="libcoreutilsutilsdart"></a>
 
 - **Path:** `lib/core/utils/utils.dart`
 - **Lines:** 76
@@ -5165,7 +5647,7 @@ class Utils {
 
 ---
 
-## 30. lib/features/ai/doc_qa_screen.dart <a id="libfeaturesaidocqascreendart"></a>
+## 35. lib/features/ai/doc_qa_screen.dart <a id="libfeaturesaidocqascreendart"></a>
 
 - **Path:** `lib/features/ai/doc_qa_screen.dart`
 - **Lines:** 395
@@ -5571,7 +6053,7 @@ class _DocQaScreenState extends ConsumerState<DocQaScreen> {
 
 ---
 
-## 31. lib/features/ai/exam_mode_screen.dart <a id="libfeaturesaiexammodescreendart"></a>
+## 36. lib/features/ai/exam_mode_screen.dart <a id="libfeaturesaiexammodescreendart"></a>
 
 - **Path:** `lib/features/ai/exam_mode_screen.dart`
 - **Lines:** 410
@@ -5992,7 +6474,7 @@ class _ExamModeScreenState extends ConsumerState<ExamModeScreen> {
 
 ---
 
-## 32. lib/features/ai/explain_text_dialog.dart <a id="libfeaturesaiexplaintextdialogdart"></a>
+## 37. lib/features/ai/explain_text_dialog.dart <a id="libfeaturesaiexplaintextdialogdart"></a>
 
 - **Path:** `lib/features/ai/explain_text_dialog.dart`
 - **Lines:** 205
@@ -6208,7 +6690,7 @@ class _ExplainTextDialogState extends State<ExplainTextDialog> {
 
 ---
 
-## 33. lib/features/delete_pages/delete_pages_screen.dart <a id="libfeaturesdeletepagesdeletepagesscreendart"></a>
+## 38. lib/features/delete_pages/delete_pages_screen.dart <a id="libfeaturesdeletepagesdeletepagesscreendart"></a>
 
 - **Path:** `lib/features/delete_pages/delete_pages_screen.dart`
 - **Lines:** 604
@@ -6823,7 +7305,7 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
 
 ---
 
-## 34. lib/features/favorites/favorites_tab.dart <a id="libfeaturesfavoritesfavoritestabdart"></a>
+## 39. lib/features/favorites/favorites_tab.dart <a id="libfeaturesfavoritesfavoritestabdart"></a>
 
 - **Path:** `lib/features/favorites/favorites_tab.dart`
 - **Lines:** 178
@@ -7012,7 +7494,7 @@ class FavoritesTab extends ConsumerWidget {
 
 ---
 
-## 35. lib/features/home/files_tab.dart <a id="libfeatureshomefilestabdart"></a>
+## 40. lib/features/home/files_tab.dart <a id="libfeatureshomefilestabdart"></a>
 
 - **Path:** `lib/features/home/files_tab.dart`
 - **Lines:** 1491
@@ -8513,7 +8995,7 @@ class _FilesTabState extends ConsumerState<FilesTab> {
 
 ---
 
-## 36. lib/features/home/main_navigation_screen.dart <a id="libfeatureshomemainnavigationscreendart"></a>
+## 41. lib/features/home/main_navigation_screen.dart <a id="libfeatureshomemainnavigationscreendart"></a>
 
 - **Path:** `lib/features/home/main_navigation_screen.dart`
 - **Lines:** 44
@@ -8568,7 +9050,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
 ---
 
-## 37. lib/features/home/pdf_list_provider.dart <a id="libfeatureshomepdflistproviderdart"></a>
+## 42. lib/features/home/pdf_list_provider.dart <a id="libfeatureshomepdflistproviderdart"></a>
 
 - **Path:** `lib/features/home/pdf_list_provider.dart`
 - **Lines:** 200
@@ -8779,7 +9261,7 @@ final recentScansListProvider = Provider<List<PdfFile>>((ref) {
 
 ---
 
-## 38. lib/features/merge/merge_screen.dart <a id="libfeaturesmergemergescreendart"></a>
+## 43. lib/features/merge/merge_screen.dart <a id="libfeaturesmergemergescreendart"></a>
 
 - **Path:** `lib/features/merge/merge_screen.dart`
 - **Lines:** 727
@@ -9517,7 +9999,7 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
 
 ---
 
-## 39. lib/features/ocr/ocr_screen.dart <a id="libfeaturesocrocrscreendart"></a>
+## 44. lib/features/ocr/ocr_screen.dart <a id="libfeaturesocrocrscreendart"></a>
 
 - **Path:** `lib/features/ocr/ocr_screen.dart`
 - **Lines:** 744
@@ -10272,7 +10754,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
 
 ---
 
-## 40. lib/features/scan/scan_document_screen.dart <a id="libfeaturesscanscandocumentscreendart"></a>
+## 45. lib/features/scan/scan_document_screen.dart <a id="libfeaturesscanscandocumentscreendart"></a>
 
 - **Path:** `lib/features/scan/scan_document_screen.dart`
 - **Lines:** 1028
@@ -11311,7 +11793,7 @@ class _ScanDocumentScreenState extends ConsumerState<ScanDocumentScreen> {
 
 ---
 
-## 41. lib/features/search/search_tab.dart <a id="libfeaturessearchsearchtabdart"></a>
+## 46. lib/features/search/search_tab.dart <a id="libfeaturessearchsearchtabdart"></a>
 
 - **Path:** `lib/features/search/search_tab.dart`
 - **Lines:** 453
@@ -11775,10 +12257,232 @@ class _SearchTabState extends ConsumerState<SearchTab> {
 
 ---
 
-## 42. lib/features/settings/settings_screen.dart <a id="libfeaturessettingssettingsscreendart"></a>
+## 47. lib/features/settings/local_ai_models_screen.dart <a id="libfeaturessettingslocalaimodelsscreendart"></a>
+
+- **Path:** `lib/features/settings/local_ai_models_screen.dart`
+- **Lines:** 211
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+import '../../core/ai/ai_model_manager.dart';
+import '../../core/ai/local_model_downloader.dart';
+import '../../core/ai/local_llm_service.dart';
+import '../../core/theme/editorial_tokens.dart';
+import '../../widgets/editorial_components.dart';
+
+class LocalAiModelsScreen extends StatefulWidget {
+  const LocalAiModelsScreen({super.key});
+
+  @override
+  State<LocalAiModelsScreen> createState() => _LocalAiModelsScreenState();
+}
+
+class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
+  String? _downloadingId;
+  int _received = 0;
+  int _total = 0;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    AiModelManager.instance.initialize();
+  }
+
+  Future<void> _download(LocalModelDescriptor model) async {
+    setState(() {
+      _downloadingId = model.id;
+      _received = 0;
+      _total = model.sizeBytes;
+      _error = null;
+    });
+    try {
+      await LocalModelDownloader.download(
+        model,
+        onProgress: (received, total) {
+          if (!mounted) return;
+          setState(() {
+            _received = received;
+            _total = total > 0 ? total : model.sizeBytes;
+          });
+        },
+      );
+      await AiModelManager.instance.setInstalledModel(
+        modelId: model.id,
+        modelName: model.name,
+        sizeMb: model.sizeMb,
+      );
+      await LocalLlmService.instance.unload();
+      if (!mounted) return;
+      setState(() => _downloadingId = null);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Local model installed and verified.')));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _downloadingId = null;
+        _error = e.toString();
+      });
+    }
+  }
+
+  Future<void> _delete(LocalModelDescriptor model) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove local model?'),
+        content: Text('This removes ${model.name} from app storage. PDF files, notes and study data are unaffected.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Remove')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await LocalLlmService.instance.unload();
+    await LocalModelDownloader.delete(model);
+    if (AiModelManager.instance.installedModelId == model.id) {
+      await AiModelManager.instance.clearInstalledModel();
+    }
+    if (mounted) setState(() {});
+  }
+
+  String _size(int bytes) => '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final manager = AiModelManager.instance;
+    return Scaffold(
+      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      appBar: AppBar(
+        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        elevation: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialEyebrow(text: 'LOCAL INTELLIGENCE · OFFLINE'),
+            Text('Local AI Models', style: EditorialTokens.titleMedium(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+          ],
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const EditorialSectionHeader(number: '01', label: 'On-Device Model Storage', count: 'GGUF models'),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+              border: Border.all(color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border, width: EditorialTokens.hairline),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(manager.config.isInstalled ? manager.config.modelName : 'No model installed', style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                const SizedBox(height: 4),
+                Text(manager.config.statusMessage, style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+                const SizedBox(height: 8),
+                Text('Models are downloaded once, verified by SHA-256, and kept inside the app\'s private support directory.', style: EditorialTokens.bodySmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                if (_error != null) ...[
+                  const SizedBox(height: 8),
+                  Text(_error!, style: EditorialTokens.metadata(color: EditorialTokens.secondary)),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          const EditorialSectionHeader(number: '02', label: 'Available Models', count: 'download on demand'),
+          const SizedBox(height: 8),
+          ...LocalModelDownloader.models.map((model) {
+            final downloading = _downloadingId == model.id;
+            final installed = manager.installedModelId == model.id && manager.config.isInstalled;
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                border: Border.all(color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border, width: EditorialTokens.hairline),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    Expanded(child: Text(model.name, style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink))),
+                    Text(_size(model.sizeBytes), style: EditorialTokens.metadataStrong(color: EditorialTokens.primary)),
+                  ]),
+                  const SizedBox(height: 4),
+                  Text(model.description, style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+                  const SizedBox(height: 4),
+                  Text('License: ${model.license}', style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+                  const SizedBox(height: 10),
+                  if (downloading) ...[
+                    LinearProgressIndicator(value: _total > 0 ? (_received / _total).clamp(0.0, 1.0) : null),
+                    const SizedBox(height: 6),
+                    Text('${(_received / (1024 * 1024)).toStringAsFixed(0)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(0)} MB', style: EditorialTokens.metadata()),
+                  ] else if (installed)
+                    Row(children: [
+                      const Icon(Icons.verified_outlined, size: 18, color: EditorialTokens.primary),
+                      const SizedBox(width: 6),
+                      Text('Installed and verified', style: EditorialTokens.metadataStrong(color: EditorialTokens.primary)),
+                      const Spacer(),
+                      TextButton(onPressed: () => _delete(model), child: const Text('Remove')),
+                    ])
+                  else
+                    Align(alignment: Alignment.centerLeft, child: FilledButton.icon(onPressed: () => _download(model), icon: const Icon(Icons.download_outlined), label: const Text('Download Model'))),
+                ],
+              ),
+            );
+          }),
+          const SizedBox(height: 18),
+          const EditorialSectionHeader(number: '03', label: 'Runtime Controls', count: 'memory safe defaults'),
+          const SizedBox(height: 8),
+          SwitchListTile(
+            title: const Text('Enable Local AI'),
+            subtitle: const Text('Use the downloaded GGUF model for document and study tasks.'),
+            value: manager.config.isEnabled,
+            onChanged: (v) async { await manager.toggleEnabled(v); if (mounted) setState(() {}); },
+          ),
+          ListTile(
+            title: const Text('Context Length'),
+            subtitle: Text('${manager.config.maxContextLength} tokens'),
+            trailing: DropdownButton<int>(
+              value: manager.config.maxContextLength,
+              items: const [
+                DropdownMenuItem(value: 1024, child: Text('1024')),
+                DropdownMenuItem(value: 2048, child: Text('2048')),
+              ],
+              onChanged: (v) async { if (v == null) return; await manager.updateSettings(maxContext: v); if (mounted) setState(() {}); },
+            ),
+          ),
+          SwitchListTile(
+            title: const Text('Unload Model Automatically'),
+            subtitle: const Text('Release native model memory when the AI workflow finishes.'),
+            value: manager.config.autoUnload,
+            onChanged: (v) async { await manager.updateSettings(autoUnload: v); if (mounted) setState(() {}); },
+          ),
+          const SizedBox(height: 18),
+          Text(
+            'Privacy: inference stays on-device after the model has been downloaded. Internet is required only for the explicit download action.',
+            style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 48. lib/features/settings/settings_screen.dart <a id="libfeaturessettingssettingsscreendart"></a>
 
 - **Path:** `lib/features/settings/settings_screen.dart`
-- **Lines:** 426
+- **Lines:** 460
 - **Language:** `dart`
 
 ```dart
@@ -11791,6 +12495,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/editorial_tokens.dart';
 import '../../widgets/editorial_components.dart';
 import '../home/pdf_list_provider.dart';
+import 'local_ai_models_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -12199,6 +12904,39 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 24),
+
+                // 4. Local Intelligence
+                const EditorialSectionHeader(
+                  number: '04',
+                  label: 'Local Intelligence',
+                  count: 'on-device AI',
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(
+                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      width: EditorialTokens.hairline,
+                    ),
+                  ),
+                  child: ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.memory_outlined, size: 20, color: EditorialTokens.primary),
+                    title: Text(
+                      'Local AI Models',
+                      style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink),
+                    ),
+                    subtitle: Text(
+                      'Download and manage the offline study model',
+                      style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                    ),
+                    trailing: Icon(Icons.chevron_right, size: 18, color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LocalAiModelsScreen())),
+                  ),
+                ),
                 const SizedBox(height: 32),
               ],
             ),
@@ -12212,7 +12950,7 @@ class SettingsScreen extends ConsumerWidget {
 
 ---
 
-## 43. lib/features/split/split_screen.dart <a id="libfeaturessplitsplitscreendart"></a>
+## 49. lib/features/split/split_screen.dart <a id="libfeaturessplitsplitscreendart"></a>
 
 - **Path:** `lib/features/split/split_screen.dart`
 - **Lines:** 833
@@ -13056,7 +13794,7 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
 ---
 
-## 44. lib/features/stats/stats_tab.dart <a id="libfeaturesstatsstatstabdart"></a>
+## 50. lib/features/stats/stats_tab.dart <a id="libfeaturesstatsstatstabdart"></a>
 
 - **Path:** `lib/features/stats/stats_tab.dart`
 - **Lines:** 663
@@ -13730,7 +14468,7 @@ class _MostOpenedTileState extends State<_MostOpenedTile> {
 
 ---
 
-## 45. lib/features/study/study_mode_screen.dart <a id="libfeaturesstudystudymodescreendart"></a>
+## 51. lib/features/study/study_mode_screen.dart <a id="libfeaturesstudystudymodescreendart"></a>
 
 - **Path:** `lib/features/study/study_mode_screen.dart`
 - **Lines:** 1219
@@ -14960,7 +15698,7 @@ class _StudyModeScreenState extends ConsumerState<StudyModeScreen>
 
 ---
 
-## 46. lib/features/tools/compress_image_to_target_size_screen.dart <a id="libfeaturestoolscompressimagetotargetsizescreendart"></a>
+## 52. lib/features/tools/compress_image_to_target_size_screen.dart <a id="libfeaturestoolscompressimagetotargetsizescreendart"></a>
 
 - **Path:** `lib/features/tools/compress_image_to_target_size_screen.dart`
 - **Lines:** 751
@@ -15722,7 +16460,7 @@ class _CompressImageToTargetSizeScreenState
 
 ---
 
-## 47. lib/features/tools/compress_pdf_screen.dart <a id="libfeaturestoolscompresspdfscreendart"></a>
+## 53. lib/features/tools/compress_pdf_screen.dart <a id="libfeaturestoolscompresspdfscreendart"></a>
 
 - **Path:** `lib/features/tools/compress_pdf_screen.dart`
 - **Lines:** 279
@@ -16012,7 +16750,7 @@ class _CompressPdfScreenState extends State<CompressPdfScreen> {
 
 ---
 
-## 48. lib/features/tools/compress_pdf_to_target_size_screen.dart <a id="libfeaturestoolscompresspdftotargetsizescreendart"></a>
+## 54. lib/features/tools/compress_pdf_to_target_size_screen.dart <a id="libfeaturestoolscompresspdftotargetsizescreendart"></a>
 
 - **Path:** `lib/features/tools/compress_pdf_to_target_size_screen.dart`
 - **Lines:** 852
@@ -16875,7 +17613,7 @@ class _CompressPdfToTargetSizeScreenState
 
 ---
 
-## 49. lib/features/tools/encrypt_pdf_screen.dart <a id="libfeaturestoolsencryptpdfscreendart"></a>
+## 55. lib/features/tools/encrypt_pdf_screen.dart <a id="libfeaturestoolsencryptpdfscreendart"></a>
 
 - **Path:** `lib/features/tools/encrypt_pdf_screen.dart`
 - **Lines:** 925
@@ -17811,7 +18549,7 @@ class _EncryptPdfScreenState extends ConsumerState<EncryptPdfScreen> {
 
 ---
 
-## 50. lib/features/tools/metadata_editor_screen.dart <a id="libfeaturestoolsmetadataeditorscreendart"></a>
+## 56. lib/features/tools/metadata_editor_screen.dart <a id="libfeaturestoolsmetadataeditorscreendart"></a>
 
 - **Path:** `lib/features/tools/metadata_editor_screen.dart`
 - **Lines:** 259
@@ -18081,7 +18819,7 @@ class _MetadataEditorScreenState extends State<MetadataEditorScreen> {
 
 ---
 
-## 51. lib/features/tools/pdf_compare_screen.dart <a id="libfeaturestoolspdfcomparescreendart"></a>
+## 57. lib/features/tools/pdf_compare_screen.dart <a id="libfeaturestoolspdfcomparescreendart"></a>
 
 - **Path:** `lib/features/tools/pdf_compare_screen.dart`
 - **Lines:** 466
@@ -18558,7 +19296,7 @@ class _PdfCompareScreenState extends State<PdfCompareScreen> {
 
 ---
 
-## 52. lib/features/tools/tools_tab.dart <a id="libfeaturestoolstoolstabdart"></a>
+## 58. lib/features/tools/tools_tab.dart <a id="libfeaturestoolstoolstabdart"></a>
 
 - **Path:** `lib/features/tools/tools_tab.dart`
 - **Lines:** 430
@@ -18999,7 +19737,7 @@ class _ToolsTabState extends State<ToolsTab> {
 
 ---
 
-## 53. lib/features/tools/version_history_screen.dart <a id="libfeaturestoolsversionhistoryscreendart"></a>
+## 59. lib/features/tools/version_history_screen.dart <a id="libfeaturestoolsversionhistoryscreendart"></a>
 
 - **Path:** `lib/features/tools/version_history_screen.dart`
 - **Lines:** 243
@@ -19253,10 +19991,10 @@ class _VersionHistoryScreenState extends State<VersionHistoryScreen> {
 
 ---
 
-## 54. lib/features/viewer/pdf_viewer_screen.dart <a id="libfeaturesviewerpdfviewerscreendart"></a>
+## 60. lib/features/viewer/pdf_viewer_screen.dart <a id="libfeaturesviewerpdfviewerscreendart"></a>
 
 - **Path:** `lib/features/viewer/pdf_viewer_screen.dart`
-- **Lines:** 2576
+- **Lines:** 2651
 - **Language:** `dart`
 
 ```dart
@@ -19284,6 +20022,11 @@ import '../study/study_mode_screen.dart';
 import '../ai/doc_qa_screen.dart';
 import '../ai/explain_text_dialog.dart';
 import '../home/pdf_list_provider.dart';
+import '../../core/ai/on_device_ai_service.dart';
+import '../../core/pet/dragon_pet_controller.dart';
+import '../../widgets/dragon_pet_widget.dart';
+import '../../widgets/dragon_pet_menu.dart';
+import '../settings/local_ai_models_screen.dart';
 
 enum MarkupAnnotationType { highlight, underline, strikethrough, squiggly }
 
@@ -21241,6 +21984,66 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     }
   }
 
+  void _showDragonPetMenu() {
+    final hasSelection = (_lastTextSelectionDetails?.selectedText ?? '').trim().isNotEmpty;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DragonPetMenu(
+        hasSelection: hasSelection,
+        onAskDocument: () {
+          Navigator.pop(context);
+          _openDocQa();
+        },
+        onExplainSelection: () {
+          Navigator.pop(context);
+          if (hasSelection) {
+            _handleExplainText();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select PDF text first.')));
+          }
+        },
+        onStudyMode: () {
+          Navigator.pop(context);
+          _openStudyMode();
+        },
+        onSummarizePage: () async {
+          Navigator.pop(context);
+          final pageText = await _extractCurrentPageTextForPet();
+          if (!mounted) return;
+          if (pageText.trim().isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No text available on the current page.')));
+          } else {
+            final result = await OnDeviceAIService.instance.summarizeSection(text: pageText, startPage: _currentPage, endPage: _currentPage);
+            if (!mounted) return;
+            showDialog(context: context, builder: (_) => AlertDialog(title: Text('Page $_currentPage Summary'), content: SingleChildScrollView(child: Text(result))));
+          }
+        },
+        onAiModels: () {
+          Navigator.pop(context);
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LocalAiModelsScreen()));
+        },
+      ),
+    );
+  }
+
+  Future<String> _extractCurrentPageTextForPet() async {
+    try {
+      if (_ttsDocument == null) {
+        final fileBytes = await File(widget.filePath).readAsBytes();
+        _ttsDocument = sf.PdfDocument(inputBytes: fileBytes);
+      }
+      final extractor = sf.PdfTextExtractor(_ttsDocument!);
+      final pageText = extractor.extractText(
+        startPageIndex: _currentPage - 1,
+        endPageIndex: _currentPage - 1,
+      );
+      return pageText;
+    } catch (_) {
+      return '';
+    }
+  }
+
   Future<void> _toggleBookmarkForCurrentPage() async {
     final existing = _userBookmarks.where((b) => b.pageNumber == _currentPage).toList();
     if (existing.isNotEmpty) {
@@ -21675,6 +22478,16 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
                 : viewerWidget,
             if (_showSelectionMenu) _buildSelectionToolbar(),
             if (_isAnnotationToolbarOpen) _buildEditorialAnnotationInspector(),
+            if (!_isCorrupted)
+              Positioned(
+                right: 10,
+                bottom: 88,
+                child: DragonPetWidget(
+                  size: 56,
+                  state: DragonPetState.idle,
+                  onTap: _showDragonPetMenu,
+                ),
+              ),
           ],
         ),
         bottomNavigationBar: Container(
@@ -21840,7 +22653,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
 
 ---
 
-## 55. lib/main.dart <a id="libmaindart"></a>
+## 61. lib/main.dart <a id="libmaindart"></a>
 
 - **Path:** `lib/main.dart`
 - **Lines:** 53
@@ -21904,7 +22717,7 @@ class _OfflinePdfReaderAppState extends ConsumerState<OfflinePdfReaderApp> {
 
 ---
 
-## 56. lib/models/ai_model_config.dart <a id="libmodelsaimodelconfigdart"></a>
+## 62. lib/models/ai_model_config.dart <a id="libmodelsaimodelconfigdart"></a>
 
 - **Path:** `lib/models/ai_model_config.dart`
 - **Lines:** 69
@@ -21984,7 +22797,7 @@ class AiModelConfig {
 
 ---
 
-## 57. lib/models/annotation_meta.dart <a id="libmodelsannotationmetadart"></a>
+## 63. lib/models/annotation_meta.dart <a id="libmodelsannotationmetadart"></a>
 
 - **Path:** `lib/models/annotation_meta.dart`
 - **Lines:** 51
@@ -22046,7 +22859,7 @@ class PdfNote {
 
 ---
 
-## 58. lib/models/bookmark.dart <a id="libmodelsbookmarkdart"></a>
+## 64. lib/models/bookmark.dart <a id="libmodelsbookmarkdart"></a>
 
 - **Path:** `lib/models/bookmark.dart`
 - **Lines:** 51
@@ -22108,7 +22921,7 @@ class Bookmark {
 
 ---
 
-## 59. lib/models/exam_session.dart <a id="libmodelsexamsessiondart"></a>
+## 65. lib/models/exam_session.dart <a id="libmodelsexamsessiondart"></a>
 
 - **Path:** `lib/models/exam_session.dart`
 - **Lines:** 47
@@ -22166,7 +22979,7 @@ class ExamSession {
 
 ---
 
-## 60. lib/models/ocr_cache_entry.dart <a id="libmodelsocrcacheentrydart"></a>
+## 66. lib/models/ocr_cache_entry.dart <a id="libmodelsocrcacheentrydart"></a>
 
 - **Path:** `lib/models/ocr_cache_entry.dart`
 - **Lines:** 35
@@ -22212,7 +23025,7 @@ class OcrCacheEntry {
 
 ---
 
-## 61. lib/models/pdf_compare_result.dart <a id="libmodelspdfcompareresultdart"></a>
+## 67. lib/models/pdf_compare_result.dart <a id="libmodelspdfcompareresultdart"></a>
 
 - **Path:** `lib/models/pdf_compare_result.dart`
 - **Lines:** 41
@@ -22264,7 +23077,7 @@ class PdfCompareResult {
 
 ---
 
-## 62. lib/models/pdf_file.dart <a id="libmodelspdffiledart"></a>
+## 68. lib/models/pdf_file.dart <a id="libmodelspdffiledart"></a>
 
 - **Path:** `lib/models/pdf_file.dart`
 - **Lines:** 151
@@ -22426,7 +23239,7 @@ class PdfFile {
 
 ---
 
-## 63. lib/models/pdf_open_request.dart <a id="libmodelspdfopenrequestdart"></a>
+## 69. lib/models/pdf_open_request.dart <a id="libmodelspdfopenrequestdart"></a>
 
 - **Path:** `lib/models/pdf_open_request.dart`
 - **Lines:** 49
@@ -22486,7 +23299,7 @@ class PdfOpenRequest {
 
 ---
 
-## 64. lib/models/pdf_version.dart <a id="libmodelspdfversiondart"></a>
+## 70. lib/models/pdf_version.dart <a id="libmodelspdfversiondart"></a>
 
 - **Path:** `lib/models/pdf_version.dart`
 - **Lines:** 47
@@ -22544,7 +23357,7 @@ class PdfVersion {
 
 ---
 
-## 65. lib/models/semantic_chunk.dart <a id="libmodelssemanticchunkdart"></a>
+## 71. lib/models/semantic_chunk.dart <a id="libmodelssemanticchunkdart"></a>
 
 - **Path:** `lib/models/semantic_chunk.dart`
 - **Lines:** 44
@@ -22599,7 +23412,7 @@ class SemanticChunk {
 
 ---
 
-## 66. lib/models/study_item.dart <a id="libmodelsstudyitemdart"></a>
+## 72. lib/models/study_item.dart <a id="libmodelsstudyitemdart"></a>
 
 - **Path:** `lib/models/study_item.dart`
 - **Lines:** 196
@@ -22806,7 +23619,7 @@ class StudyQuestion {
 
 ---
 
-## 67. lib/models/study_session.dart <a id="libmodelsstudysessiondart"></a>
+## 73. lib/models/study_session.dart <a id="libmodelsstudysessiondart"></a>
 
 - **Path:** `lib/models/study_session.dart`
 - **Lines:** 91
@@ -22908,7 +23721,7 @@ class StudyAttempt {
 
 ---
 
-## 68. lib/models/tool_usage_stat.dart <a id="libmodelstoolusagestatdart"></a>
+## 74. lib/models/tool_usage_stat.dart <a id="libmodelstoolusagestatdart"></a>
 
 - **Path:** `lib/models/tool_usage_stat.dart`
 - **Lines:** 27
@@ -22946,7 +23759,235 @@ class ToolUsageStat {
 
 ---
 
-## 69. lib/widgets/editorial_components.dart <a id="libwidgetseditorialcomponentsdart"></a>
+## 75. lib/widgets/dragon_pet_menu.dart <a id="libwidgetsdragonpetmenudart"></a>
+
+- **Path:** `lib/widgets/dragon_pet_menu.dart`
+- **Lines:** 66
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import '../core/theme/editorial_tokens.dart';
+
+class DragonPetMenu extends StatelessWidget {
+  final bool hasSelection;
+  final VoidCallback onAskDocument;
+  final VoidCallback onExplainSelection;
+  final VoidCallback onStudyMode;
+  final VoidCallback onAiModels;
+  final VoidCallback onSummarizePage;
+
+  const DragonPetMenu({
+    super.key,
+    required this.hasSelection,
+    required this.onAskDocument,
+    required this.onExplainSelection,
+    required this.onStudyMode,
+    required this.onAiModels,
+    required this.onSummarizePage,
+  });
+
+  Widget _action(BuildContext context, IconData icon, String title, String subtitle, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return ListTile(
+      dense: true,
+      leading: Icon(icon, size: 19, color: EditorialTokens.primary),
+      title: Text(title, style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+      subtitle: Text(subtitle, style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+      onTap: onTap,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.auto_awesome, size: 17, color: EditorialTokens.primary),
+                  const SizedBox(width: 8),
+                  Text('Study Companion', style: EditorialTokens.titleMedium(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              const Divider(height: 1),
+              _action(context, Icons.psychology_outlined, 'Ask Document', 'Open the existing grounded document Q&A', onAskDocument),
+              _action(context, Icons.auto_awesome, 'Explain Selection', hasSelection ? 'Explain the selected PDF text' : 'Select text first to use this action', onExplainSelection),
+              _action(context, Icons.menu_book_outlined, 'Study Mode', 'Open the existing Study Mode', onStudyMode),
+              _action(context, Icons.summarize_outlined, 'Summarize Page', 'Create a local revision summary', onSummarizePage),
+              _action(context, Icons.memory_outlined, 'Local AI Models', 'Download or remove the offline model', onAiModels),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 76. lib/widgets/dragon_pet_widget.dart <a id="libwidgetsdragonpetwidgetdart"></a>
+
+- **Path:** `lib/widgets/dragon_pet_widget.dart`
+- **Lines:** 140
+- **Language:** `dart`
+
+```dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+import '../core/pet/dragon_pet_controller.dart';
+
+class DragonPetWidget extends StatefulWidget {
+  final double size;
+  final VoidCallback? onTap;
+  final DragonPetState state;
+  final bool enabled;
+
+  const DragonPetWidget({
+    super.key,
+    this.size = 56,
+    this.onTap,
+    this.state = DragonPetState.idle,
+    this.enabled = true,
+  });
+
+  @override
+  State<DragonPetWidget> createState() => _DragonPetWidgetState();
+}
+
+class _DragonPetWidgetState extends State<DragonPetWidget>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  late final AnimationController _idleController;
+  Timer? _blinkTimer;
+  DragonPetState _visualState = DragonPetState.idle;
+
+  static const _assets = <DragonPetState, String>{
+    DragonPetState.idle: 'assets/images/dragon/dragon_idle.png',
+    DragonPetState.blink: 'assets/images/dragon/dragon_blink.png',
+    DragonPetState.happy: 'assets/images/dragon/dragon_happy.png',
+    DragonPetState.reading: 'assets/images/dragon/dragon_reading.png',
+    DragonPetState.thinking: 'assets/images/dragon/dragon_thinking.png',
+    DragonPetState.curious: 'assets/images/dragon/dragon_curious.png',
+    DragonPetState.sleeping: 'assets/images/dragon/dragon_sleeping.png',
+    DragonPetState.tired: 'assets/images/dragon/dragon_tired.png',
+    DragonPetState.excited: 'assets/images/dragon/dragon_excited.png',
+    DragonPetState.explaining: 'assets/images/dragon/dragon_explaining.png',
+    DragonPetState.working: 'assets/images/dragon/dragon_working.png',
+    DragonPetState.holdingBook: 'assets/images/dragon/dragon_holding_book.png',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _idleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat(reverse: true);
+    _visualState = widget.state;
+    _scheduleBlink();
+  }
+
+  void _scheduleBlink() {
+    _blinkTimer?.cancel();
+    _blinkTimer = Timer(Duration(milliseconds: 3000 + DateTime.now().millisecond % 2500), () {
+      if (!mounted || !widget.enabled || _visualState != DragonPetState.idle) return;
+      setState(() => _visualState = DragonPetState.blink);
+      Timer(const Duration(milliseconds: 160), () {
+        if (mounted && widget.enabled && _visualState == DragonPetState.blink) {
+          setState(() => _visualState = DragonPetState.idle);
+          _scheduleBlink();
+        }
+      });
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant DragonPetWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.state != widget.state) {
+      _visualState = widget.state;
+      _scheduleBlink();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      _idleController.stop();
+      _blinkTimer?.cancel();
+    } else if (state == AppLifecycleState.resumed && !_idleController.isAnimating) {
+      _idleController.repeat(reverse: true);
+      _scheduleBlink();
+    }
+  }
+
+  @override
+  void dispose() {
+    _blinkTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    _idleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.enabled) return const SizedBox.shrink();
+    final asset = _assets[_visualState] ?? _assets[DragonPetState.idle]!;
+    return Semantics(
+      button: true,
+      label: 'Study companion',
+      hint: 'Open study companion actions',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onTap,
+        child: AnimatedBuilder(
+          animation: _idleController,
+          builder: (context, child) {
+            final t = _visualState == DragonPetState.idle
+                ? (_idleController.value * 0.5 - 0.25)
+                : 0.0;
+            final scale = _visualState == DragonPetState.happy || _visualState == DragonPetState.excited
+                ? 1.0 + (_idleController.value * 0.02)
+                : 1.0;
+            return Transform.translate(
+              offset: Offset(0, t),
+              child: Transform.scale(scale: scale, child: child),
+            );
+          },
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 180),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            child: Image.asset(
+              asset,
+              key: ValueKey(asset),
+              width: widget.size,
+              height: widget.size,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.medium,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 77. lib/widgets/editorial_components.dart <a id="libwidgetseditorialcomponentsdart"></a>
 
 - **Path:** `lib/widgets/editorial_components.dart`
 - **Lines:** 881
@@ -23838,7 +24879,7 @@ class EditorialDocumentOperationsSheet extends StatelessWidget {
 
 ---
 
-## 70. lib/widgets/empty_state.dart <a id="libwidgetsemptystatedart"></a>
+## 78. lib/widgets/empty_state.dart <a id="libwidgetsemptystatedart"></a>
 
 - **Path:** `lib/widgets/empty_state.dart`
 - **Lines:** 52
@@ -23901,7 +24942,7 @@ class EmptyStateWidget extends StatelessWidget {
 
 ---
 
-## 71. lib/widgets/pdf_file_card.dart <a id="libwidgetspdffilecarddart"></a>
+## 79. lib/widgets/pdf_file_card.dart <a id="libwidgetspdffilecarddart"></a>
 
 - **Path:** `lib/widgets/pdf_file_card.dart`
 - **Lines:** 237
@@ -24149,7 +25190,7 @@ class _PdfFileCardState extends State<PdfFileCard> {
 
 ---
 
-## 72. lib/widgets/pdf_tool_file_picker_screen.dart <a id="libwidgetspdftoolfilepickerscreendart"></a>
+## 80. lib/widgets/pdf_tool_file_picker_screen.dart <a id="libwidgetspdftoolfilepickerscreendart"></a>
 
 - **Path:** `lib/widgets/pdf_tool_file_picker_screen.dart`
 - **Lines:** 624
@@ -24784,7 +25825,7 @@ class _PdfToolFilePickerScreenState
 
 ---
 
-## 73. lib/widgets/permission_banner.dart <a id="libwidgetspermissionbannerdart"></a>
+## 81. lib/widgets/permission_banner.dart <a id="libwidgetspermissionbannerdart"></a>
 
 - **Path:** `lib/widgets/permission_banner.dart`
 - **Lines:** 31
@@ -24826,7 +25867,180 @@ class PermissionBanner extends StatelessWidget {
 
 ---
 
-## 74. test/e2e_smoke_test.dart <a id="teste2esmoketestdart"></a>
+## 82. test/dragon_pet_test.dart <a id="testdragonpettestdart"></a>
+
+- **Path:** `test/dragon_pet_test.dart`
+- **Lines:** 162
+- **Language:** `dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:offline_pdf_reader/core/ai/ai_model_manager.dart';
+import 'package:offline_pdf_reader/core/ai/local_model_downloader.dart';
+import 'package:offline_pdf_reader/core/pet/dragon_pet_controller.dart';
+import 'package:offline_pdf_reader/widgets/dragon_pet_widget.dart';
+import 'package:offline_pdf_reader/widgets/dragon_pet_menu.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  group('DragonPetController Tests', () {
+    test('initializes in idle state and transitions states', () {
+      final controller = DragonPetController();
+      expect(controller.state, DragonPetState.idle);
+
+      controller.setState(DragonPetState.reading);
+      expect(controller.state, DragonPetState.reading);
+
+      controller.setState(DragonPetState.thinking);
+      expect(controller.state, DragonPetState.thinking);
+
+      controller.dispose();
+    });
+
+    test('pause and resume manages state correctly', () {
+      final controller = DragonPetController();
+      controller.setState(DragonPetState.sleeping);
+      expect(controller.state, DragonPetState.sleeping);
+
+      controller.pause();
+      controller.setState(DragonPetState.excited);
+      // Ignored because controller is paused
+      expect(controller.state, DragonPetState.sleeping);
+
+      controller.resume();
+      // Resume resets sleeping or tired to idle
+      expect(controller.state, DragonPetState.idle);
+
+      controller.dispose();
+    });
+  });
+
+  group('DragonPetWidget Tests', () {
+    testWidgets('renders companion and triggers onTap callback', (tester) async {
+      bool tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DragonPetWidget(
+              size: 56,
+              state: DragonPetState.idle,
+              onTap: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      // Verify Semantics
+      expect(find.bySemanticsLabel('Study companion'), findsOneWidget);
+
+      // Tap widget
+      await tester.tap(find.byType(DragonPetWidget));
+      await tester.pump();
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('respects enabled=false', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: DragonPetWidget(
+              size: 56,
+              enabled: false,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.bySemanticsLabel('Study companion'), findsNothing);
+    });
+  });
+
+  group('DragonPetMenu Tests', () {
+    testWidgets('renders all 5 companion actions and triggers callbacks', (tester) async {
+      bool askedDoc = false;
+      bool explained = false;
+      bool studied = false;
+      bool summarized = false;
+      bool aiModels = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DragonPetMenu(
+              hasSelection: true,
+              onAskDocument: () => askedDoc = true,
+              onExplainSelection: () => explained = true,
+              onStudyMode: () => studied = true,
+              onSummarizePage: () => summarized = true,
+              onAiModels: () => aiModels = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Study Companion'), findsOneWidget);
+      expect(find.text('Ask Document'), findsOneWidget);
+      expect(find.text('Explain Selection'), findsOneWidget);
+      expect(find.text('Study Mode'), findsOneWidget);
+      expect(find.text('Summarize Page'), findsOneWidget);
+      expect(find.text('Local AI Models'), findsOneWidget);
+
+      await tester.tap(find.text('Ask Document'));
+      expect(askedDoc, isTrue);
+
+      await tester.tap(find.text('Explain Selection'));
+      expect(explained, isTrue);
+
+      await tester.tap(find.text('Study Mode'));
+      expect(studied, isTrue);
+
+      await tester.tap(find.text('Summarize Page'));
+      expect(summarized, isTrue);
+
+      await tester.tap(find.text('Local AI Models'));
+      expect(aiModels, isTrue);
+    });
+  });
+
+  group('Local AI Models & Manager Tests', () {
+    test('LocalModelDownloader models registry contains expected GGUFs', () {
+      expect(LocalModelDownloader.models.length, greaterThanOrEqualTo(2));
+      final qwen1_7 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-1.7b-q4km');
+      expect(qwen1_7.fileName, 'Qwen3-1.7B-Q4_K_M.gguf');
+      expect(qwen1_7.sizeBytes, 1280000000);
+
+      final qwen0_6 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-0.6b-q40');
+      expect(qwen0_6.fileName, 'Qwen3-0.6B-Q4_0.gguf');
+      expect(qwen0_6.sizeBytes, 429000000);
+    });
+
+    test('AiModelManager updates settings and toggles enabled', () async {
+      final manager = AiModelManager.instance;
+      await manager.initialize();
+
+      expect(manager.config.maxContextLength, 2048);
+      await manager.updateSettings(maxContext: 1024);
+      expect(manager.config.maxContextLength, 1024);
+
+      await manager.toggleEnabled(false);
+      expect(manager.config.isEnabled, isFalse);
+      await manager.toggleEnabled(true);
+      expect(manager.config.isEnabled, isTrue);
+    });
+  });
+}
+```
+
+---
+
+## 83. test/e2e_smoke_test.dart <a id="teste2esmoketestdart"></a>
 
 - **Path:** `test/e2e_smoke_test.dart`
 - **Lines:** 185
@@ -25022,10 +26236,10 @@ void main() {
 
 ---
 
-## 75. test/unit_test.dart <a id="testunittestdart"></a>
+## 84. test/unit_test.dart <a id="testunittestdart"></a>
 
 - **Path:** `test/unit_test.dart`
-- **Lines:** 392
+- **Lines:** 395
 - **Language:** `dart`
 
 ```dart
@@ -25046,8 +26260,11 @@ import 'package:offline_pdf_reader/models/pdf_compare_result.dart';
 import 'package:offline_pdf_reader/core/tools/pdf_metadata_service.dart';
 import 'package:offline_pdf_reader/core/tools/pdf_target_size_compressor_service.dart';
 import 'package:offline_pdf_reader/core/tools/image_target_size_compressor_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences.setMockInitialValues({});
   group('Utils Formatting Tests', () {
     test('formatBytes converts bytes into human-readable strings', () {
       expect(Utils.formatBytes(0), '0 B');
@@ -25422,7 +26639,7 @@ void main() {
 
 ---
 
-## 76. test/widget_test.dart <a id="testwidgettestdart"></a>
+## 85. test/widget_test.dart <a id="testwidgettestdart"></a>
 
 - **Path:** `test/widget_test.dart`
 - **Lines:** 68
@@ -25501,10 +26718,10 @@ void main() {
 
 ---
 
-## 77. android/app/src/main/AndroidManifest.xml <a id="androidappsrcmainandroidmanifestxml"></a>
+## 86. android/app/src/main/AndroidManifest.xml <a id="androidappsrcmainandroidmanifestxml"></a>
 
 - **Path:** `android/app/src/main/AndroidManifest.xml`
-- **Lines:** 103
+- **Lines:** 104
 - **Language:** `xml`
 
 ```xml
@@ -25517,6 +26734,7 @@ void main() {
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:label="Offline PDF Reader"
@@ -25615,7 +26833,7 @@ void main() {
 
 ---
 
-## 78. android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt <a id="androidappsrcmainkotlincomofflinepdfappofflinepdfreadermainactivitykt"></a>
+## 87. android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt <a id="androidappsrcmainkotlincomofflinepdfappofflinepdfreadermainactivitykt"></a>
 
 - **Path:** `android/app/src/main/kotlin/com/offlinepdf/app/offline_pdf_reader/MainActivity.kt`
 - **Lines:** 754
@@ -26380,7 +27598,7 @@ class MainActivity: FlutterActivity() {
 
 ---
 
-## 79. android/app/src/main/res/xml/file_paths.xml <a id="androidappsrcmainresxmlfilepathsxml"></a>
+## 88. android/app/src/main/res/xml/file_paths.xml <a id="androidappsrcmainresxmlfilepathsxml"></a>
 
 - **Path:** `android/app/src/main/res/xml/file_paths.xml`
 - **Lines:** 7
@@ -26398,7 +27616,7 @@ class MainActivity: FlutterActivity() {
 
 ---
 
-## 80. android/app/build.gradle <a id="androidappbuildgradle"></a>
+## 89. android/app/build.gradle <a id="androidappbuildgradle"></a>
 
 - **Path:** `android/app/build.gradle`
 - **Lines:** 45
@@ -26415,7 +27633,7 @@ plugins {
 android {
     namespace = "com.offlinepdf.app.offline_pdf_reader"
     compileSdk = 36
-    ndkVersion = "25.1.8937393"
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -26454,7 +27672,38 @@ flutter {
 
 ---
 
-## 81. android/build.gradle <a id="androidbuildgradle"></a>
+## 90. android/app/proguard-rules.pro <a id="androidappproguardrulespro"></a>
+
+- **Path:** `android/app/proguard-rules.pro`
+- **Lines:** 20
+- **Language:** `properties`
+
+```properties
+# Flutter Wrapper Rules
+-keep class io.flutter.app.** { *; }
+-keep class io.flutter.plugin.**  { *; }
+-keep class io.flutter.util.**  { *; }
+-keep class io.flutter.view.**  { *; }
+-keep class io.flutter.**  { *; }
+-keep class io.flutter.plugins.**  { *; }
+-keep class com.google_mlkit_text_recognition.** { *; }
+
+# Ignore ML Kit language specific missing classes (we only use Latin)
+-dontwarn com.google.mlkit.vision.text.chinese.**
+-dontwarn com.google.mlkit.vision.text.devanagari.**
+-dontwarn com.google.mlkit.vision.text.japanese.**
+-dontwarn com.google.mlkit.vision.text.korean.**
+
+# Ignore Play Core missing classes (used by Flutter for deferred components which we don't use)
+-dontwarn com.google.android.play.core.**
+
+# llama_flutter_android native bindings and Pigeon classes
+-keep class com.write4me.llama_flutter_android.** { *; }
+```
+
+---
+
+## 91. android/build.gradle <a id="androidbuildgradle"></a>
 
 - **Path:** `android/build.gradle`
 - **Lines:** 25
@@ -26490,7 +27739,7 @@ tasks.register("clean", Delete) {
 
 ---
 
-## 82. android/settings.gradle <a id="androidsettingsgradle"></a>
+## 92. android/settings.gradle <a id="androidsettingsgradle"></a>
 
 - **Path:** `android/settings.gradle`
 - **Lines:** 25
@@ -26523,5 +27772,3 @@ plugins {
 
 include ":app"
 ```
-
----
