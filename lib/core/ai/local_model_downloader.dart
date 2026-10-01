@@ -113,23 +113,73 @@ class LocalModelDownloader {
   static Future<void> download(
     LocalModelDescriptor model, {
     required void Function(int received, int total) onProgress,
+    void Function(String status)? onStatus,
     bool Function()? isCancelled,
   }) async {
     final target = await modelFile(model);
     final partial = await partialFile(model);
     final marker = await verifiedFile(model);
     var received = await partial.exists() ? await partial.length() : 0;
+
+    // If partial file was already fully downloaded, verify and install immediately
+    if (model.expectedSizeBytes != null && received >= model.expectedSizeBytes!) {
+      onStatus?.call('Verifying SHA-256 integrity...');
+      final digest = await _sha256(partial);
+      if (digest == model.sha256) {
+        onStatus?.call('Installing model...');
+        if (await target.exists()) await target.delete();
+        await partial.rename(target.path);
+        await marker.writeAsString(jsonEncode({
+          'modelId': model.id,
+          'sha256': model.sha256,
+          'sizeBytes': await target.length(),
+          'verifiedAtUtc': DateTime.now().toUtc().toIso8601String(),
+        }), flush: true);
+        return;
+      } else {
+        await partial.delete();
+        received = 0;
+      }
+    }
+
     final client = HttpClient()
       ..connectionTimeout = const Duration(seconds: 30)
       ..idleTimeout = const Duration(seconds: 30);
 
     try {
+      onStatus?.call(received > 0 ? 'Resuming download...' : 'Connecting...');
       final request = await client.getUrl(Uri.parse(model.url));
       request.headers.set(HttpHeaders.acceptHeader, '*/*');
       if (received > 0) {
         request.headers.set(HttpHeaders.rangeHeader, 'bytes=$received-');
       }
       final response = await request.close();
+
+      // Handle HTTP 416 (Requested Range Not Satisfiable)
+      if (response.statusCode == 416) {
+        await response.drain<void>();
+        if (await partial.exists() && await partial.length() > 0) {
+          onStatus?.call('Verifying existing download...');
+          final digest = await _sha256(partial);
+          if (digest == model.sha256) {
+            onStatus?.call('Installing model...');
+            if (await target.exists()) await target.delete();
+            await partial.rename(target.path);
+            await marker.writeAsString(jsonEncode({
+              'modelId': model.id,
+              'sha256': model.sha256,
+              'sizeBytes': await target.length(),
+              'verifiedAtUtc': DateTime.now().toUtc().toIso8601String(),
+            }), flush: true);
+            return;
+          }
+        }
+        await partial.delete();
+        throw const LocalModelDownloadException(
+          'Existing download cache was invalid and has been cleared. Tap Download to start fresh.',
+        );
+      }
+
       if (received > 0) {
         if (response.statusCode == HttpStatus.partialContent) {
           final contentRange = response.headers.value(HttpHeaders.contentRangeHeader);
@@ -165,6 +215,7 @@ class LocalModelDownloader {
         mode: received > 0 ? FileMode.append : FileMode.write,
       );
 
+      onStatus?.call('Downloading model...');
       try {
         await for (final chunk in response) {
           if (isCancelled?.call() ?? false) {
@@ -184,15 +235,17 @@ class LocalModelDownloader {
         throw const LocalModelDownloadException('Downloaded model file is empty.');
       }
 
+      onStatus?.call('Verifying SHA-256 integrity (this may take ~30s)...');
       final digest = await _sha256(partial);
       if (digest != model.sha256) {
         await partial.delete();
         if (await marker.exists()) await marker.delete();
         throw const LocalModelDownloadException(
-          'SHA-256 verification failed. The model was deleted.',
+          'SHA-256 verification failed. Corrupted download was deleted. Please try again.',
         );
       }
 
+      onStatus?.call('Installing model...');
       if (await target.exists()) await target.delete();
       await partial.rename(target.path);
       await marker.writeAsString(jsonEncode({
