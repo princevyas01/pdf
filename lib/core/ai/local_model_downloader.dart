@@ -43,15 +43,15 @@ class LocalModelDownloadException implements Exception {
 class LocalModelDownloader {
   static const models = <LocalModelDescriptor>[
     LocalModelDescriptor(
-      id: 'qwen3-1.7b-q4km',
-      name: 'Qwen3 1.7B Q4_K_M',
-      fileName: 'Qwen3-1.7B-Q4_K_M.gguf',
+      id: 'qwen3-4b-q4km',
+      name: 'Qwen3 4B Q4_K_M',
+      fileName: 'Qwen3-4B-Q4_K_M.gguf',
       url:
-          'https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/daeb8e2d528a760970442092f6bf1e55c3b659eb/Qwen3-1.7B-Q4_K_M.gguf',
-      expectedSizeBytes: null,
-      displaySize: '~1.28 GB',
+          'https://huggingface.co/ggml-org/Qwen3-4B-GGUF/resolve/2f3b082b1356a6123f7ed71e65aea340da25d53c/Qwen3-4B-Q4_K_M.gguf',
+      expectedSizeBytes: 2497280640,
+      displaySize: '~2.50 GB',
       sha256:
-          'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5',
+          'ab27b9bfa375a178d6cba48f3ad892b94b7739659dcc7aae8058ce0ffed6b328',
       license: 'Apache-2.0',
       description:
           'Primary study model for document explanations, revision notes and exam generation.',
