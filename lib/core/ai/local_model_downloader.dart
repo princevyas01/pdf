@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as p;
@@ -8,7 +9,8 @@ class LocalModelDescriptor {
   final String name;
   final String fileName;
   final String url;
-  final int sizeBytes;
+  final int? expectedSizeBytes;
+  final String displaySize;
   final String sha256;
   final String license;
   final String description;
@@ -18,13 +20,16 @@ class LocalModelDescriptor {
     required this.name,
     required this.fileName,
     required this.url,
-    required this.sizeBytes,
+    required this.expectedSizeBytes,
+    required this.displaySize,
     required this.sha256,
     required this.license,
     required this.description,
   });
 
-  double get sizeMb => sizeBytes / (1024 * 1024);
+  double? get sizeMb => expectedSizeBytes == null
+      ? null
+      : expectedSizeBytes! / (1024 * 1024);
 }
 
 class LocalModelDownloadException implements Exception {
@@ -43,7 +48,8 @@ class LocalModelDownloader {
       fileName: 'Qwen3-1.7B-Q4_K_M.gguf',
       url:
           'https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/daeb8e2d528a760970442092f6bf1e55c3b659eb/Qwen3-1.7B-Q4_K_M.gguf',
-      sizeBytes: 1280000000,
+      expectedSizeBytes: null,
+      displaySize: '~1.28 GB',
       sha256:
           'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5',
       license: 'Apache-2.0',
@@ -56,7 +62,8 @@ class LocalModelDownloader {
       fileName: 'Qwen3-0.6B-Q4_0.gguf',
       url:
           'https://huggingface.co/ggml-org/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf',
-      sizeBytes: 429000000,
+      expectedSizeBytes: null,
+      displaySize: '~429 MB',
       sha256:
           'da2572f16c06133561ce56accaa822216f2391ef4d37fba427801cd6736417d4',
       license: 'Apache-2.0',
@@ -82,11 +89,25 @@ class LocalModelDownloader {
     return File(p.join(dir.path, '${model.fileName}.part'));
   }
 
+  static Future<File> verifiedFile(LocalModelDescriptor model) async {
+    final dir = await _modelDirectory();
+    return File(p.join(dir.path, '${model.fileName}.verified.json'));
+  }
+
   static Future<bool> isInstalled(LocalModelDescriptor model) async {
-    final file = await modelFile(model);
-    if (!await file.exists()) return false;
-    final stat = await file.stat();
-    return stat.size == model.sizeBytes;
+    final target = await modelFile(model);
+    final marker = await verifiedFile(model);
+    if (!await target.exists() || !await marker.exists()) return false;
+    try {
+      final stat = await target.stat();
+      final raw = jsonDecode(await marker.readAsString());
+      return raw is Map &&
+          raw['modelId'] == model.id &&
+          raw['sha256'] == model.sha256 &&
+          raw['sizeBytes'] == stat.size;
+    } catch (_) {
+      return false;
+    }
   }
 
   static Future<void> download(
@@ -96,51 +117,90 @@ class LocalModelDownloader {
   }) async {
     final target = await modelFile(model);
     final partial = await partialFile(model);
+    final marker = await verifiedFile(model);
     var received = await partial.exists() ? await partial.length() : 0;
-    final client = HttpClient()..connectionTimeout = const Duration(seconds: 20);
+    final client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 30)
+      ..idleTimeout = const Duration(seconds: 30);
+
     try {
       final request = await client.getUrl(Uri.parse(model.url));
+      request.headers.set(HttpHeaders.acceptHeader, '*/*');
       if (received > 0) {
         request.headers.set(HttpHeaders.rangeHeader, 'bytes=$received-');
       }
       final response = await request.close();
-      if (received > 0 && response.statusCode != HttpStatus.partialContent) {
-        await partial.writeAsBytes(const [], flush: true);
-        received = 0;
+      if (received > 0) {
+        if (response.statusCode == HttpStatus.partialContent) {
+          final contentRange = response.headers.value(HttpHeaders.contentRangeHeader);
+          final expectedPrefix = 'bytes $received-';
+          if (contentRange == null || !contentRange.startsWith(expectedPrefix)) {
+            await response.drain<void>();
+            throw const LocalModelDownloadException(
+              'Server returned an unexpected Content-Range for the resumed download.',
+            );
+          }
+        } else if (response.statusCode == HttpStatus.ok) {
+          await partial.writeAsBytes(const [], flush: true);
+          received = 0;
+        } else {
+          throw LocalModelDownloadException(
+            'Model resume failed: HTTP ${response.statusCode}.',
+          );
+        }
       }
+
       if (response.statusCode != HttpStatus.ok &&
           response.statusCode != HttpStatus.partialContent) {
         throw LocalModelDownloadException(
-            'Model download failed: HTTP ${response.statusCode}.');
+          'Model download failed: HTTP ${response.statusCode}.',
+        );
       }
+
       final contentLength = response.contentLength;
-      final total = received + (contentLength > 0 ? contentLength : 0);
-      final sink = partial.openWrite(
-          mode: received > 0 ? FileMode.append : FileMode.write);
+      final total = model.expectedSizeBytes ??
+          (received + (contentLength > 0 ? contentLength : 0));
       var current = received;
-      await for (final chunk in response) {
-        if (isCancelled?.call() ?? false) {
-          await sink.close();
-          throw const LocalModelDownloadException(
-              'Download cancelled. Partial file retained for resume.');
+      final sink = partial.openWrite(
+        mode: received > 0 ? FileMode.append : FileMode.write,
+      );
+
+      try {
+        await for (final chunk in response) {
+          if (isCancelled?.call() ?? false) {
+            throw const LocalModelDownloadException(
+              'Download cancelled. Partial file retained for resume.',
+            );
+          }
+          sink.add(chunk);
+          current += chunk.length;
+          onProgress(current, total);
         }
-        sink.add(chunk);
-        current += chunk.length;
-        onProgress(current, total);
+      } finally {
+        await sink.close();
       }
-      await sink.close();
-      if (current != model.sizeBytes) {
-        throw LocalModelDownloadException(
-            'Downloaded file size is $current bytes; expected ${model.sizeBytes} bytes.');
+
+      if (current <= 0) {
+        throw const LocalModelDownloadException('Downloaded model file is empty.');
       }
+
       final digest = await _sha256(partial);
       if (digest != model.sha256) {
         await partial.delete();
+        if (await marker.exists()) await marker.delete();
         throw const LocalModelDownloadException(
-            'SHA-256 verification failed. The model was deleted.');
+          'SHA-256 verification failed. The model was deleted.',
+        );
       }
+
       if (await target.exists()) await target.delete();
       await partial.rename(target.path);
+      await marker.writeAsString(jsonEncode({
+        'modelId': model.id,
+        'sha256': model.sha256,
+        'sizeBytes': await target.length(),
+        'verifiedAtUtc': DateTime.now().toUtc().toIso8601String(),
+      }), flush: true);
     } finally {
       client.close(force: true);
     }
@@ -154,7 +214,9 @@ class LocalModelDownloader {
   static Future<void> delete(LocalModelDescriptor model) async {
     final target = await modelFile(model);
     final partial = await partialFile(model);
-    if (await target.exists()) await target.delete();
-    if (await partial.exists()) await partial.delete();
+    final marker = await verifiedFile(model);
+    for (final file in [target, partial, marker]) {
+      if (await file.exists()) await file.delete();
+    }
   }
 }

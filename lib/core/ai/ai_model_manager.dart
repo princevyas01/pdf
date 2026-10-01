@@ -16,7 +16,6 @@ class AiModelManager {
     sizeMb: 0,
     statusMessage: 'No local model installed.',
   );
-
   String? _installedModelId;
   bool _initialized = false;
 
@@ -40,7 +39,7 @@ class AiModelManager {
       isEnabled: enabled,
       modelName: _installedModelId ?? '',
       statusMessage: _installedModelId != null
-          ? 'Installed local model ready.'
+          ? 'Local model selected. Verifying file before inference.'
           : 'No local model installed.',
       maxContextLength: context,
       temperature: temperature,
