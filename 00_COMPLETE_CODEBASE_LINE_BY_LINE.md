@@ -1,7 +1,7 @@
 # Offline PDF Reader — Complete Codebase Source of Truth
 > **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
 > **Total Source Files:** 92
-> **Total Source Lines:** 27026
+> **Total Source Lines:** 27188
 > **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
 
 ---
@@ -16,7 +16,7 @@
 | 4 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 103 |
 | 5 | [`lib/core/ai/local_ai_provider.dart`](#libcoreailocalaiproviderdart) | dart | 43 |
 | 6 | [`lib/core/ai/local_llm_service.dart`](#libcoreailocalllmservicedart) | dart | 126 |
-| 7 | [`lib/core/ai/local_model_downloader.dart`](#libcoreailocalmodeldownloaderdart) | dart | 222 |
+| 7 | [`lib/core/ai/local_model_downloader.dart`](#libcoreailocalmodeldownloaderdart) | dart | 275 |
 | 8 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 243 |
 | 9 | [`lib/core/ai/semantic_search_service.dart`](#libcoreaisemanticsearchservicedart) | dart | 192 |
 | 10 | [`lib/core/config/app_config.dart`](#libcoreconfigappconfigdart) | dart | 9 |
@@ -56,7 +56,7 @@
 | 44 | [`lib/features/ocr/ocr_screen.dart`](#libfeaturesocrocrscreendart) | dart | 744 |
 | 45 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 1028 |
 | 46 | [`lib/features/search/search_tab.dart`](#libfeaturessearchsearchtabdart) | dart | 453 |
-| 47 | [`lib/features/settings/local_ai_models_screen.dart`](#libfeaturessettingslocalaimodelsscreendart) | dart | 295 |
+| 47 | [`lib/features/settings/local_ai_models_screen.dart`](#libfeaturessettingslocalaimodelsscreendart) | dart | 364 |
 | 48 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 460 |
 | 49 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 833 |
 | 50 | [`lib/features/stats/stats_tab.dart`](#libfeaturesstatsstatstabdart) | dart | 663 |
@@ -69,7 +69,7 @@
 | 57 | [`lib/features/tools/pdf_compare_screen.dart`](#libfeaturestoolspdfcomparescreendart) | dart | 466 |
 | 58 | [`lib/features/tools/tools_tab.dart`](#libfeaturestoolstoolstabdart) | dart | 430 |
 | 59 | [`lib/features/tools/version_history_screen.dart`](#libfeaturestoolsversionhistoryscreendart) | dart | 243 |
-| 60 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2689 |
+| 60 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2729 |
 | 61 | [`lib/main.dart`](#libmaindart) | dart | 53 |
 | 62 | [`lib/models/ai_model_config.dart`](#libmodelsaimodelconfigdart) | dart | 69 |
 | 63 | [`lib/models/annotation_meta.dart`](#libmodelsannotationmetadart) | dart | 51 |
@@ -614,7 +614,7 @@ class LocalLlmService {
 ## 7. lib/core/ai/local_model_downloader.dart <a id="libcoreailocalmodeldownloaderdart"></a>
 
 - **Path:** `lib/core/ai/local_model_downloader.dart`
-- **Lines:** 222
+- **Lines:** 275
 - **Language:** `dart`
 
 ```dart
@@ -733,23 +733,73 @@ class LocalModelDownloader {
   static Future<void> download(
     LocalModelDescriptor model, {
     required void Function(int received, int total) onProgress,
+    void Function(String status)? onStatus,
     bool Function()? isCancelled,
   }) async {
     final target = await modelFile(model);
     final partial = await partialFile(model);
     final marker = await verifiedFile(model);
     var received = await partial.exists() ? await partial.length() : 0;
+
+    // If partial file was already fully downloaded, verify and install immediately
+    if (model.expectedSizeBytes != null && received >= model.expectedSizeBytes!) {
+      onStatus?.call('Verifying SHA-256 integrity...');
+      final digest = await _sha256(partial);
+      if (digest == model.sha256) {
+        onStatus?.call('Installing model...');
+        if (await target.exists()) await target.delete();
+        await partial.rename(target.path);
+        await marker.writeAsString(jsonEncode({
+          'modelId': model.id,
+          'sha256': model.sha256,
+          'sizeBytes': await target.length(),
+          'verifiedAtUtc': DateTime.now().toUtc().toIso8601String(),
+        }), flush: true);
+        return;
+      } else {
+        await partial.delete();
+        received = 0;
+      }
+    }
+
     final client = HttpClient()
       ..connectionTimeout = const Duration(seconds: 30)
       ..idleTimeout = const Duration(seconds: 30);
 
     try {
+      onStatus?.call(received > 0 ? 'Resuming download...' : 'Connecting...');
       final request = await client.getUrl(Uri.parse(model.url));
       request.headers.set(HttpHeaders.acceptHeader, '*/*');
       if (received > 0) {
         request.headers.set(HttpHeaders.rangeHeader, 'bytes=$received-');
       }
       final response = await request.close();
+
+      // Handle HTTP 416 (Requested Range Not Satisfiable)
+      if (response.statusCode == 416) {
+        await response.drain<void>();
+        if (await partial.exists() && await partial.length() > 0) {
+          onStatus?.call('Verifying existing download...');
+          final digest = await _sha256(partial);
+          if (digest == model.sha256) {
+            onStatus?.call('Installing model...');
+            if (await target.exists()) await target.delete();
+            await partial.rename(target.path);
+            await marker.writeAsString(jsonEncode({
+              'modelId': model.id,
+              'sha256': model.sha256,
+              'sizeBytes': await target.length(),
+              'verifiedAtUtc': DateTime.now().toUtc().toIso8601String(),
+            }), flush: true);
+            return;
+          }
+        }
+        await partial.delete();
+        throw const LocalModelDownloadException(
+          'Existing download cache was invalid and has been cleared. Tap Download to start fresh.',
+        );
+      }
+
       if (received > 0) {
         if (response.statusCode == HttpStatus.partialContent) {
           final contentRange = response.headers.value(HttpHeaders.contentRangeHeader);
@@ -785,6 +835,7 @@ class LocalModelDownloader {
         mode: received > 0 ? FileMode.append : FileMode.write,
       );
 
+      onStatus?.call('Downloading model...');
       try {
         await for (final chunk in response) {
           if (isCancelled?.call() ?? false) {
@@ -804,15 +855,17 @@ class LocalModelDownloader {
         throw const LocalModelDownloadException('Downloaded model file is empty.');
       }
 
+      onStatus?.call('Verifying SHA-256 integrity (this may take ~30s)...');
       final digest = await _sha256(partial);
       if (digest != model.sha256) {
         await partial.delete();
         if (await marker.exists()) await marker.delete();
         throw const LocalModelDownloadException(
-          'SHA-256 verification failed. The model was deleted.',
+          'SHA-256 verification failed. Corrupted download was deleted. Please try again.',
         );
       }
 
+      onStatus?.call('Installing model...');
       if (await target.exists()) await target.delete();
       await partial.rename(target.path);
       await marker.writeAsString(jsonEncode({
@@ -12447,7 +12500,7 @@ class _SearchTabState extends ConsumerState<SearchTab> {
 ## 47. lib/features/settings/local_ai_models_screen.dart <a id="libfeaturessettingslocalaimodelsscreendart"></a>
 
 - **Path:** `lib/features/settings/local_ai_models_screen.dart`
-- **Lines:** 295
+- **Lines:** 364
 - **Language:** `dart`
 
 ```dart
@@ -12472,7 +12525,9 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
   bool _initializing = true;
   int _received = 0;
   int _total = 0;
+  String? _statusText;
   String? _error;
+  String? _failedModelId;
   Map<String, bool> _installedMap = {};
 
   @override
@@ -12499,26 +12554,49 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
   }
 
   Future<void> _download(LocalModelDescriptor model) async {
-    if (_downloadingId != null) return;
+    if (_downloadingId != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Operation in progress: ${_statusText ?? "Working..."}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
     setState(() {
       _downloadingId = model.id;
       _cancelRequested = false;
       _received = 0;
       _total = model.expectedSizeBytes ?? 0;
+      _statusText = 'Connecting...';
       _error = null;
+      _failedModelId = null;
     });
     try {
       await LocalModelDownloader.download(
         model,
         isCancelled: () => _cancelRequested,
+        onStatus: (status) {
+          if (!mounted) return;
+          setState(() => _statusText = status);
+        },
         onProgress: (received, total) {
           if (!mounted) return;
           setState(() {
             _received = received;
             _total = total > 0 ? total : _total;
+            if (_statusText == null ||
+                _statusText!.startsWith('Connecting') ||
+                _statusText!.startsWith('Downloading') ||
+                _statusText!.startsWith('Resuming')) {
+              _statusText =
+                  'Downloading: ${(_received / (1024 * 1024)).toStringAsFixed(1)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(1)} MB';
+            }
           });
         },
       );
+      if (!mounted) return;
+      setState(() => _statusText = 'Finalizing installation...');
       await LocalLlmService.instance.unload();
       await AiModelManager.instance.setInstalledModel(
         modelId: model.id,
@@ -12529,19 +12607,25 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
       if (!mounted) return;
       setState(() {
         _downloadingId = null;
+        _statusText = null;
         _cancelRequested = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Local model installed and verified.')),
+        SnackBar(content: Text('${model.name} installed and verified.')),
       );
     } catch (e) {
-      if (!mounted) return;
       await _refreshInstalledState();
+      if (!mounted) return;
       setState(() {
         _downloadingId = null;
+        _statusText = null;
         _cancelRequested = false;
         _error = e.toString();
+        _failedModelId = model.id;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Model setup error: $e')),
+      );
     }
   }
 
@@ -12658,53 +12742,91 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
                         Text('License: ${model.license}', style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
                         const SizedBox(height: 10),
                         if (downloading) ...[
-                          LinearProgressIndicator(value: _total > 0 ? (_received / _total).clamp(0.0, 1.0) : null),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Text(
-                                _total > 0
-                                    ? '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(1)} MB'
-                                    : '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB downloaded',
-                                style: EditorialTokens.metadata(),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: _cancelRequested ? null : _cancelDownload,
-                                child: Text(_cancelRequested ? 'Stopping...' : 'Cancel'),
-                              ),
-                            ],
+                          LinearProgressIndicator(
+                            value: (_statusText != null &&
+                                    (_statusText!.contains('Verifying') ||
+                                     _statusText!.contains('Installing') ||
+                                     _statusText!.contains('Finalizing')))
+                                ? null
+                                : (_total > 0 ? (_received / _total).clamp(0.0, 1.0) : null),
                           ),
-                        ] else if (installed) ...[
+                          const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.verified_outlined, size: 18, color: EditorialTokens.primary),
-                              const SizedBox(width: 6),
-                              Text(
-                                active ? 'Active Model' : 'Installed & Verified',
-                                style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
-                              ),
-                              const Spacer(),
-                              if (!active)
-                                TextButton(
-                                  onPressed: busy ? null : () => _activateModel(model),
-                                  child: const Text('Select'),
+                              Expanded(
+                                child: Text(
+                                  _statusText ??
+                                      (_total > 0
+                                          ? '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(1)} MB'
+                                          : '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB'),
+                                  style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
                                 ),
-                              TextButton(
-                                onPressed: busy ? null : () => _delete(model),
-                                child: const Text('Remove'),
                               ),
+                              if (_statusText == null ||
+                                  (!_statusText!.contains('Verifying') &&
+                                   !_statusText!.contains('Installing') &&
+                                   !_statusText!.contains('Finalizing')))
+                                TextButton(
+                                  onPressed: _cancelRequested ? null : _cancelDownload,
+                                  child: Text(_cancelRequested ? 'Stopping...' : 'Cancel'),
+                                ),
                             ],
                           ),
-                        ] else
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: FilledButton.icon(
-                              onPressed: busy ? null : () => _download(model),
-                              icon: const Icon(Icons.download_outlined),
-                              label: const Text('Download Model'),
+                        ] else ...[
+                          if (_error != null && _failedModelId == model.id) ...[
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: EditorialTokens.secondary.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                border: Border.all(
+                                  color: EditorialTokens.secondary.withOpacity(0.3),
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.info_outline, size: 16, color: EditorialTokens.secondary),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(_error!, style: EditorialTokens.metadata(color: EditorialTokens.secondary)),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
+                          if (installed) ...[
+                            Row(
+                              children: [
+                                const Icon(Icons.verified_outlined, size: 18, color: EditorialTokens.primary),
+                                const SizedBox(width: 6),
+                                Text(
+                                  active ? 'Active Model' : 'Installed & Verified',
+                                  style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                                ),
+                                const Spacer(),
+                                if (!active)
+                                  TextButton(
+                                    onPressed: busy ? null : () => _activateModel(model),
+                                    child: const Text('Select'),
+                                  ),
+                                TextButton(
+                                  onPressed: busy ? null : () => _delete(model),
+                                  child: const Text('Remove'),
+                                ),
+                              ],
+                            ),
+                          ] else
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: FilledButton.icon(
+                                onPressed: () => _download(model),
+                                icon: const Icon(Icons.download_outlined),
+                                label: const Text('Download Model'),
+                              ),
+                            ),
+                        ],
                       ],
                     ),
                   );
@@ -20265,12 +20387,13 @@ class _VersionHistoryScreenState extends State<VersionHistoryScreen> {
 ## 60. lib/features/viewer/pdf_viewer_screen.dart <a id="libfeaturesviewerpdfviewerscreendart"></a>
 
 - **Path:** `lib/features/viewer/pdf_viewer_screen.dart`
-- **Lines:** 2689
+- **Lines:** 2729
 - **Language:** `dart`
 
 ```dart
 import 'dart:async';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20357,6 +20480,25 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
 
   final Stopwatch _sessionStopwatch = Stopwatch();
 
+  static const _petPosXKey = 'dragon_pet_pos_x';
+  static const _petPosYKey = 'dragon_pet_pos_y';
+  double _petX = 12.0;
+  double _petY = 16.0;
+
+  Future<void> _loadPetPosition() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final x = prefs.getDouble(_petPosXKey);
+      final y = prefs.getDouble(_petPosYKey);
+      if (x != null && y != null && mounted) {
+        setState(() {
+          _petX = x;
+          _petY = y;
+        });
+      }
+    } catch (_) {}
+  }
+
   late final DragonPetController _dragonPetController;
 
   void _setDragonState(
@@ -20376,6 +20518,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _pdfViewerController = PdfViewerController();
     _dragonPetController = DragonPetController();
     _dragonPetController.markInteraction();
+    _loadPetPosition();
     if (widget.initialPage > 1) {
       _initialPage = widget.initialPage;
       _currentPage = widget.initialPage;
@@ -22777,24 +22920,43 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
             if (_isAnnotationToolbarOpen) _buildEditorialAnnotationInspector(),
             if (!_isCorrupted)
               Positioned(
-                right: 10,
-                bottom: 88,
-                child: AnimatedBuilder(
-                  animation: _dragonPetController,
-                  builder: (context, _) {
-                    return DragonPetWidget(
-                      size: 56,
-                      state: _dragonPetController.state,
-                      onTap: () {
-                        _dragonPetController.markInteraction();
-                        _setDragonState(
-                          DragonPetState.curious,
-                          returnToPreviousAfter: const Duration(milliseconds: 900),
-                        );
-                        _showDragonPetMenu();
-                      },
-                    );
+                left: _petX,
+                top: _petY,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onPanUpdate: (details) {
+                    setState(() {
+                      final mq = MediaQuery.of(context);
+                      final maxX = (mq.size.width - 64.0).clamp(0.0, double.infinity);
+                      final maxY = (mq.size.height - 180.0).clamp(0.0, double.infinity);
+                      _petX = (_petX + details.delta.dx).clamp(4.0, maxX);
+                      _petY = (_petY + details.delta.dy).clamp(4.0, maxY);
+                    });
                   },
+                  onPanEnd: (_) async {
+                    try {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setDouble(_petPosXKey, _petX);
+                      await prefs.setDouble(_petPosYKey, _petY);
+                    } catch (_) {}
+                  },
+                  onTap: () {
+                    _dragonPetController.markInteraction();
+                    _setDragonState(
+                      DragonPetState.curious,
+                      returnToPreviousAfter: const Duration(milliseconds: 900),
+                    );
+                    _showDragonPetMenu();
+                  },
+                  child: AnimatedBuilder(
+                    animation: _dragonPetController,
+                    builder: (context, _) {
+                      return DragonPetWidget(
+                        size: 56,
+                        state: _dragonPetController.state,
+                      );
+                    },
+                  ),
                 ),
               ),
           ],
