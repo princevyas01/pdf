@@ -15,3 +15,6 @@
 
 # Ignore Play Core missing classes (used by Flutter for deferred components which we don't use)
 -dontwarn com.google.android.play.core.**
+
+# llama_flutter_android native bindings and Pigeon classes
+-keep class com.write4me.llama_flutter_android.** { *; }
