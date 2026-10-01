@@ -19,7 +19,9 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
   bool _initializing = true;
   int _received = 0;
   int _total = 0;
+  String? _statusText;
   String? _error;
+  String? _failedModelId;
   Map<String, bool> _installedMap = {};
 
   @override
@@ -46,26 +48,49 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
   }
 
   Future<void> _download(LocalModelDescriptor model) async {
-    if (_downloadingId != null) return;
+    if (_downloadingId != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Operation in progress: ${_statusText ?? "Working..."}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
     setState(() {
       _downloadingId = model.id;
       _cancelRequested = false;
       _received = 0;
       _total = model.expectedSizeBytes ?? 0;
+      _statusText = 'Connecting...';
       _error = null;
+      _failedModelId = null;
     });
     try {
       await LocalModelDownloader.download(
         model,
         isCancelled: () => _cancelRequested,
+        onStatus: (status) {
+          if (!mounted) return;
+          setState(() => _statusText = status);
+        },
         onProgress: (received, total) {
           if (!mounted) return;
           setState(() {
             _received = received;
             _total = total > 0 ? total : _total;
+            if (_statusText == null ||
+                _statusText!.startsWith('Connecting') ||
+                _statusText!.startsWith('Downloading') ||
+                _statusText!.startsWith('Resuming')) {
+              _statusText =
+                  'Downloading: ${(_received / (1024 * 1024)).toStringAsFixed(1)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(1)} MB';
+            }
           });
         },
       );
+      if (!mounted) return;
+      setState(() => _statusText = 'Finalizing installation...');
       await LocalLlmService.instance.unload();
       await AiModelManager.instance.setInstalledModel(
         modelId: model.id,
@@ -76,19 +101,25 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
       if (!mounted) return;
       setState(() {
         _downloadingId = null;
+        _statusText = null;
         _cancelRequested = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Local model installed and verified.')),
+        SnackBar(content: Text('${model.name} installed and verified.')),
       );
     } catch (e) {
-      if (!mounted) return;
       await _refreshInstalledState();
+      if (!mounted) return;
       setState(() {
         _downloadingId = null;
+        _statusText = null;
         _cancelRequested = false;
         _error = e.toString();
+        _failedModelId = model.id;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Model setup error: $e')),
+      );
     }
   }
 
@@ -205,53 +236,91 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
                         Text('License: ${model.license}', style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
                         const SizedBox(height: 10),
                         if (downloading) ...[
-                          LinearProgressIndicator(value: _total > 0 ? (_received / _total).clamp(0.0, 1.0) : null),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Text(
-                                _total > 0
-                                    ? '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(1)} MB'
-                                    : '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB downloaded',
-                                style: EditorialTokens.metadata(),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: _cancelRequested ? null : _cancelDownload,
-                                child: Text(_cancelRequested ? 'Stopping...' : 'Cancel'),
-                              ),
-                            ],
+                          LinearProgressIndicator(
+                            value: (_statusText != null &&
+                                    (_statusText!.contains('Verifying') ||
+                                     _statusText!.contains('Installing') ||
+                                     _statusText!.contains('Finalizing')))
+                                ? null
+                                : (_total > 0 ? (_received / _total).clamp(0.0, 1.0) : null),
                           ),
-                        ] else if (installed) ...[
+                          const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.verified_outlined, size: 18, color: EditorialTokens.primary),
-                              const SizedBox(width: 6),
-                              Text(
-                                active ? 'Active Model' : 'Installed & Verified',
-                                style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
-                              ),
-                              const Spacer(),
-                              if (!active)
-                                TextButton(
-                                  onPressed: busy ? null : () => _activateModel(model),
-                                  child: const Text('Select'),
+                              Expanded(
+                                child: Text(
+                                  _statusText ??
+                                      (_total > 0
+                                          ? '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(1)} MB'
+                                          : '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB'),
+                                  style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
                                 ),
-                              TextButton(
-                                onPressed: busy ? null : () => _delete(model),
-                                child: const Text('Remove'),
                               ),
+                              if (_statusText == null ||
+                                  (!_statusText!.contains('Verifying') &&
+                                   !_statusText!.contains('Installing') &&
+                                   !_statusText!.contains('Finalizing')))
+                                TextButton(
+                                  onPressed: _cancelRequested ? null : _cancelDownload,
+                                  child: Text(_cancelRequested ? 'Stopping...' : 'Cancel'),
+                                ),
                             ],
                           ),
-                        ] else
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: FilledButton.icon(
-                              onPressed: busy ? null : () => _download(model),
-                              icon: const Icon(Icons.download_outlined),
-                              label: const Text('Download Model'),
+                        ] else ...[
+                          if (_error != null && _failedModelId == model.id) ...[
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: EditorialTokens.secondary.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                border: Border.all(
+                                  color: EditorialTokens.secondary.withOpacity(0.3),
+                                  width: EditorialTokens.hairline,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.info_outline, size: 16, color: EditorialTokens.secondary),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(_error!, style: EditorialTokens.metadata(color: EditorialTokens.secondary)),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
+                          if (installed) ...[
+                            Row(
+                              children: [
+                                const Icon(Icons.verified_outlined, size: 18, color: EditorialTokens.primary),
+                                const SizedBox(width: 6),
+                                Text(
+                                  active ? 'Active Model' : 'Installed & Verified',
+                                  style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                                ),
+                                const Spacer(),
+                                if (!active)
+                                  TextButton(
+                                    onPressed: busy ? null : () => _activateModel(model),
+                                    child: const Text('Select'),
+                                  ),
+                                TextButton(
+                                  onPressed: busy ? null : () => _delete(model),
+                                  child: const Text('Remove'),
+                                ),
+                              ],
+                            ),
+                          ] else
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: FilledButton.icon(
+                                onPressed: () => _download(model),
+                                icon: const Icon(Icons.download_outlined),
+                                label: const Text('Download Model'),
+                              ),
+                            ),
+                        ],
                       ],
                     ),
                   );
