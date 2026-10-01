@@ -1,7 +1,7 @@
 # Offline PDF Reader — Complete Codebase Source of Truth
 > **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
 > **Total Source Files:** 92
-> **Total Source Lines:** 27025
+> **Total Source Lines:** 27026
 > **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
 
 ---
@@ -91,7 +91,7 @@
 | 79 | [`lib/widgets/pdf_file_card.dart`](#libwidgetspdffilecarddart) | dart | 237 |
 | 80 | [`lib/widgets/pdf_tool_file_picker_screen.dart`](#libwidgetspdftoolfilepickerscreendart) | dart | 624 |
 | 81 | [`lib/widgets/permission_banner.dart`](#libwidgetspermissionbannerdart) | dart | 31 |
-| 82 | [`test/dragon_pet_test.dart`](#testdragonpettestdart) | dart | 196 |
+| 82 | [`test/dragon_pet_test.dart`](#testdragonpettestdart) | dart | 197 |
 | 83 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 185 |
 | 84 | [`test/unit_test.dart`](#testunittestdart) | dart | 395 |
 | 85 | [`test/widget_test.dart`](#testwidgettestdart) | dart | 68 |
@@ -663,15 +663,15 @@ class LocalModelDownloadException implements Exception {
 class LocalModelDownloader {
   static const models = <LocalModelDescriptor>[
     LocalModelDescriptor(
-      id: 'qwen3-1.7b-q4km',
-      name: 'Qwen3 1.7B Q4_K_M',
-      fileName: 'Qwen3-1.7B-Q4_K_M.gguf',
+      id: 'qwen3-4b-q4km',
+      name: 'Qwen3 4B Q4_K_M',
+      fileName: 'Qwen3-4B-Q4_K_M.gguf',
       url:
-          'https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/daeb8e2d528a760970442092f6bf1e55c3b659eb/Qwen3-1.7B-Q4_K_M.gguf',
-      expectedSizeBytes: null,
-      displaySize: '~1.28 GB',
+          'https://huggingface.co/ggml-org/Qwen3-4B-GGUF/resolve/2f3b082b1356a6123f7ed71e65aea340da25d53c/Qwen3-4B-Q4_K_M.gguf',
+      expectedSizeBytes: 2497280640,
+      displaySize: '~2.50 GB',
       sha256:
-          'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5',
+          'ab27b9bfa375a178d6cba48f3ad892b94b7739659dcc7aae8058ce0ffed6b328',
       license: 'Apache-2.0',
       description:
           'Primary study model for document explanations, revision notes and exam generation.',
@@ -26199,7 +26199,7 @@ class PermissionBanner extends StatelessWidget {
 ## 82. test/dragon_pet_test.dart <a id="testdragonpettestdart"></a>
 
 - **Path:** `test/dragon_pet_test.dart`
-- **Lines:** 196
+- **Lines:** 197
 - **Language:** `dart`
 
 ```dart
@@ -26372,10 +26372,11 @@ void main() {
   group('Local AI Models & Manager Tests', () {
     test('LocalModelDownloader models registry contains expected GGUFs', () {
       expect(LocalModelDownloader.models.length, greaterThanOrEqualTo(2));
-      final qwen1_7 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-1.7b-q4km');
-      expect(qwen1_7.fileName, 'Qwen3-1.7B-Q4_K_M.gguf');
-      expect(qwen1_7.displaySize, '~1.28 GB');
-      expect(qwen1_7.sha256, 'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5');
+      final qwen4 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-4b-q4km');
+      expect(qwen4.fileName, 'Qwen3-4B-Q4_K_M.gguf');
+      expect(qwen4.expectedSizeBytes, 2497280640);
+      expect(qwen4.displaySize, '~2.50 GB');
+      expect(qwen4.sha256, 'ab27b9bfa375a178d6cba48f3ad892b94b7739659dcc7aae8058ce0ffed6b328');
 
       final qwen0_6 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-0.6b-q40');
       expect(qwen0_6.fileName, 'Qwen3-0.6B-Q4_0.gguf');
