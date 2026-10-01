@@ -167,10 +167,11 @@ void main() {
   group('Local AI Models & Manager Tests', () {
     test('LocalModelDownloader models registry contains expected GGUFs', () {
       expect(LocalModelDownloader.models.length, greaterThanOrEqualTo(2));
-      final qwen1_7 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-1.7b-q4km');
-      expect(qwen1_7.fileName, 'Qwen3-1.7B-Q4_K_M.gguf');
-      expect(qwen1_7.displaySize, '~1.28 GB');
-      expect(qwen1_7.sha256, 'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5');
+      final qwen4 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-4b-q4km');
+      expect(qwen4.fileName, 'Qwen3-4B-Q4_K_M.gguf');
+      expect(qwen4.expectedSizeBytes, 2497280640);
+      expect(qwen4.displaySize, '~2.50 GB');
+      expect(qwen4.sha256, 'ab27b9bfa375a178d6cba48f3ad892b94b7739659dcc7aae8058ce0ffed6b328');
 
       final qwen0_6 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-0.6b-q40');
       expect(qwen0_6.fileName, 'Qwen3-0.6B-Q4_0.gguf');
