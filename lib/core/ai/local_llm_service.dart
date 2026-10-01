@@ -4,6 +4,13 @@ import 'package:llama_flutter_android/llama_flutter_android.dart';
 import 'ai_model_manager.dart';
 import 'local_model_downloader.dart';
 
+class LocalLlmException implements Exception {
+  final String message;
+  const LocalLlmException(this.message);
+  @override
+  String toString() => message;
+}
+
 class LocalLlmService {
   static final LocalLlmService instance = LocalLlmService._init();
   LocalLlmService._init();
@@ -34,7 +41,7 @@ class LocalLlmService {
   Future<void> load() async {
     await AiModelManager.instance.initialize();
     final file = await _resolveInstalledModel();
-    if (file == null) throw StateError('No verified local model is installed.');
+    if (file == null) throw const LocalLlmException('No verified local model is installed.');
     if (_loaded && _loadedModelId == AiModelManager.instance.installedModelId) return;
     await unload();
     final controller = LlamaController();
@@ -57,12 +64,14 @@ class LocalLlmService {
     double? temperature,
   }) async {
     await load();
-    final controller = _controller!;
+    if (_controller == null) {
+      throw const LocalLlmException('Local LLM controller is not loaded.');
+    }
     final chunks = <String>[];
 
     await _generationSubscription?.cancel();
     final done = Completer<void>();
-    _generationSubscription = controller.generateChat(
+    _generationSubscription = _controller!.generateChat(
       messages: [
         ChatMessage(role: 'system', content: systemPrompt),
         ChatMessage(role: 'user', content: userPrompt),
@@ -75,7 +84,6 @@ class LocalLlmService {
       minP: 0.05,
       repeatPenalty: 1.12,
       repeatLastN: 64,
-      mirostat: 0,
     ).listen(
       chunks.add,
       onError: (Object error, StackTrace stack) {
@@ -86,8 +94,11 @@ class LocalLlmService {
       },
     );
     await done.future;
-    final raw = chunks.join();
-    return _cleanModelText(raw);
+    final text = _cleanModelText(chunks.join());
+    if (text.trim().isEmpty) {
+      throw const LocalLlmException('The local model returned an empty response.');
+    }
+    return text;
   }
 
   Future<void> stop() async {
