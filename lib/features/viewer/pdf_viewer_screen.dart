@@ -22,6 +22,11 @@ import '../study/study_mode_screen.dart';
 import '../ai/doc_qa_screen.dart';
 import '../ai/explain_text_dialog.dart';
 import '../home/pdf_list_provider.dart';
+import '../../core/ai/on_device_ai_service.dart';
+import '../../core/pet/dragon_pet_controller.dart';
+import '../../widgets/dragon_pet_widget.dart';
+import '../../widgets/dragon_pet_menu.dart';
+import '../settings/local_ai_models_screen.dart';
 
 enum MarkupAnnotationType { highlight, underline, strikethrough, squiggly }
 
@@ -1979,6 +1984,66 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     }
   }
 
+  void _showDragonPetMenu() {
+    final hasSelection = (_lastTextSelectionDetails?.selectedText ?? '').trim().isNotEmpty;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DragonPetMenu(
+        hasSelection: hasSelection,
+        onAskDocument: () {
+          Navigator.pop(context);
+          _openDocQa();
+        },
+        onExplainSelection: () {
+          Navigator.pop(context);
+          if (hasSelection) {
+            _handleExplainText();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select PDF text first.')));
+          }
+        },
+        onStudyMode: () {
+          Navigator.pop(context);
+          _openStudyMode();
+        },
+        onSummarizePage: () async {
+          Navigator.pop(context);
+          final pageText = await _extractCurrentPageTextForPet();
+          if (!mounted) return;
+          if (pageText.trim().isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No text available on the current page.')));
+          } else {
+            final result = await OnDeviceAIService.instance.summarizeSection(text: pageText, startPage: _currentPage, endPage: _currentPage);
+            if (!mounted) return;
+            showDialog(context: context, builder: (_) => AlertDialog(title: Text('Page $_currentPage Summary'), content: SingleChildScrollView(child: Text(result))));
+          }
+        },
+        onAiModels: () {
+          Navigator.pop(context);
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LocalAiModelsScreen()));
+        },
+      ),
+    );
+  }
+
+  Future<String> _extractCurrentPageTextForPet() async {
+    try {
+      if (_ttsDocument == null) {
+        final fileBytes = await File(widget.filePath).readAsBytes();
+        _ttsDocument = sf.PdfDocument(inputBytes: fileBytes);
+      }
+      final extractor = sf.PdfTextExtractor(_ttsDocument!);
+      final pageText = extractor.extractText(
+        startPageIndex: _currentPage - 1,
+        endPageIndex: _currentPage - 1,
+      );
+      return pageText;
+    } catch (_) {
+      return '';
+    }
+  }
+
   Future<void> _toggleBookmarkForCurrentPage() async {
     final existing = _userBookmarks.where((b) => b.pageNumber == _currentPage).toList();
     if (existing.isNotEmpty) {
@@ -2413,6 +2478,16 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
                 : viewerWidget,
             if (_showSelectionMenu) _buildSelectionToolbar(),
             if (_isAnnotationToolbarOpen) _buildEditorialAnnotationInspector(),
+            if (!_isCorrupted)
+              Positioned(
+                right: 10,
+                bottom: 88,
+                child: DragonPetWidget(
+                  size: 56,
+                  state: DragonPetState.idle,
+                  onTap: _showDragonPetMenu,
+                ),
+              ),
           ],
         ),
         bottomNavigationBar: Container(

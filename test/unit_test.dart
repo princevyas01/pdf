@@ -15,8 +15,11 @@ import 'package:offline_pdf_reader/models/pdf_compare_result.dart';
 import 'package:offline_pdf_reader/core/tools/pdf_metadata_service.dart';
 import 'package:offline_pdf_reader/core/tools/pdf_target_size_compressor_service.dart';
 import 'package:offline_pdf_reader/core/tools/image_target_size_compressor_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences.setMockInitialValues({});
   group('Utils Formatting Tests', () {
     test('formatBytes converts bytes into human-readable strings', () {
       expect(Utils.formatBytes(0), '0 B');
