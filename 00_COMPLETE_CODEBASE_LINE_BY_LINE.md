@@ -1,7 +1,7 @@
 # Offline PDF Reader — Complete Codebase Source of Truth
 > **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
 > **Total Source Files:** 92
-> **Total Source Lines:** 26662
+> **Total Source Lines:** 27025
 > **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
 
 ---
@@ -13,15 +13,15 @@
 | 1 | [`pubspec.yaml`](#pubspecyaml) | yaml | 96 |
 | 2 | [`analysis_options.yaml`](#analysisoptionsyaml) | yaml | 28 |
 | 3 | [`README.md`](#readmemd) | text | 44 |
-| 4 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 104 |
+| 4 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 103 |
 | 5 | [`lib/core/ai/local_ai_provider.dart`](#libcoreailocalaiproviderdart) | dart | 43 |
-| 6 | [`lib/core/ai/local_llm_service.dart`](#libcoreailocalllmservicedart) | dart | 115 |
-| 7 | [`lib/core/ai/local_model_downloader.dart`](#libcoreailocalmodeldownloaderdart) | dart | 160 |
-| 8 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 193 |
+| 6 | [`lib/core/ai/local_llm_service.dart`](#libcoreailocalllmservicedart) | dart | 126 |
+| 7 | [`lib/core/ai/local_model_downloader.dart`](#libcoreailocalmodeldownloaderdart) | dart | 222 |
+| 8 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 243 |
 | 9 | [`lib/core/ai/semantic_search_service.dart`](#libcoreaisemanticsearchservicedart) | dart | 192 |
 | 10 | [`lib/core/config/app_config.dart`](#libcoreconfigappconfigdart) | dart | 9 |
 | 11 | [`lib/core/permissions/permissions_service.dart`](#libcorepermissionspermissionsservicedart) | dart | 67 |
-| 12 | [`lib/core/pet/dragon_pet_controller.dart`](#libcorepetdragonpetcontrollerdart) | dart | 54 |
+| 12 | [`lib/core/pet/dragon_pet_controller.dart`](#libcorepetdragonpetcontrollerdart) | dart | 119 |
 | 13 | [`lib/core/services/external_pdf_intent_service.dart`](#libcoreservicesexternalpdfintentservicedart) | dart | 188 |
 | 14 | [`lib/core/storage/database_helper.dart`](#libcorestoragedatabasehelperdart) | dart | 830 |
 | 15 | [`lib/core/storage/file_scanner.dart`](#libcorestoragefilescannerdart) | dart | 537 |
@@ -56,7 +56,7 @@
 | 44 | [`lib/features/ocr/ocr_screen.dart`](#libfeaturesocrocrscreendart) | dart | 744 |
 | 45 | [`lib/features/scan/scan_document_screen.dart`](#libfeaturesscanscandocumentscreendart) | dart | 1028 |
 | 46 | [`lib/features/search/search_tab.dart`](#libfeaturessearchsearchtabdart) | dart | 453 |
-| 47 | [`lib/features/settings/local_ai_models_screen.dart`](#libfeaturessettingslocalaimodelsscreendart) | dart | 211 |
+| 47 | [`lib/features/settings/local_ai_models_screen.dart`](#libfeaturessettingslocalaimodelsscreendart) | dart | 295 |
 | 48 | [`lib/features/settings/settings_screen.dart`](#libfeaturessettingssettingsscreendart) | dart | 460 |
 | 49 | [`lib/features/split/split_screen.dart`](#libfeaturessplitsplitscreendart) | dart | 833 |
 | 50 | [`lib/features/stats/stats_tab.dart`](#libfeaturesstatsstatstabdart) | dart | 663 |
@@ -69,7 +69,7 @@
 | 57 | [`lib/features/tools/pdf_compare_screen.dart`](#libfeaturestoolspdfcomparescreendart) | dart | 466 |
 | 58 | [`lib/features/tools/tools_tab.dart`](#libfeaturestoolstoolstabdart) | dart | 430 |
 | 59 | [`lib/features/tools/version_history_screen.dart`](#libfeaturestoolsversionhistoryscreendart) | dart | 243 |
-| 60 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2651 |
+| 60 | [`lib/features/viewer/pdf_viewer_screen.dart`](#libfeaturesviewerpdfviewerscreendart) | dart | 2689 |
 | 61 | [`lib/main.dart`](#libmaindart) | dart | 53 |
 | 62 | [`lib/models/ai_model_config.dart`](#libmodelsaimodelconfigdart) | dart | 69 |
 | 63 | [`lib/models/annotation_meta.dart`](#libmodelsannotationmetadart) | dart | 51 |
@@ -85,13 +85,13 @@
 | 73 | [`lib/models/study_session.dart`](#libmodelsstudysessiondart) | dart | 91 |
 | 74 | [`lib/models/tool_usage_stat.dart`](#libmodelstoolusagestatdart) | dart | 27 |
 | 75 | [`lib/widgets/dragon_pet_menu.dart`](#libwidgetsdragonpetmenudart) | dart | 66 |
-| 76 | [`lib/widgets/dragon_pet_widget.dart`](#libwidgetsdragonpetwidgetdart) | dart | 140 |
+| 76 | [`lib/widgets/dragon_pet_widget.dart`](#libwidgetsdragonpetwidgetdart) | dart | 160 |
 | 77 | [`lib/widgets/editorial_components.dart`](#libwidgetseditorialcomponentsdart) | dart | 881 |
 | 78 | [`lib/widgets/empty_state.dart`](#libwidgetsemptystatedart) | dart | 52 |
 | 79 | [`lib/widgets/pdf_file_card.dart`](#libwidgetspdffilecarddart) | dart | 237 |
 | 80 | [`lib/widgets/pdf_tool_file_picker_screen.dart`](#libwidgetspdftoolfilepickerscreendart) | dart | 624 |
 | 81 | [`lib/widgets/permission_banner.dart`](#libwidgetspermissionbannerdart) | dart | 31 |
-| 82 | [`test/dragon_pet_test.dart`](#testdragonpettestdart) | dart | 162 |
+| 82 | [`test/dragon_pet_test.dart`](#testdragonpettestdart) | dart | 196 |
 | 83 | [`test/e2e_smoke_test.dart`](#teste2esmoketestdart) | dart | 185 |
 | 84 | [`test/unit_test.dart`](#testunittestdart) | dart | 395 |
 | 85 | [`test/widget_test.dart`](#testwidgettestdart) | dart | 68 |
@@ -309,7 +309,7 @@ A private, distraction-free document reader and archival study studio designed f
 ## 4. lib/core/ai/ai_model_manager.dart <a id="libcoreaiaimodelmanagerdart"></a>
 
 - **Path:** `lib/core/ai/ai_model_manager.dart`
-- **Lines:** 104
+- **Lines:** 103
 - **Language:** `dart`
 
 ```dart
@@ -331,7 +331,6 @@ class AiModelManager {
     sizeMb: 0,
     statusMessage: 'No local model installed.',
   );
-
   String? _installedModelId;
   bool _initialized = false;
 
@@ -355,7 +354,7 @@ class AiModelManager {
       isEnabled: enabled,
       modelName: _installedModelId ?? '',
       statusMessage: _installedModelId != null
-          ? 'Installed local model ready.'
+          ? 'Local model selected. Verifying file before inference.'
           : 'No local model installed.',
       maxContextLength: context,
       temperature: temperature,
@@ -478,7 +477,7 @@ abstract class LocalAIProvider {
 ## 6. lib/core/ai/local_llm_service.dart <a id="libcoreailocalllmservicedart"></a>
 
 - **Path:** `lib/core/ai/local_llm_service.dart`
-- **Lines:** 115
+- **Lines:** 126
 - **Language:** `dart`
 
 ````dart
@@ -487,6 +486,13 @@ import 'dart:io';
 import 'package:llama_flutter_android/llama_flutter_android.dart';
 import 'ai_model_manager.dart';
 import 'local_model_downloader.dart';
+
+class LocalLlmException implements Exception {
+  final String message;
+  const LocalLlmException(this.message);
+  @override
+  String toString() => message;
+}
 
 class LocalLlmService {
   static final LocalLlmService instance = LocalLlmService._init();
@@ -518,7 +524,7 @@ class LocalLlmService {
   Future<void> load() async {
     await AiModelManager.instance.initialize();
     final file = await _resolveInstalledModel();
-    if (file == null) throw StateError('No verified local model is installed.');
+    if (file == null) throw const LocalLlmException('No verified local model is installed.');
     if (_loaded && _loadedModelId == AiModelManager.instance.installedModelId) return;
     await unload();
     final controller = LlamaController();
@@ -541,12 +547,14 @@ class LocalLlmService {
     double? temperature,
   }) async {
     await load();
-    final controller = _controller!;
+    if (_controller == null) {
+      throw const LocalLlmException('Local LLM controller is not loaded.');
+    }
     final chunks = <String>[];
 
     await _generationSubscription?.cancel();
     final done = Completer<void>();
-    _generationSubscription = controller.generateChat(
+    _generationSubscription = _controller!.generateChat(
       messages: [
         ChatMessage(role: 'system', content: systemPrompt),
         ChatMessage(role: 'user', content: userPrompt),
@@ -559,7 +567,6 @@ class LocalLlmService {
       minP: 0.05,
       repeatPenalty: 1.12,
       repeatLastN: 64,
-      mirostat: 0,
     ).listen(
       chunks.add,
       onError: (Object error, StackTrace stack) {
@@ -570,8 +577,11 @@ class LocalLlmService {
       },
     );
     await done.future;
-    final raw = chunks.join();
-    return _cleanModelText(raw);
+    final text = _cleanModelText(chunks.join());
+    if (text.trim().isEmpty) {
+      throw const LocalLlmException('The local model returned an empty response.');
+    }
+    return text;
   }
 
   Future<void> stop() async {
@@ -604,10 +614,11 @@ class LocalLlmService {
 ## 7. lib/core/ai/local_model_downloader.dart <a id="libcoreailocalmodeldownloaderdart"></a>
 
 - **Path:** `lib/core/ai/local_model_downloader.dart`
-- **Lines:** 160
+- **Lines:** 222
 - **Language:** `dart`
 
 ```dart
+import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as p;
@@ -618,7 +629,8 @@ class LocalModelDescriptor {
   final String name;
   final String fileName;
   final String url;
-  final int sizeBytes;
+  final int? expectedSizeBytes;
+  final String displaySize;
   final String sha256;
   final String license;
   final String description;
@@ -628,13 +640,16 @@ class LocalModelDescriptor {
     required this.name,
     required this.fileName,
     required this.url,
-    required this.sizeBytes,
+    required this.expectedSizeBytes,
+    required this.displaySize,
     required this.sha256,
     required this.license,
     required this.description,
   });
 
-  double get sizeMb => sizeBytes / (1024 * 1024);
+  double? get sizeMb => expectedSizeBytes == null
+      ? null
+      : expectedSizeBytes! / (1024 * 1024);
 }
 
 class LocalModelDownloadException implements Exception {
@@ -653,7 +668,8 @@ class LocalModelDownloader {
       fileName: 'Qwen3-1.7B-Q4_K_M.gguf',
       url:
           'https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF/resolve/daeb8e2d528a760970442092f6bf1e55c3b659eb/Qwen3-1.7B-Q4_K_M.gguf',
-      sizeBytes: 1280000000,
+      expectedSizeBytes: null,
+      displaySize: '~1.28 GB',
       sha256:
           'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5',
       license: 'Apache-2.0',
@@ -666,7 +682,8 @@ class LocalModelDownloader {
       fileName: 'Qwen3-0.6B-Q4_0.gguf',
       url:
           'https://huggingface.co/ggml-org/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf',
-      sizeBytes: 429000000,
+      expectedSizeBytes: null,
+      displaySize: '~429 MB',
       sha256:
           'da2572f16c06133561ce56accaa822216f2391ef4d37fba427801cd6736417d4',
       license: 'Apache-2.0',
@@ -692,11 +709,25 @@ class LocalModelDownloader {
     return File(p.join(dir.path, '${model.fileName}.part'));
   }
 
+  static Future<File> verifiedFile(LocalModelDescriptor model) async {
+    final dir = await _modelDirectory();
+    return File(p.join(dir.path, '${model.fileName}.verified.json'));
+  }
+
   static Future<bool> isInstalled(LocalModelDescriptor model) async {
-    final file = await modelFile(model);
-    if (!await file.exists()) return false;
-    final stat = await file.stat();
-    return stat.size == model.sizeBytes;
+    final target = await modelFile(model);
+    final marker = await verifiedFile(model);
+    if (!await target.exists() || !await marker.exists()) return false;
+    try {
+      final stat = await target.stat();
+      final raw = jsonDecode(await marker.readAsString());
+      return raw is Map &&
+          raw['modelId'] == model.id &&
+          raw['sha256'] == model.sha256 &&
+          raw['sizeBytes'] == stat.size;
+    } catch (_) {
+      return false;
+    }
   }
 
   static Future<void> download(
@@ -706,51 +737,90 @@ class LocalModelDownloader {
   }) async {
     final target = await modelFile(model);
     final partial = await partialFile(model);
+    final marker = await verifiedFile(model);
     var received = await partial.exists() ? await partial.length() : 0;
-    final client = HttpClient()..connectionTimeout = const Duration(seconds: 20);
+    final client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 30)
+      ..idleTimeout = const Duration(seconds: 30);
+
     try {
       final request = await client.getUrl(Uri.parse(model.url));
+      request.headers.set(HttpHeaders.acceptHeader, '*/*');
       if (received > 0) {
         request.headers.set(HttpHeaders.rangeHeader, 'bytes=$received-');
       }
       final response = await request.close();
-      if (received > 0 && response.statusCode != HttpStatus.partialContent) {
-        await partial.writeAsBytes(const [], flush: true);
-        received = 0;
+      if (received > 0) {
+        if (response.statusCode == HttpStatus.partialContent) {
+          final contentRange = response.headers.value(HttpHeaders.contentRangeHeader);
+          final expectedPrefix = 'bytes $received-';
+          if (contentRange == null || !contentRange.startsWith(expectedPrefix)) {
+            await response.drain<void>();
+            throw const LocalModelDownloadException(
+              'Server returned an unexpected Content-Range for the resumed download.',
+            );
+          }
+        } else if (response.statusCode == HttpStatus.ok) {
+          await partial.writeAsBytes(const [], flush: true);
+          received = 0;
+        } else {
+          throw LocalModelDownloadException(
+            'Model resume failed: HTTP ${response.statusCode}.',
+          );
+        }
       }
+
       if (response.statusCode != HttpStatus.ok &&
           response.statusCode != HttpStatus.partialContent) {
         throw LocalModelDownloadException(
-            'Model download failed: HTTP ${response.statusCode}.');
+          'Model download failed: HTTP ${response.statusCode}.',
+        );
       }
+
       final contentLength = response.contentLength;
-      final total = received + (contentLength > 0 ? contentLength : 0);
-      final sink = partial.openWrite(
-          mode: received > 0 ? FileMode.append : FileMode.write);
+      final total = model.expectedSizeBytes ??
+          (received + (contentLength > 0 ? contentLength : 0));
       var current = received;
-      await for (final chunk in response) {
-        if (isCancelled?.call() ?? false) {
-          await sink.close();
-          throw const LocalModelDownloadException(
-              'Download cancelled. Partial file retained for resume.');
+      final sink = partial.openWrite(
+        mode: received > 0 ? FileMode.append : FileMode.write,
+      );
+
+      try {
+        await for (final chunk in response) {
+          if (isCancelled?.call() ?? false) {
+            throw const LocalModelDownloadException(
+              'Download cancelled. Partial file retained for resume.',
+            );
+          }
+          sink.add(chunk);
+          current += chunk.length;
+          onProgress(current, total);
         }
-        sink.add(chunk);
-        current += chunk.length;
-        onProgress(current, total);
+      } finally {
+        await sink.close();
       }
-      await sink.close();
-      if (current != model.sizeBytes) {
-        throw LocalModelDownloadException(
-            'Downloaded file size is $current bytes; expected ${model.sizeBytes} bytes.');
+
+      if (current <= 0) {
+        throw const LocalModelDownloadException('Downloaded model file is empty.');
       }
+
       final digest = await _sha256(partial);
       if (digest != model.sha256) {
         await partial.delete();
+        if (await marker.exists()) await marker.delete();
         throw const LocalModelDownloadException(
-            'SHA-256 verification failed. The model was deleted.');
+          'SHA-256 verification failed. The model was deleted.',
+        );
       }
+
       if (await target.exists()) await target.delete();
       await partial.rename(target.path);
+      await marker.writeAsString(jsonEncode({
+        'modelId': model.id,
+        'sha256': model.sha256,
+        'sizeBytes': await target.length(),
+        'verifiedAtUtc': DateTime.now().toUtc().toIso8601String(),
+      }), flush: true);
     } finally {
       client.close(force: true);
     }
@@ -764,8 +834,10 @@ class LocalModelDownloader {
   static Future<void> delete(LocalModelDescriptor model) async {
     final target = await modelFile(model);
     final partial = await partialFile(model);
-    if (await target.exists()) await target.delete();
-    if (await partial.exists()) await partial.delete();
+    final marker = await verifiedFile(model);
+    for (final file in [target, partial, marker]) {
+      if (await file.exists()) await file.delete();
+    }
   }
 }
 ```
@@ -775,7 +847,7 @@ class LocalModelDownloader {
 ## 8. lib/core/ai/on_device_ai_service.dart <a id="libcoreaiondeviceaiservicedart"></a>
 
 - **Path:** `lib/core/ai/on_device_ai_service.dart`
-- **Lines:** 193
+- **Lines:** 243
 - **Language:** `dart`
 
 ```dart
@@ -807,9 +879,11 @@ class OnDeviceAIService implements LocalAIProvider {
         maxTokens: maxTokens,
         temperature: AiModelManager.instance.config.temperature,
       );
-      return output.trim().isEmpty ? null : output.trim();
-    } catch (_) {
-      return null;
+      final trimmed = output.trim();
+      if (trimmed.isEmpty) {
+        throw const LocalLlmException('The local model returned an empty response.');
+      }
+      return trimmed;
     } finally {
       if (AiModelManager.instance.config.autoUnload) {
         await LocalLlmService.instance.unload();
@@ -839,16 +913,26 @@ class OnDeviceAIService implements LocalAIProvider {
     final top = results.where((r) => r.score >= 0.10).toList();
     final sourcePages = top.map((r) => r.chunk.pageNumber).toSet().toList()..sort();
     final context = top.map((r) => '[Page ${r.chunk.pageNumber}] ${r.chunk.chunkText}').join('\n\n');
-    final answer = await _llm(
-      system: 'You are a private offline study assistant. Answer only from the supplied document context. If the context is insufficient, say so. Do not invent facts. Give a concise student-friendly answer and cite relevant pages.',
-      user: 'DOCUMENT CONTEXT:\n$context\n\nQUESTION:\n$question\n\nAnswer using only the document context.',
-      maxTokens: 600,
-    );
-    if (answer != null) {
-      return GroundedAnswer(answer: 'Based on this PDF:\n\n$answer', sourcePages: sourcePages, hasSufficientContext: true);
+
+    try {
+      final answer = await _llm(
+        system: 'You are a private offline study assistant. Answer only from the supplied document context. If the context is insufficient, say so. Do not invent facts. Give a concise student-friendly answer and cite relevant pages.',
+        user: 'DOCUMENT CONTEXT:\n$context\n\nQUESTION:\n$question\n\nAnswer using only the document context.',
+        maxTokens: 600,
+      );
+      if (answer != null) {
+        return GroundedAnswer(answer: 'Based on this PDF:\n\n$answer', sourcePages: sourcePages, hasSufficientContext: true);
+      }
+    } catch (e) {
+      return GroundedAnswer(
+        answer: 'Local AI Inference Error: $e\n\nPlease check your model in Settings > Local AI Models.',
+        sourcePages: sourcePages,
+        hasSufficientContext: false,
+      );
     }
+
     final fallback = await compute(_generateExtractiveAnswer, _QAData(context, question));
-    return GroundedAnswer(answer: 'Based on this PDF:\n\n$fallback', sourcePages: sourcePages, hasSufficientContext: true);
+    return GroundedAnswer(answer: '[Local AI unavailable - using fallback extraction]\n\nBased on this PDF:\n\n$fallback', sourcePages: sourcePages, hasSufficientContext: true);
   }
 
   @override
@@ -860,26 +944,35 @@ class OnDeviceAIService implements LocalAIProvider {
       ExplanationMode.detailed => 'Explain the concept technically, with mechanism and relationships.',
       ExplanationMode.examFocused => 'Explain in exam-ready form with definition, key points and one example.',
     };
-    final answer = await _llm(
-      system: 'You are an offline study tutor. $style Use only the provided text/context. Do not invent citations or facts. Do not reveal hidden reasoning.',
-      user: 'SELECTED TEXT:\n$cleanText\n\nSURROUNDING CONTEXT:\n${_clip(surroundingContext, 4000)}',
-      maxTokens: 450,
-    );
-    return answer ?? 'Explanation:\n\n$cleanText\n\nContext:\n${_clip(surroundingContext, 240)}';
+    try {
+      final answer = await _llm(
+        system: 'You are an offline study tutor. $style Use only the provided text/context. Do not invent citations or facts. Do not reveal hidden reasoning.',
+        user: 'SELECTED TEXT:\n$cleanText\n\nSURROUNDING CONTEXT:\n${_clip(surroundingContext, 4000)}',
+        maxTokens: 450,
+      );
+      if (answer != null) return answer;
+    } catch (e) {
+      return 'Local AI Inference Error: $e\n\nPlease check your model in Settings > Local AI Models.';
+    }
+    return '[Local AI unavailable - using fallback extraction]\n\nExplanation:\n\n$cleanText\n\nContext:\n${_clip(surroundingContext, 240)}';
   }
 
   @override
   Future<String> summarizeSection({required String text, required int startPage, required int endPage}) async {
     if (text.trim().isEmpty) return 'No text available for pages $startPage - $endPage.';
-    final answer = await _llm(
-      system: 'You are an offline study-note generator. Produce a compact factual revision summary using only the supplied document text. Include 5-8 bullet points and a short key takeaway. Do not reveal hidden reasoning.',
-      user: 'PAGES $startPage-$endPage:\n${_clip(text, 10000)}',
-      maxTokens: 500,
-    );
-    if (answer != null) return 'Summary of Pages $startPage - $endPage:\n\n$answer';
+    try {
+      final answer = await _llm(
+        system: 'You are an offline study-note generator. Produce a compact factual revision summary using only the supplied document text. Include 5-8 bullet points and a short key takeaway. Do not reveal hidden reasoning.',
+        user: 'PAGES $startPage-$endPage:\n${_clip(text, 10000)}',
+        maxTokens: 500,
+      );
+      if (answer != null) return 'Summary of Pages $startPage - $endPage:\n\n$answer';
+    } catch (e) {
+      return 'Local AI Inference Error: $e\n\nPlease check your model in Settings > Local AI Models.';
+    }
     final sentences = text.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 20).toList();
     final summary = sentences.take(min(3, sentences.length)).join(' ');
-    return 'Summary of Pages $startPage - $endPage:\n\n$summary';
+    return '[Local AI unavailable - using fallback extraction]\n\nSummary of Pages $startPage - $endPage:\n\n$summary';
   }
 
   @override
@@ -892,29 +985,38 @@ class OnDeviceAIService implements LocalAIProvider {
   }) async {
     if (pageTextMap.isEmpty) return [];
     final compact = pageTextMap.entries.map((e) => '[Page ${e.key}] ${_clip(e.value, 1200)}').join('\n');
-    final output = await _llm(
-      system: 'You generate exam questions from source text. Output ONLY valid JSON array. Each item must have: page, type, question, options, correctAnswer, explanation, marks, topic. type must be one of mcq,trueFalse,shortAnswer.',
-      user: 'TOPIC: $topic\nDIFFICULTY: $difficulty\nCOUNT: $questionCount\nSOURCE:\n$compact',
-      maxTokens: 1000,
-    );
-    if (output != null) {
-      try {
+    final validPageNumbers = pageTextMap.keys.toSet();
+
+    try {
+      final output = await _llm(
+        system: 'You generate exam questions from source text. Output ONLY valid JSON array. Each item must have: page, type, question, options, correctAnswer, explanation, marks, topic. type must be one of mcq,trueFalse,shortAnswer.',
+        user: 'TOPIC: $topic\nDIFFICULTY: $difficulty\nCOUNT: $questionCount\nSOURCE:\n$compact',
+        maxTokens: 1000,
+      );
+      if (output != null) {
         final cleaned = output.replaceFirst(RegExp(r'^[^\[]*'), '').replaceFirst(RegExp(r'[^\]]*$'), '');
         final data = jsonDecode(cleaned);
         if (data is List) {
           final items = <StudyQuestion>[];
           for (final raw in data) {
             if (raw is! Map) continue;
+            final qText = raw['question']?.toString().trim() ?? '';
+            final cAns = raw['correctAnswer']?.toString().trim() ?? '';
+            if (qText.isEmpty || cAns.isEmpty) continue;
+
+            final rawPage = int.tryParse(raw['page']?.toString() ?? '');
+            if (rawPage == null || !validPageNumbers.contains(rawPage)) continue;
+
             final typeName = raw['type']?.toString() ?? 'mcq';
             final type = QuestionType.values.firstWhere((e) => e.name == typeName, orElse: () => QuestionType.mcq);
             final opts = (raw['options'] is List) ? (raw['options'] as List).map((e) => e.toString()).toList() : <String>[];
             items.add(StudyQuestion(
               filePath: filePath,
-              pageNumber: int.tryParse(raw['page']?.toString() ?? '') ?? 1,
+              pageNumber: rawPage,
               type: type,
-              question: raw['question']?.toString() ?? '',
+              question: qText,
               options: opts,
-              correctAnswer: raw['correctAnswer']?.toString() ?? '',
+              correctAnswer: cAns,
               explanation: raw['explanation']?.toString() ?? '',
               marks: int.tryParse(raw['marks']?.toString() ?? '') ?? 1,
               topic: raw['topic']?.toString() ?? topic,
@@ -922,9 +1024,25 @@ class OnDeviceAIService implements LocalAIProvider {
           }
           if (items.isNotEmpty) return items.take(questionCount).toList();
         }
-      } catch (_) {}
+      }
+    } catch (e) {
+      debugPrint('Local AI question generation error: $e');
+      return compute(_fallbackQuestions, _FallbackQuestionData(
+        filePath,
+        pageTextMap,
+        topic,
+        difficulty,
+        questionCount,
+        errorNote: 'Local AI Inference Error: $e',
+      ));
     }
-    return compute(_fallbackQuestions, _FallbackQuestionData(filePath, pageTextMap, topic, difficulty, questionCount));
+    return compute(_fallbackQuestions, _FallbackQuestionData(
+      filePath,
+      pageTextMap,
+      topic,
+      difficulty,
+      questionCount,
+    ));
   }
 }
 
@@ -947,12 +1065,16 @@ class _FallbackQuestionData {
   final String topic;
   final String difficulty;
   final int count;
-  _FallbackQuestionData(this.filePath, this.pages, this.topic, this.difficulty, this.count);
+  final String? errorNote;
+  _FallbackQuestionData(this.filePath, this.pages, this.topic, this.difficulty, this.count, {this.errorNote});
 }
 
 List<StudyQuestion> _fallbackQuestions(_FallbackQuestionData data) {
   final items = <StudyQuestion>[];
   final entries = data.pages.entries.toList();
+  final note = data.errorNote != null
+      ? '[Fallback - ${data.errorNote}] '
+      : '[Fallback Extraction - Local AI Not Active] ';
   for (int i = 0; i < data.count && i < entries.length * 2; i++) {
     final e = entries[i % entries.length];
     final sentence = e.value.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 30).firstOrNull;
@@ -965,7 +1087,7 @@ List<StudyQuestion> _fallbackQuestions(_FallbackQuestionData data) {
       type: QuestionType.shortAnswer,
       question: 'Explain the role of $keyword as discussed on Page ${e.key}.',
       correctAnswer: sentence,
-      explanation: 'Document context from Page ${e.key}',
+      explanation: '${note}Document context from Page ${e.key}',
       marks: 2,
       topic: data.topic,
     ));
@@ -1280,7 +1402,7 @@ final permissionsProvider =
 ## 12. lib/core/pet/dragon_pet_controller.dart <a id="libcorepetdragonpetcontrollerdart"></a>
 
 - **Path:** `lib/core/pet/dragon_pet_controller.dart`
-- **Lines:** 54
+- **Lines:** 119
 - **Language:** `dart`
 
 ```dart
@@ -1304,37 +1426,102 @@ enum DragonPetState {
 
 class DragonPetController extends ChangeNotifier {
   DragonPetState _state = DragonPetState.idle;
+  DragonPetState _previousContextState = DragonPetState.idle;
   Timer? _returnTimer;
+  Timer? _sleepTimer;
+  Timer? _idleTimer;
   bool _active = true;
+  DateTime _lastInteraction = DateTime.now();
 
   DragonPetState get state => _state;
+  DateTime get lastInteraction => _lastInteraction;
 
-  void setState(DragonPetState value, {Duration? returnToIdleAfter}) {
+  void setState(
+    DragonPetState value, {
+    Duration? returnToPreviousAfter,
+  }) {
     if (!_active) return;
-    _state = value;
-    notifyListeners();
-    _returnTimer?.cancel();
-    if (returnToIdleAfter != null) {
-      _returnTimer = Timer(returnToIdleAfter, () => setState(DragonPetState.idle));
+    if (value != DragonPetState.blink && value != _state) {
+      _previousContextState = _state == DragonPetState.blink
+          ? _previousContextState
+          : _state;
     }
+    _returnTimer?.cancel();
+    _state = value;
+    _lastInteraction = DateTime.now();
+    notifyListeners();
+    if (returnToPreviousAfter != null) {
+      _returnTimer = Timer(returnToPreviousAfter, () {
+        if (!_active) return;
+        _state = _previousContextState == DragonPetState.blink
+            ? DragonPetState.idle
+            : _previousContextState;
+        notifyListeners();
+      });
+    }
+  }
+
+  void setContextState(DragonPetState value) {
+    if (!_active) return;
+    _previousContextState = value;
+    _returnTimer?.cancel();
+    _state = value;
+    _lastInteraction = DateTime.now();
+    notifyListeners();
+  }
+
+  void markInteraction() {
+    _lastInteraction = DateTime.now();
+    if (_state == DragonPetState.sleeping || _state == DragonPetState.tired) {
+      setContextState(DragonPetState.idle);
+    }
+    _scheduleInactivityState();
+  }
+
+  void _scheduleInactivityState() {
+    _sleepTimer?.cancel();
+    _sleepTimer = Timer(const Duration(minutes: 2), () {
+      if (!_active) return;
+      final inactive = DateTime.now().difference(_lastInteraction);
+      if (inactive >= const Duration(minutes: 2)) {
+        setContextState(DragonPetState.tired);
+      }
+      _idleTimer?.cancel();
+      _idleTimer = Timer(const Duration(minutes: 5), () {
+        if (!_active) return;
+        final stillInactive = DateTime.now().difference(_lastInteraction);
+        if (stillInactive >= const Duration(minutes: 5)) {
+          setContextState(DragonPetState.sleeping);
+        }
+      });
+    });
   }
 
   void pause() {
     _active = false;
     _returnTimer?.cancel();
+    _sleepTimer?.cancel();
+    _idleTimer?.cancel();
   }
 
   void resume() {
     _active = true;
+    _lastInteraction = DateTime.now();
+    _returnTimer?.cancel();
+    _sleepTimer?.cancel();
+    _idleTimer?.cancel();
     if (_state == DragonPetState.sleeping || _state == DragonPetState.tired) {
       _state = DragonPetState.idle;
       notifyListeners();
     }
+    _scheduleInactivityState();
   }
 
   @override
   void dispose() {
     _returnTimer?.cancel();
+    _sleepTimer?.cancel();
+    _idleTimer?.cancel();
     super.dispose();
   }
 }
@@ -12260,7 +12447,7 @@ class _SearchTabState extends ConsumerState<SearchTab> {
 ## 47. lib/features/settings/local_ai_models_screen.dart <a id="libfeaturessettingslocalaimodelsscreendart"></a>
 
 - **Path:** `lib/features/settings/local_ai_models_screen.dart`
-- **Lines:** 211
+- **Lines:** 295
 - **Language:** `dart`
 
 ```dart
@@ -12281,50 +12468,86 @@ class LocalAiModelsScreen extends StatefulWidget {
 
 class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
   String? _downloadingId;
+  bool _cancelRequested = false;
+  bool _initializing = true;
   int _received = 0;
   int _total = 0;
   String? _error;
+  Map<String, bool> _installedMap = {};
 
   @override
   void initState() {
     super.initState();
-    AiModelManager.instance.initialize();
+    _initialize();
+  }
+
+  Future<void> _refreshInstalledState() async {
+    final map = <String, bool>{};
+    for (final model in LocalModelDownloader.models) {
+      map[model.id] = await LocalModelDownloader.isInstalled(model);
+    }
+    if (mounted) {
+      setState(() => _installedMap = map);
+    }
+  }
+
+  Future<void> _initialize() async {
+    await AiModelManager.instance.initialize();
+    await _refreshInstalledState();
+    if (!mounted) return;
+    setState(() => _initializing = false);
   }
 
   Future<void> _download(LocalModelDescriptor model) async {
+    if (_downloadingId != null) return;
     setState(() {
       _downloadingId = model.id;
+      _cancelRequested = false;
       _received = 0;
-      _total = model.sizeBytes;
+      _total = model.expectedSizeBytes ?? 0;
       _error = null;
     });
     try {
       await LocalModelDownloader.download(
         model,
+        isCancelled: () => _cancelRequested,
         onProgress: (received, total) {
           if (!mounted) return;
           setState(() {
             _received = received;
-            _total = total > 0 ? total : model.sizeBytes;
+            _total = total > 0 ? total : _total;
           });
         },
       );
+      await LocalLlmService.instance.unload();
       await AiModelManager.instance.setInstalledModel(
         modelId: model.id,
         modelName: model.name,
-        sizeMb: model.sizeMb,
+        sizeMb: model.sizeMb ?? 0,
       );
-      await LocalLlmService.instance.unload();
-      if (!mounted) return;
-      setState(() => _downloadingId = null);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Local model installed and verified.')));
-    } catch (e) {
+      await _refreshInstalledState();
       if (!mounted) return;
       setState(() {
         _downloadingId = null;
+        _cancelRequested = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Local model installed and verified.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      await _refreshInstalledState();
+      setState(() {
+        _downloadingId = null;
+        _cancelRequested = false;
         _error = e.toString();
       });
     }
+  }
+
+  void _cancelDownload() {
+    if (_downloadingId == null) return;
+    setState(() => _cancelRequested = true);
   }
 
   Future<void> _delete(LocalModelDescriptor model) async {
@@ -12345,15 +12568,25 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
     if (AiModelManager.instance.installedModelId == model.id) {
       await AiModelManager.instance.clearInstalledModel();
     }
-    if (mounted) setState(() {});
+    await _refreshInstalledState();
   }
 
-  String _size(int bytes) => '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
+  Future<void> _activateModel(LocalModelDescriptor model) async {
+    await LocalLlmService.instance.unload();
+    await AiModelManager.instance.setInstalledModel(
+      modelId: model.id,
+      modelName: model.name,
+      sizeMb: model.sizeMb ?? 0,
+    );
+    await _refreshInstalledState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final manager = AiModelManager.instance;
+    final busy = _downloadingId != null;
+
     return Scaffold(
       backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
       appBar: AppBar(
@@ -12367,111 +12600,149 @@ class _LocalAiModelsScreenState extends State<LocalAiModelsScreen> {
           ],
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const EditorialSectionHeader(number: '01', label: 'On-Device Model Storage', count: 'GGUF models'),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
-              borderRadius: BorderRadius.circular(EditorialTokens.r4),
-              border: Border.all(color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border, width: EditorialTokens.hairline),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: _initializing
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.all(16),
               children: [
-                Text(manager.config.isInstalled ? manager.config.modelName : 'No model installed', style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
-                const SizedBox(height: 4),
-                Text(manager.config.statusMessage, style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+                const EditorialSectionHeader(number: '01', label: 'On-Device Model Storage', count: 'GGUF models'),
                 const SizedBox(height: 8),
-                Text('Models are downloaded once, verified by SHA-256, and kept inside the app\'s private support directory.', style: EditorialTokens.bodySmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
-                if (_error != null) ...[
-                  const SizedBox(height: 8),
-                  Text(_error!, style: EditorialTokens.metadata(color: EditorialTokens.secondary)),
-                ],
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                    border: Border.all(color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border, width: EditorialTokens.hairline),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(manager.config.isInstalled ? manager.config.modelName : 'No model installed', style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                      const SizedBox(height: 4),
+                      Text(manager.config.statusMessage, style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+                      const SizedBox(height: 8),
+                      Text('Models are downloaded once, verified by SHA-256, and kept inside the app\'s private support directory.', style: EditorialTokens.bodySmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink)),
+                      if (_error != null) ...[
+                        const SizedBox(height: 8),
+                        Text(_error!, style: EditorialTokens.metadata(color: EditorialTokens.secondary)),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const EditorialSectionHeader(number: '02', label: 'Available Models', count: 'download on demand'),
+                const SizedBox(height: 8),
+                ...LocalModelDownloader.models.map((model) {
+                  final downloading = _downloadingId == model.id;
+                  final installed = _installedMap[model.id] == true;
+                  final active = installed && manager.installedModelId == model.id && manager.config.isInstalled;
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                      borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                      border: Border.all(color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border, width: EditorialTokens.hairline),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          Expanded(child: Text(model.name, style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink))),
+                          Text(model.displaySize, style: EditorialTokens.metadataStrong(color: EditorialTokens.primary)),
+                        ]),
+                        const SizedBox(height: 4),
+                        Text(model.description, style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+                        const SizedBox(height: 4),
+                        Text('License: ${model.license}', style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
+                        const SizedBox(height: 10),
+                        if (downloading) ...[
+                          LinearProgressIndicator(value: _total > 0 ? (_received / _total).clamp(0.0, 1.0) : null),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Text(
+                                _total > 0
+                                    ? '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(1)} MB'
+                                    : '${(_received / (1024 * 1024)).toStringAsFixed(1)} MB downloaded',
+                                style: EditorialTokens.metadata(),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                onPressed: _cancelRequested ? null : _cancelDownload,
+                                child: Text(_cancelRequested ? 'Stopping...' : 'Cancel'),
+                              ),
+                            ],
+                          ),
+                        ] else if (installed) ...[
+                          Row(
+                            children: [
+                              const Icon(Icons.verified_outlined, size: 18, color: EditorialTokens.primary),
+                              const SizedBox(width: 6),
+                              Text(
+                                active ? 'Active Model' : 'Installed & Verified',
+                                style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                              ),
+                              const Spacer(),
+                              if (!active)
+                                TextButton(
+                                  onPressed: busy ? null : () => _activateModel(model),
+                                  child: const Text('Select'),
+                                ),
+                              TextButton(
+                                onPressed: busy ? null : () => _delete(model),
+                                child: const Text('Remove'),
+                              ),
+                            ],
+                          ),
+                        ] else
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: FilledButton.icon(
+                              onPressed: busy ? null : () => _download(model),
+                              icon: const Icon(Icons.download_outlined),
+                              label: const Text('Download Model'),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }),
+                const SizedBox(height: 18),
+                const EditorialSectionHeader(number: '03', label: 'Runtime Controls', count: 'memory safe defaults'),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  title: const Text('Enable Local AI'),
+                  subtitle: const Text('Use the downloaded GGUF model for document and study tasks.'),
+                  value: manager.config.isEnabled,
+                  onChanged: (v) async { await manager.toggleEnabled(v); if (mounted) setState(() {}); },
+                ),
+                ListTile(
+                  title: const Text('Context Length'),
+                  subtitle: Text('${manager.config.maxContextLength} tokens'),
+                  trailing: DropdownButton<int>(
+                    value: manager.config.maxContextLength,
+                    items: const [
+                      DropdownMenuItem(value: 1024, child: Text('1024')),
+                      DropdownMenuItem(value: 2048, child: Text('2048')),
+                    ],
+                    onChanged: (v) async { if (v == null) return; await manager.updateSettings(maxContext: v); if (mounted) setState(() {}); },
+                  ),
+                ),
+                SwitchListTile(
+                  title: const Text('Unload Model Automatically'),
+                  subtitle: const Text('Release native model memory when the AI workflow finishes.'),
+                  value: manager.config.autoUnload,
+                  onChanged: (v) async { await manager.updateSettings(autoUnload: v); if (mounted) setState(() {}); },
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Privacy: inference stays on-device after the model has been downloaded. Internet is required only for the explicit download action.',
+                  style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 24),
-          const EditorialSectionHeader(number: '02', label: 'Available Models', count: 'download on demand'),
-          const SizedBox(height: 8),
-          ...LocalModelDownloader.models.map((model) {
-            final downloading = _downloadingId == model.id;
-            final installed = manager.installedModelId == model.id && manager.config.isInstalled;
-            return Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
-                borderRadius: BorderRadius.circular(EditorialTokens.r4),
-                border: Border.all(color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border, width: EditorialTokens.hairline),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Expanded(child: Text(model.name, style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink))),
-                    Text(_size(model.sizeBytes), style: EditorialTokens.metadataStrong(color: EditorialTokens.primary)),
-                  ]),
-                  const SizedBox(height: 4),
-                  Text(model.description, style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
-                  const SizedBox(height: 4),
-                  Text('License: ${model.license}', style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary)),
-                  const SizedBox(height: 10),
-                  if (downloading) ...[
-                    LinearProgressIndicator(value: _total > 0 ? (_received / _total).clamp(0.0, 1.0) : null),
-                    const SizedBox(height: 6),
-                    Text('${(_received / (1024 * 1024)).toStringAsFixed(0)} MB / ${(_total / (1024 * 1024)).toStringAsFixed(0)} MB', style: EditorialTokens.metadata()),
-                  ] else if (installed)
-                    Row(children: [
-                      const Icon(Icons.verified_outlined, size: 18, color: EditorialTokens.primary),
-                      const SizedBox(width: 6),
-                      Text('Installed and verified', style: EditorialTokens.metadataStrong(color: EditorialTokens.primary)),
-                      const Spacer(),
-                      TextButton(onPressed: () => _delete(model), child: const Text('Remove')),
-                    ])
-                  else
-                    Align(alignment: Alignment.centerLeft, child: FilledButton.icon(onPressed: () => _download(model), icon: const Icon(Icons.download_outlined), label: const Text('Download Model'))),
-                ],
-              ),
-            );
-          }),
-          const SizedBox(height: 18),
-          const EditorialSectionHeader(number: '03', label: 'Runtime Controls', count: 'memory safe defaults'),
-          const SizedBox(height: 8),
-          SwitchListTile(
-            title: const Text('Enable Local AI'),
-            subtitle: const Text('Use the downloaded GGUF model for document and study tasks.'),
-            value: manager.config.isEnabled,
-            onChanged: (v) async { await manager.toggleEnabled(v); if (mounted) setState(() {}); },
-          ),
-          ListTile(
-            title: const Text('Context Length'),
-            subtitle: Text('${manager.config.maxContextLength} tokens'),
-            trailing: DropdownButton<int>(
-              value: manager.config.maxContextLength,
-              items: const [
-                DropdownMenuItem(value: 1024, child: Text('1024')),
-                DropdownMenuItem(value: 2048, child: Text('2048')),
-              ],
-              onChanged: (v) async { if (v == null) return; await manager.updateSettings(maxContext: v); if (mounted) setState(() {}); },
-            ),
-          ),
-          SwitchListTile(
-            title: const Text('Unload Model Automatically'),
-            subtitle: const Text('Release native model memory when the AI workflow finishes.'),
-            value: manager.config.autoUnload,
-            onChanged: (v) async { await manager.updateSettings(autoUnload: v); if (mounted) setState(() {}); },
-          ),
-          const SizedBox(height: 18),
-          Text(
-            'Privacy: inference stays on-device after the model has been downloaded. Internet is required only for the explicit download action.',
-            style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -19994,7 +20265,7 @@ class _VersionHistoryScreenState extends State<VersionHistoryScreen> {
 ## 60. lib/features/viewer/pdf_viewer_screen.dart <a id="libfeaturesviewerpdfviewerscreendart"></a>
 
 - **Path:** `lib/features/viewer/pdf_viewer_screen.dart`
-- **Lines:** 2651
+- **Lines:** 2689
 - **Language:** `dart`
 
 ```dart
@@ -20086,11 +20357,25 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
 
   final Stopwatch _sessionStopwatch = Stopwatch();
 
+  late final DragonPetController _dragonPetController;
+
+  void _setDragonState(
+    DragonPetState state, {
+    Duration? returnToPreviousAfter,
+  }) {
+    _dragonPetController.setState(
+      state,
+      returnToPreviousAfter: returnToPreviousAfter,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _pdfViewerController = PdfViewerController();
+    _dragonPetController = DragonPetController();
+    _dragonPetController.markInteraction();
     if (widget.initialPage > 1) {
       _initialPage = widget.initialPage;
       _currentPage = widget.initialPage;
@@ -20119,6 +20404,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _searchFieldController.dispose();
     _ttsDocument?.dispose();
     _zoomNotifier.dispose();
+    _dragonPetController.dispose();
     super.dispose();
   }
 
@@ -21939,6 +22225,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
   }
 
   void _openStudyMode() {
+    _setDragonState(DragonPetState.holdingBook);
     final pdfFile = PdfFile(
       docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
       path: widget.filePath,
@@ -21956,6 +22243,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
   }
 
   void _openDocQa() {
+    _setDragonState(DragonPetState.thinking);
     final pdfFile = PdfFile(
       docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
       path: widget.filePath,
@@ -21977,6 +22265,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _pdfViewerController.clearSelection();
     setState(() => _showSelectionMenu = false);
     if (text != null && text.trim().isNotEmpty) {
+      _setDragonState(DragonPetState.explaining);
       showDialog(
         context: context,
         builder: (_) => ExplainTextDialog(selectedText: text),
@@ -22014,8 +22303,10 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
           if (pageText.trim().isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No text available on the current page.')));
           } else {
+            _setDragonState(DragonPetState.thinking);
             final result = await OnDeviceAIService.instance.summarizeSection(text: pageText, startPage: _currentPage, endPage: _currentPage);
             if (!mounted) return;
+            _setDragonState(DragonPetState.happy, returnToPreviousAfter: const Duration(seconds: 2));
             showDialog(context: context, builder: (_) => AlertDialog(title: Text('Page $_currentPage Summary'), content: SingleChildScrollView(child: Text(result))));
           }
         },
@@ -22139,6 +22430,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         _lastTextSelectionDetails = details;
         if (details.selectedText != null &&
             details.selectedText!.trim().isNotEmpty) {
+          _setDragonState(DragonPetState.curious);
           setState(() => _showSelectionMenu = true);
         } else {
           setState(() => _showSelectionMenu = false);
@@ -22148,6 +22440,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         _zoomNotifier.value = details.newZoomLevel;
       },
       onDocumentLoaded: (details) {
+        _setDragonState(DragonPetState.holdingBook);
         setState(() {
           _totalPages = details.document.pages.count;
           _docBookmarks = details.document.bookmarks;
@@ -22166,6 +22459,10 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         }
       },
       onPageChanged: (details) {
+        _setDragonState(
+          DragonPetState.reading,
+          returnToPreviousAfter: const Duration(milliseconds: 1800),
+        );
         setState(() {
           _currentPage = details.newPageNumber;
         });
@@ -22482,10 +22779,22 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
               Positioned(
                 right: 10,
                 bottom: 88,
-                child: DragonPetWidget(
-                  size: 56,
-                  state: DragonPetState.idle,
-                  onTap: _showDragonPetMenu,
+                child: AnimatedBuilder(
+                  animation: _dragonPetController,
+                  builder: (context, _) {
+                    return DragonPetWidget(
+                      size: 56,
+                      state: _dragonPetController.state,
+                      onTap: () {
+                        _dragonPetController.markInteraction();
+                        _setDragonState(
+                          DragonPetState.curious,
+                          returnToPreviousAfter: const Duration(milliseconds: 900),
+                        );
+                        _showDragonPetMenu();
+                      },
+                    );
+                  },
                 ),
               ),
           ],
@@ -23839,7 +24148,7 @@ class DragonPetMenu extends StatelessWidget {
 ## 76. lib/widgets/dragon_pet_widget.dart <a id="libwidgetsdragonpetwidgetdart"></a>
 
 - **Path:** `lib/widgets/dragon_pet_widget.dart`
-- **Lines:** 140
+- **Lines:** 160
 - **Language:** `dart`
 
 ```dart
@@ -23870,6 +24179,7 @@ class _DragonPetWidgetState extends State<DragonPetWidget>
   late final AnimationController _idleController;
   Timer? _blinkTimer;
   DragonPetState _visualState = DragonPetState.idle;
+  DragonPetState _stateBeforeBlink = DragonPetState.idle;
 
   static const _assets = <DragonPetState, String>{
     DragonPetState.idle: 'assets/images/dragon/dragon_idle.png',
@@ -23900,14 +24210,20 @@ class _DragonPetWidgetState extends State<DragonPetWidget>
 
   void _scheduleBlink() {
     _blinkTimer?.cancel();
-    _blinkTimer = Timer(Duration(milliseconds: 3000 + DateTime.now().millisecond % 2500), () {
-      if (!mounted || !widget.enabled || _visualState != DragonPetState.idle) return;
+    if (!widget.enabled) return;
+    final delayMs = 3200 + DateTime.now().millisecondsSinceEpoch % 2600;
+    _blinkTimer = Timer(Duration(milliseconds: delayMs), () {
+      if (!mounted || !widget.enabled) return;
+      _stateBeforeBlink = _visualState == DragonPetState.blink
+          ? DragonPetState.idle
+          : _visualState;
       setState(() => _visualState = DragonPetState.blink);
       Timer(const Duration(milliseconds: 160), () {
-        if (mounted && widget.enabled && _visualState == DragonPetState.blink) {
-          setState(() => _visualState = DragonPetState.idle);
-          _scheduleBlink();
+        if (!mounted || !widget.enabled) return;
+        if (_visualState == DragonPetState.blink) {
+          setState(() => _visualState = _stateBeforeBlink);
         }
+        _scheduleBlink();
       });
     });
   }
@@ -23917,6 +24233,9 @@ class _DragonPetWidgetState extends State<DragonPetWidget>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.state != widget.state) {
       _visualState = widget.state;
+      if (widget.state != DragonPetState.blink) {
+        _stateBeforeBlink = widget.state;
+      }
       _scheduleBlink();
     }
   }
@@ -23944,29 +24263,39 @@ class _DragonPetWidgetState extends State<DragonPetWidget>
   Widget build(BuildContext context) {
     if (!widget.enabled) return const SizedBox.shrink();
     final asset = _assets[_visualState] ?? _assets[DragonPetState.idle]!;
+    final animatedStates = {
+      DragonPetState.idle,
+      DragonPetState.happy,
+      DragonPetState.excited,
+      DragonPetState.reading,
+      DragonPetState.thinking,
+      DragonPetState.curious,
+      DragonPetState.working,
+      DragonPetState.explaining,
+    };
     return Semantics(
       button: true,
       label: 'Study companion',
       hint: 'Open study companion actions',
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+        behavior: HitTestBehavior.translucent,
         onTap: widget.onTap,
         child: AnimatedBuilder(
           animation: _idleController,
           builder: (context, child) {
-            final t = _visualState == DragonPetState.idle
-                ? (_idleController.value * 0.5 - 0.25)
-                : 0.0;
-            final scale = _visualState == DragonPetState.happy || _visualState == DragonPetState.excited
-                ? 1.0 + (_idleController.value * 0.02)
+            final wave = (_idleController.value * 2 - 1);
+            final bob = animatedStates.contains(_visualState) ? wave * 1.4 : 0.0;
+            final pulse = _visualState == DragonPetState.happy ||
+                    _visualState == DragonPetState.excited
+                ? 1.0 + ((_idleController.value - 0.5).abs() * 0.025)
                 : 1.0;
             return Transform.translate(
-              offset: Offset(0, t),
-              child: Transform.scale(scale: scale, child: child),
+              offset: Offset(0, bob),
+              child: Transform.scale(scale: pulse, child: child),
             );
           },
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 180),
+            duration: const Duration(milliseconds: 120),
             switchInCurve: Curves.easeOut,
             switchOutCurve: Curves.easeIn,
             child: Image.asset(
@@ -25870,7 +26199,7 @@ class PermissionBanner extends StatelessWidget {
 ## 82. test/dragon_pet_test.dart <a id="testdragonpettestdart"></a>
 
 - **Path:** `test/dragon_pet_test.dart`
-- **Lines:** 162
+- **Lines:** 196
 - **Language:** `dart`
 
 ```dart
@@ -25916,6 +26245,37 @@ void main() {
 
       controller.resume();
       // Resume resets sleeping or tired to idle
+      expect(controller.state, DragonPetState.idle);
+
+      controller.dispose();
+    });
+
+    test('returnToPreviousAfter restores previous state after timer', () async {
+      final controller = DragonPetController();
+      controller.setContextState(DragonPetState.reading);
+      expect(controller.state, DragonPetState.reading);
+
+      controller.setState(DragonPetState.curious, returnToPreviousAfter: const Duration(milliseconds: 50));
+      expect(controller.state, DragonPetState.curious);
+
+      await Future.delayed(const Duration(milliseconds: 70));
+      expect(controller.state, DragonPetState.reading);
+
+      controller.dispose();
+    });
+
+    test('markInteraction wakes dragon from tired/sleeping', () {
+      final controller = DragonPetController();
+      controller.setState(DragonPetState.tired);
+      expect(controller.state, DragonPetState.tired);
+
+      controller.markInteraction();
+      expect(controller.state, DragonPetState.idle);
+
+      controller.setState(DragonPetState.sleeping);
+      expect(controller.state, DragonPetState.sleeping);
+
+      controller.markInteraction();
       expect(controller.state, DragonPetState.idle);
 
       controller.dispose();
@@ -26014,16 +26374,19 @@ void main() {
       expect(LocalModelDownloader.models.length, greaterThanOrEqualTo(2));
       final qwen1_7 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-1.7b-q4km');
       expect(qwen1_7.fileName, 'Qwen3-1.7B-Q4_K_M.gguf');
-      expect(qwen1_7.sizeBytes, 1280000000);
+      expect(qwen1_7.displaySize, '~1.28 GB');
+      expect(qwen1_7.sha256, 'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5');
 
       final qwen0_6 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-0.6b-q40');
       expect(qwen0_6.fileName, 'Qwen3-0.6B-Q4_0.gguf');
-      expect(qwen0_6.sizeBytes, 429000000);
+      expect(qwen0_6.displaySize, '~429 MB');
+      expect(qwen0_6.sha256, 'da2572f16c06133561ce56accaa822216f2391ef4d37fba427801cd6736417d4');
     });
 
     test('AiModelManager updates settings and toggles enabled', () async {
       final manager = AiModelManager.instance;
       await manager.initialize();
+      expect(manager.initialized, isTrue);
 
       expect(manager.config.maxContextLength, 2048);
       await manager.updateSettings(maxContext: 1024);

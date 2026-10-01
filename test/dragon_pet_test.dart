@@ -44,6 +44,37 @@ void main() {
 
       controller.dispose();
     });
+
+    test('returnToPreviousAfter restores previous state after timer', () async {
+      final controller = DragonPetController();
+      controller.setContextState(DragonPetState.reading);
+      expect(controller.state, DragonPetState.reading);
+
+      controller.setState(DragonPetState.curious, returnToPreviousAfter: const Duration(milliseconds: 50));
+      expect(controller.state, DragonPetState.curious);
+
+      await Future.delayed(const Duration(milliseconds: 70));
+      expect(controller.state, DragonPetState.reading);
+
+      controller.dispose();
+    });
+
+    test('markInteraction wakes dragon from tired/sleeping', () {
+      final controller = DragonPetController();
+      controller.setState(DragonPetState.tired);
+      expect(controller.state, DragonPetState.tired);
+
+      controller.markInteraction();
+      expect(controller.state, DragonPetState.idle);
+
+      controller.setState(DragonPetState.sleeping);
+      expect(controller.state, DragonPetState.sleeping);
+
+      controller.markInteraction();
+      expect(controller.state, DragonPetState.idle);
+
+      controller.dispose();
+    });
   });
 
   group('DragonPetWidget Tests', () {
@@ -138,16 +169,19 @@ void main() {
       expect(LocalModelDownloader.models.length, greaterThanOrEqualTo(2));
       final qwen1_7 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-1.7b-q4km');
       expect(qwen1_7.fileName, 'Qwen3-1.7B-Q4_K_M.gguf');
-      expect(qwen1_7.sizeBytes, 1280000000);
+      expect(qwen1_7.displaySize, '~1.28 GB');
+      expect(qwen1_7.sha256, 'd2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5');
 
       final qwen0_6 = LocalModelDownloader.models.firstWhere((m) => m.id == 'qwen3-0.6b-q40');
       expect(qwen0_6.fileName, 'Qwen3-0.6B-Q4_0.gguf');
-      expect(qwen0_6.sizeBytes, 429000000);
+      expect(qwen0_6.displaySize, '~429 MB');
+      expect(qwen0_6.sha256, 'da2572f16c06133561ce56accaa822216f2391ef4d37fba427801cd6736417d4');
     });
 
     test('AiModelManager updates settings and toggles enabled', () async {
       final manager = AiModelManager.instance;
       await manager.initialize();
+      expect(manager.initialized, isTrue);
 
       expect(manager.config.maxContextLength, 2048);
       await manager.updateSettings(maxContext: 1024);
