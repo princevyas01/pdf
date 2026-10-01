@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../../models/semantic_chunk.dart';
@@ -5,11 +6,35 @@ import '../../models/study_item.dart';
 import '../storage/database_helper.dart';
 import 'ai_model_manager.dart';
 import 'local_ai_provider.dart';
+import 'local_llm_service.dart';
 import 'semantic_search_service.dart';
 
 class OnDeviceAIService implements LocalAIProvider {
   static final OnDeviceAIService instance = OnDeviceAIService._init();
   OnDeviceAIService._init();
+
+  String _clip(String text, int maxChars) =>
+      text.length <= maxChars ? text : '${text.substring(0, maxChars)}...';
+
+  Future<String?> _llm({required String system, required String user, int maxTokens = 512}) async {
+    await AiModelManager.instance.initialize();
+    if (!AiModelManager.instance.config.isEnabled || !AiModelManager.instance.config.isInstalled) return null;
+    try {
+      final output = await LocalLlmService.instance.generate(
+        systemPrompt: system,
+        userPrompt: user,
+        maxTokens: maxTokens,
+        temperature: AiModelManager.instance.config.temperature,
+      );
+      return output.trim().isEmpty ? null : output.trim();
+    } catch (_) {
+      return null;
+    } finally {
+      if (AiModelManager.instance.config.autoUnload) {
+        await LocalLlmService.instance.unload();
+      }
+    }
+  }
 
   @override
   Future<GroundedAnswer> answerQuestion({
@@ -17,90 +42,61 @@ class OnDeviceAIService implements LocalAIProvider {
     required String question,
     required Map<int, String> pageTextMap,
   }) async {
-    if (!AiModelManager.instance.config.isEnabled) {
-      return GroundedAnswer(
-        answer: 'Local AI is currently disabled in AI Settings.',
-        sourcePages: [],
-        hasSufficientContext: false,
-      );
-    }
-
     if (pageTextMap.isEmpty) {
-      return GroundedAnswer(
-        answer: 'Not enough information was found in this document.',
-        sourcePages: [],
-        hasSufficientContext: false,
-      );
+      return GroundedAnswer(answer: 'Not enough information was found in this document.', sourcePages: [], hasSufficientContext: false);
     }
-
-    // 1. Fetch or generate semantic chunks
     List<SemanticChunk> chunks = [];
-    try {
-      chunks = await DatabaseHelper.instance.getSemanticChunksForFile(filePath);
-    } catch (_) {}
-
+    try { chunks = await DatabaseHelper.instance.getSemanticChunksForFile(filePath); } catch (_) {}
     if (chunks.isEmpty) {
       chunks = await SemanticSearchService.chunkDocumentText(filePath, pageTextMap);
-      try {
-        await DatabaseHelper.instance.saveSemanticChunks(chunks);
-      } catch (_) {}
+      try { await DatabaseHelper.instance.saveSemanticChunks(chunks); } catch (_) {}
     }
-
-    // 2. Perform local semantic vector search
-    final searchResults = SemanticSearchService.search(question, chunks, topK: 4);
-
-    if (searchResults.isEmpty || searchResults.first.score < 0.12) {
-      return GroundedAnswer(
-        answer: 'Not enough information was found in this document to answer your question.',
-        sourcePages: [],
-        hasSufficientContext: false,
-      );
+    final results = SemanticSearchService.search(question, chunks, topK: 4);
+    if (results.isEmpty || results.first.score < 0.12) {
+      return GroundedAnswer(answer: 'Not enough information was found in this document to answer your question.', sourcePages: [], hasSufficientContext: false);
     }
-
-    final topResults = searchResults.where((r) => r.score >= 0.10).toList();
-    final sourcePages = topResults.map((r) => r.chunk.pageNumber).toSet().toList()..sort();
-
-    final contextSnippet = topResults.map((r) => r.chunk.chunkText).join('\n\n');
-
-    // 3. Extractive Document Q&A Generation
-    final answerText = await compute(_generateExtractiveAnswer, _QAData(contextSnippet, question));
-
-    return GroundedAnswer(
-      answer: 'Based on this PDF:\n\n$answerText',
-      sourcePages: sourcePages,
-      hasSufficientContext: true,
+    final top = results.where((r) => r.score >= 0.10).toList();
+    final sourcePages = top.map((r) => r.chunk.pageNumber).toSet().toList()..sort();
+    final context = top.map((r) => '[Page ${r.chunk.pageNumber}] ${r.chunk.chunkText}').join('\n\n');
+    final answer = await _llm(
+      system: 'You are a private offline study assistant. Answer only from the supplied document context. If the context is insufficient, say so. Do not invent facts. Give a concise student-friendly answer and cite relevant pages.',
+      user: 'DOCUMENT CONTEXT:\n$context\n\nQUESTION:\n$question\n\nAnswer using only the document context.',
+      maxTokens: 600,
     );
+    if (answer != null) {
+      return GroundedAnswer(answer: 'Based on this PDF:\n\n$answer', sourcePages: sourcePages, hasSufficientContext: true);
+    }
+    final fallback = await compute(_generateExtractiveAnswer, _QAData(context, question));
+    return GroundedAnswer(answer: 'Based on this PDF:\n\n$fallback', sourcePages: sourcePages, hasSufficientContext: true);
   }
 
   @override
-  Future<String> explainText({
-    required String selectedText,
-    required String surroundingContext,
-    required ExplanationMode mode,
-  }) async {
+  Future<String> explainText({required String selectedText, required String surroundingContext, required ExplanationMode mode}) async {
     final cleanText = selectedText.trim();
     if (cleanText.isEmpty) return 'No text selected for explanation.';
-
-    switch (mode) {
-      case ExplanationMode.simple:
-        return 'Simple Explanation:\n\n"$cleanText" means the core concept or mechanism described here in the document context. It represents a fundamental building block of the topic.';
-      case ExplanationMode.detailed:
-        return 'Detailed Technical Explanation:\n\nSelected Term: "$cleanText"\n\nIn the context of the document, this concept establishes structural rules, relationships, and computational behavior. Surrounding context reference: "${surroundingContext.take(120)}"';
-      case ExplanationMode.examFocused:
-        return 'Exam-Focused Key Points:\n\n• Definition: $cleanText\n• Key Takeaway: Essential concept commonly tested in exam short-answer questions.\n• Example Context: ${surroundingContext.take(100)}';
-    }
+    final style = switch (mode) {
+      ExplanationMode.simple => 'Explain in simple language for a college student.',
+      ExplanationMode.detailed => 'Explain the concept technically, with mechanism and relationships.',
+      ExplanationMode.examFocused => 'Explain in exam-ready form with definition, key points and one example.',
+    };
+    final answer = await _llm(
+      system: 'You are an offline study tutor. $style Use only the provided text/context. Do not invent citations or facts. Do not reveal hidden reasoning.',
+      user: 'SELECTED TEXT:\n$cleanText\n\nSURROUNDING CONTEXT:\n${_clip(surroundingContext, 4000)}',
+      maxTokens: 450,
+    );
+    return answer ?? 'Explanation:\n\n$cleanText\n\nContext:\n${_clip(surroundingContext, 240)}';
   }
 
   @override
-  Future<String> summarizeSection({
-    required String text,
-    required int startPage,
-    required int endPage,
-  }) async {
+  Future<String> summarizeSection({required String text, required int startPage, required int endPage}) async {
     if (text.trim().isEmpty) return 'No text available for pages $startPage - $endPage.';
+    final answer = await _llm(
+      system: 'You are an offline study-note generator. Produce a compact factual revision summary using only the supplied document text. Include 5-8 bullet points and a short key takeaway. Do not reveal hidden reasoning.',
+      user: 'PAGES $startPage-$endPage:\n${_clip(text, 10000)}',
+      maxTokens: 500,
+    );
+    if (answer != null) return 'Summary of Pages $startPage - $endPage:\n\n$answer';
     final sentences = text.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 20).toList();
-    if (sentences.isEmpty) return text.take(200);
-
     final summary = sentences.take(min(3, sentences.length)).join(' ');
     return 'Summary of Pages $startPage - $endPage:\n\n$summary';
   }
@@ -114,14 +110,40 @@ class OnDeviceAIService implements LocalAIProvider {
     required int questionCount,
   }) async {
     if (pageTextMap.isEmpty) return [];
-
-    return compute(_generateExamQuestionsLogic, _ExamData(
-      filePath: filePath,
-      pageTextMap: pageTextMap,
-      topic: topic,
-      difficulty: difficulty,
-      questionCount: questionCount,
-    ));
+    final compact = pageTextMap.entries.map((e) => '[Page ${e.key}] ${_clip(e.value, 1200)}').join('\n');
+    final output = await _llm(
+      system: 'You generate exam questions from source text. Output ONLY valid JSON array. Each item must have: page, type, question, options, correctAnswer, explanation, marks, topic. type must be one of mcq,trueFalse,shortAnswer.',
+      user: 'TOPIC: $topic\nDIFFICULTY: $difficulty\nCOUNT: $questionCount\nSOURCE:\n$compact',
+      maxTokens: 1000,
+    );
+    if (output != null) {
+      try {
+        final cleaned = output.replaceFirst(RegExp(r'^[^\[]*'), '').replaceFirst(RegExp(r'[^\]]*$'), '');
+        final data = jsonDecode(cleaned);
+        if (data is List) {
+          final items = <StudyQuestion>[];
+          for (final raw in data) {
+            if (raw is! Map) continue;
+            final typeName = raw['type']?.toString() ?? 'mcq';
+            final type = QuestionType.values.firstWhere((e) => e.name == typeName, orElse: () => QuestionType.mcq);
+            final opts = (raw['options'] is List) ? (raw['options'] as List).map((e) => e.toString()).toList() : <String>[];
+            items.add(StudyQuestion(
+              filePath: filePath,
+              pageNumber: int.tryParse(raw['page']?.toString() ?? '') ?? 1,
+              type: type,
+              question: raw['question']?.toString() ?? '',
+              options: opts,
+              correctAnswer: raw['correctAnswer']?.toString() ?? '',
+              explanation: raw['explanation']?.toString() ?? '',
+              marks: int.tryParse(raw['marks']?.toString() ?? '') ?? 1,
+              topic: raw['topic']?.toString() ?? topic,
+            ));
+          }
+          if (items.isNotEmpty) return items.take(questionCount).toList();
+        }
+      } catch (_) {}
+    }
+    return compute(_fallbackQuestions, _FallbackQuestionData(filePath, pageTextMap, topic, difficulty, questionCount));
   }
 }
 
@@ -133,109 +155,39 @@ class _QAData {
 
 String _generateExtractiveAnswer(_QAData data) {
   final sentences = data.contextSnippet.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 15).toList();
-  final qLower = data.question.toLowerCase();
-  final keywords = qLower.split(RegExp(r'\s+')).where((k) => k.length > 2).toList();
-
-  List<String> matchedSentences = [];
-  for (final s in sentences) {
-    final sLower = s.toLowerCase();
-    int matches = 0;
-    for (final k in keywords) {
-      if (sLower.contains(k)) matches++;
-    }
-    if (matches > 0) {
-      matchedSentences.add(s);
-    }
-  }
-
-  if (matchedSentences.isNotEmpty) {
-    return matchedSentences.take(3).join(' ');
-  } else {
-    return sentences.take(2).join(' ');
-  }
+  final keywords = data.question.toLowerCase().split(RegExp(r'\s+')).where((k) => k.length > 2).toList();
+  final matched = sentences.where((s) => keywords.any((k) => s.toLowerCase().contains(k))).toList();
+  return (matched.isNotEmpty ? matched : sentences).take(3).join(' ');
 }
 
-class _ExamData {
+class _FallbackQuestionData {
   final String filePath;
-  final Map<int, String> pageTextMap;
+  final Map<int, String> pages;
   final String topic;
   final String difficulty;
-  final int questionCount;
-  _ExamData({
-    required this.filePath,
-    required this.pageTextMap,
-    required this.topic,
-    required this.difficulty,
-    required this.questionCount,
-  });
+  final int count;
+  _FallbackQuestionData(this.filePath, this.pages, this.topic, this.difficulty, this.count);
 }
 
-List<StudyQuestion> _generateExamQuestionsLogic(_ExamData data) {
-  final List<StudyQuestion> questions = [];
-  final List<MapEntry<int, String>> pages = data.pageTextMap.entries.toList();
-
-  for (int i = 0; i < data.questionCount && i < pages.length * 2; i++) {
-    final entry = pages[i % pages.length];
-    final page = entry.key;
-    final text = entry.value;
-
-    final sentences = text.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 30).toList();
-    if (sentences.isEmpty) continue;
-
-    final sentence = sentences.first.trim();
+List<StudyQuestion> _fallbackQuestions(_FallbackQuestionData data) {
+  final items = <StudyQuestion>[];
+  final entries = data.pages.entries.toList();
+  for (int i = 0; i < data.count && i < entries.length * 2; i++) {
+    final e = entries[i % entries.length];
+    final sentence = e.value.split(RegExp(r'(?<=[.!?])\s+')).where((s) => s.trim().length > 30).firstOrNull;
+    if (sentence == null) continue;
     final words = sentence.split(RegExp(r'\s+')).where((w) => w.length > 4).toList();
     final keyword = words.isNotEmpty ? words.first : 'Concept';
-
-    if (data.difficulty.toLowerCase() == 'easy') {
-      questions.add(
-        StudyQuestion(
-          filePath: data.filePath,
-          pageNumber: page,
-          type: QuestionType.trueFalse,
-          question: '(Easy) $sentence',
-          options: ['TRUE', 'FALSE'],
-          correctAnswer: 'TRUE',
-          explanation: 'Source Page $page: "$sentence"',
-          topic: data.topic,
-        ),
-      );
-    } else if (data.difficulty.toLowerCase() == 'medium') {
-      questions.add(
-        StudyQuestion(
-          filePath: data.filePath,
-          pageNumber: page,
-          type: QuestionType.mcq,
-          question: '(Medium) What does the document state regarding $keyword?',
-          options: [
-            sentence.take(60),
-            'It has no impact on system behavior',
-            'It is explicitly deprecated',
-            'None of the above'
-          ]..shuffle(),
-          correctAnswer: sentence.take(60),
-          explanation: 'Source Page $page: $sentence',
-          topic: data.topic,
-        ),
-      );
-    } else {
-      questions.add(
-        StudyQuestion(
-          filePath: data.filePath,
-          pageNumber: page,
-          type: QuestionType.shortAnswer,
-          question: '(Hard - 5 Marks) Critically analyze the role of $keyword as discussed on Page $page.',
-          correctAnswer: sentence,
-          explanation: 'Document Reference: $sentence',
-          marks: 5,
-          topic: data.topic,
-        ),
-      );
-    }
+    items.add(StudyQuestion(
+      filePath: data.filePath,
+      pageNumber: e.key,
+      type: QuestionType.shortAnswer,
+      question: 'Explain the role of $keyword as discussed on Page ${e.key}.',
+      correctAnswer: sentence,
+      explanation: 'Document context from Page ${e.key}',
+      marks: 2,
+      topic: data.topic,
+    ));
   }
-
-  return questions;
-}
-
-extension StringTakeExt on String {
-  String take(int n) => length <= n ? this : '${substring(0, n)}...';
+  return items;
 }
