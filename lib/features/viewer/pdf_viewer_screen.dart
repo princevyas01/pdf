@@ -86,11 +86,25 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
 
   final Stopwatch _sessionStopwatch = Stopwatch();
 
+  late final DragonPetController _dragonPetController;
+
+  void _setDragonState(
+    DragonPetState state, {
+    Duration? returnToPreviousAfter,
+  }) {
+    _dragonPetController.setState(
+      state,
+      returnToPreviousAfter: returnToPreviousAfter,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _pdfViewerController = PdfViewerController();
+    _dragonPetController = DragonPetController();
+    _dragonPetController.markInteraction();
     if (widget.initialPage > 1) {
       _initialPage = widget.initialPage;
       _currentPage = widget.initialPage;
@@ -119,6 +133,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _searchFieldController.dispose();
     _ttsDocument?.dispose();
     _zoomNotifier.dispose();
+    _dragonPetController.dispose();
     super.dispose();
   }
 
@@ -1939,6 +1954,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
   }
 
   void _openStudyMode() {
+    _setDragonState(DragonPetState.holdingBook);
     final pdfFile = PdfFile(
       docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
       path: widget.filePath,
@@ -1956,6 +1972,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
   }
 
   void _openDocQa() {
+    _setDragonState(DragonPetState.thinking);
     final pdfFile = PdfFile(
       docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
       path: widget.filePath,
@@ -1977,6 +1994,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _pdfViewerController.clearSelection();
     setState(() => _showSelectionMenu = false);
     if (text != null && text.trim().isNotEmpty) {
+      _setDragonState(DragonPetState.explaining);
       showDialog(
         context: context,
         builder: (_) => ExplainTextDialog(selectedText: text),
@@ -2014,8 +2032,10 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
           if (pageText.trim().isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No text available on the current page.')));
           } else {
+            _setDragonState(DragonPetState.thinking);
             final result = await OnDeviceAIService.instance.summarizeSection(text: pageText, startPage: _currentPage, endPage: _currentPage);
             if (!mounted) return;
+            _setDragonState(DragonPetState.happy, returnToPreviousAfter: const Duration(seconds: 2));
             showDialog(context: context, builder: (_) => AlertDialog(title: Text('Page $_currentPage Summary'), content: SingleChildScrollView(child: Text(result))));
           }
         },
@@ -2139,6 +2159,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         _lastTextSelectionDetails = details;
         if (details.selectedText != null &&
             details.selectedText!.trim().isNotEmpty) {
+          _setDragonState(DragonPetState.curious);
           setState(() => _showSelectionMenu = true);
         } else {
           setState(() => _showSelectionMenu = false);
@@ -2148,6 +2169,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         _zoomNotifier.value = details.newZoomLevel;
       },
       onDocumentLoaded: (details) {
+        _setDragonState(DragonPetState.holdingBook);
         setState(() {
           _totalPages = details.document.pages.count;
           _docBookmarks = details.document.bookmarks;
@@ -2166,6 +2188,10 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         }
       },
       onPageChanged: (details) {
+        _setDragonState(
+          DragonPetState.reading,
+          returnToPreviousAfter: const Duration(milliseconds: 1800),
+        );
         setState(() {
           _currentPage = details.newPageNumber;
         });
@@ -2482,10 +2508,22 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
               Positioned(
                 right: 10,
                 bottom: 88,
-                child: DragonPetWidget(
-                  size: 56,
-                  state: DragonPetState.idle,
-                  onTap: _showDragonPetMenu,
+                child: AnimatedBuilder(
+                  animation: _dragonPetController,
+                  builder: (context, _) {
+                    return DragonPetWidget(
+                      size: 56,
+                      state: _dragonPetController.state,
+                      onTap: () {
+                        _dragonPetController.markInteraction();
+                        _setDragonState(
+                          DragonPetState.curious,
+                          returnToPreviousAfter: const Duration(milliseconds: 900),
+                        );
+                        _showDragonPetMenu();
+                      },
+                    );
+                  },
                 ),
               ),
           ],
