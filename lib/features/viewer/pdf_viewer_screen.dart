@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,6 +87,25 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
 
   final Stopwatch _sessionStopwatch = Stopwatch();
 
+  static const _petPosXKey = 'dragon_pet_pos_x';
+  static const _petPosYKey = 'dragon_pet_pos_y';
+  double _petX = 12.0;
+  double _petY = 16.0;
+
+  Future<void> _loadPetPosition() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final x = prefs.getDouble(_petPosXKey);
+      final y = prefs.getDouble(_petPosYKey);
+      if (x != null && y != null && mounted) {
+        setState(() {
+          _petX = x;
+          _petY = y;
+        });
+      }
+    } catch (_) {}
+  }
+
   late final DragonPetController _dragonPetController;
 
   void _setDragonState(
@@ -105,6 +125,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _pdfViewerController = PdfViewerController();
     _dragonPetController = DragonPetController();
     _dragonPetController.markInteraction();
+    _loadPetPosition();
     if (widget.initialPage > 1) {
       _initialPage = widget.initialPage;
       _currentPage = widget.initialPage;
@@ -2506,24 +2527,43 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
             if (_isAnnotationToolbarOpen) _buildEditorialAnnotationInspector(),
             if (!_isCorrupted)
               Positioned(
-                right: 10,
-                bottom: 88,
-                child: AnimatedBuilder(
-                  animation: _dragonPetController,
-                  builder: (context, _) {
-                    return DragonPetWidget(
-                      size: 56,
-                      state: _dragonPetController.state,
-                      onTap: () {
-                        _dragonPetController.markInteraction();
-                        _setDragonState(
-                          DragonPetState.curious,
-                          returnToPreviousAfter: const Duration(milliseconds: 900),
-                        );
-                        _showDragonPetMenu();
-                      },
-                    );
+                left: _petX,
+                top: _petY,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onPanUpdate: (details) {
+                    setState(() {
+                      final mq = MediaQuery.of(context);
+                      final maxX = (mq.size.width - 64.0).clamp(0.0, double.infinity);
+                      final maxY = (mq.size.height - 180.0).clamp(0.0, double.infinity);
+                      _petX = (_petX + details.delta.dx).clamp(4.0, maxX);
+                      _petY = (_petY + details.delta.dy).clamp(4.0, maxY);
+                    });
                   },
+                  onPanEnd: (_) async {
+                    try {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setDouble(_petPosXKey, _petX);
+                      await prefs.setDouble(_petPosYKey, _petY);
+                    } catch (_) {}
+                  },
+                  onTap: () {
+                    _dragonPetController.markInteraction();
+                    _setDragonState(
+                      DragonPetState.curious,
+                      returnToPreviousAfter: const Duration(milliseconds: 900),
+                    );
+                    _showDragonPetMenu();
+                  },
+                  child: AnimatedBuilder(
+                    animation: _dragonPetController,
+                    builder: (context, _) {
+                      return DragonPetWidget(
+                        size: 56,
+                        state: _dragonPetController.state,
+                      );
+                    },
+                  ),
                 ),
               ),
           ],
