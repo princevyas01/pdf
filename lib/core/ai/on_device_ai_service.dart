@@ -16,25 +16,30 @@ class OnDeviceAIService implements LocalAIProvider {
   String _clip(String text, int maxChars) =>
       text.length <= maxChars ? text : '${text.substring(0, maxChars)}...';
 
-  Future<String?> _llm({required String system, required String user, int maxTokens = 512}) async {
-    await AiModelManager.instance.initialize();
-    if (!AiModelManager.instance.config.isEnabled || !AiModelManager.instance.config.isInstalled) return null;
+  Future<String?> _llm({
+    String? system,
+    String? user,
+    String? systemPrompt,
+    String? userPrompt,
+    int maxTokens = 256,
+  }) async {
+    final sys = systemPrompt ?? system ?? '';
+    final usr = userPrompt ?? user ?? '';
+    final manager = AiModelManager.instance;
+    await manager.initialize();
+    if (!manager.config.isEnabled) return null;
+    if (!manager.config.isInstalled) return null;
+
     try {
-      final output = await LocalLlmService.instance.generate(
-        systemPrompt: system,
-        userPrompt: user,
+      return await LocalLlmService.instance.generate(
+        systemPrompt: sys,
+        userPrompt: usr,
         maxTokens: maxTokens,
-        temperature: AiModelManager.instance.config.temperature,
       );
-      final trimmed = output.trim();
-      if (trimmed.isEmpty) {
-        throw const LocalLlmException('The local model returned an empty response.');
-      }
-      return trimmed;
-    } finally {
-      if (AiModelManager.instance.config.autoUnload) {
-        await LocalLlmService.instance.unload();
-      }
+    } catch (e, st) {
+      debugPrint('OnDeviceAIService._llm: $e');
+      debugPrintStack(stackTrace: st);
+      rethrow;
     }
   }
 
