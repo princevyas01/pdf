@@ -1,7 +1,7 @@
 # Offline PDF Reader — Complete Codebase Source of Truth
 > **Document Purpose:** Complete, line-by-line, un-truncated source code dump of the Offline PDF Reader application.
 > **Total Source Files:** 92
-> **Total Source Lines:** 27257
+> **Total Source Lines:** 27306
 > **Security Notice:** All commercial license keys and proprietary secrets have been masked with `[REDACTED_*]` placeholders.
 
 ---
@@ -9348,6 +9348,7 @@ class _FilesTabState extends ConsumerState<FilesTab> {
     );
   }
 }
+
 ```
 
 ---
@@ -27278,6 +27279,9 @@ void main() {
     });
   });
 }
+
+
+
 ```
 
 ---
