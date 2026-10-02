@@ -15,7 +15,7 @@
 | 3 | [`README.md`](#readmemd) | text | 44 |
 | 4 | [`lib/core/ai/ai_model_manager.dart`](#libcoreaiaimodelmanagerdart) | dart | 103 |
 | 5 | [`lib/core/ai/local_ai_provider.dart`](#libcoreailocalaiproviderdart) | dart | 43 |
-| 6 | [`lib/core/ai/local_llm_service.dart`](#libcoreailocalllmservicedart) | dart | 194 |
+| 6 | [`lib/core/ai/local_llm_service.dart`](#libcoreailocalllmservicedart) | dart | 243 |
 | 7 | [`lib/core/ai/local_model_downloader.dart`](#libcoreailocalmodeldownloaderdart) | dart | 275 |
 | 8 | [`lib/core/ai/on_device_ai_service.dart`](#libcoreaiondeviceaiservicedart) | dart | 243 |
 | 9 | [`lib/core/ai/semantic_search_service.dart`](#libcoreaisemanticsearchservicedart) | dart | 192 |
@@ -477,7 +477,7 @@ abstract class LocalAIProvider {
 ## 6. lib/core/ai/local_llm_service.dart <a id="libcoreailocalllmservicedart"></a>
 
 - **Path:** `lib/core/ai/local_llm_service.dart`
-- **Lines:** 194
+- **Lines:** 243
 - **Language:** `dart`
 
 ````dart
@@ -503,8 +503,10 @@ class LocalLlmService {
   StreamSubscription<String>? _generationSubscription;
   bool _loaded = false;
   String? _loadedModelId;
+  int _activeContextSize = 1024;
 
   bool get isLoaded => _loaded;
+  int get activeContextSize => _activeContextSize;
 
   Future<File?> _resolveInstalledModel() async {
     final id = AiModelManager.instance.installedModelId;
@@ -530,32 +532,50 @@ class LocalLlmService {
     await unload();
 
     final controller = LlamaController();
-    final contextSize = AiModelManager.instance.config.maxContextLength;
-    final threads = Platform.numberOfProcessors > 0
-        ? min(Platform.numberOfProcessors, 4)
-        : 4;
 
+    // Check and clean any orphaned native model instance before attempting load
+    try {
+      if (await controller.isModelLoaded()) {
+        await controller.dispose();
+      }
+    } catch (_) {}
+
+    final configuredContext = AiModelManager.instance.config.maxContextLength;
+    // For large models (4B+ weights ~2.5GB), cap context to 1024 on mobile to prevent KV cache OOM.
+    // 1024 context uses ~150MB KV cache vs ~300MB for 2048, which keeps total app RSS safely below Android LMK thresholds.
+    final fileBytes = await file.length();
+    final isLargeModel = fileBytes > 1500 * 1024 * 1024;
+    final targetContext = isLargeModel
+        ? min(configuredContext > 0 ? configuredContext : 1024, 1024)
+        : (configuredContext > 0 ? configuredContext : 1024);
+
+    // Use 2 threads on mobile to run on primary performance cores without memory bus saturation or thread thrashing
+    const threads = 2;
+
+    int loadedCtx = targetContext;
     try {
       await controller.loadModel(
         modelPath: file.path,
         threads: threads,
-        contextSize: contextSize,
+        contextSize: targetContext,
         gpuLayers: 0,
       );
     } catch (e) {
-      if (contextSize > 1024) {
+      if (targetContext > 512) {
         await controller.loadModel(
           modelPath: file.path,
           threads: threads,
-          contextSize: 1024,
+          contextSize: 512,
           gpuLayers: 0,
         );
+        loadedCtx = 512;
       } else {
         rethrow;
       }
     }
 
     _controller = controller;
+    _activeContextSize = loadedCtx;
     _loaded = true;
     _loadedModelId = AiModelManager.instance.installedModelId;
   }
@@ -576,22 +596,31 @@ class LocalLlmService {
       await _controller!.clearContext();
     } catch (_) {}
 
-    // Safe context budget calculation:
-    // Ensure total prompt tokens + max generation tokens stays strictly below contextSize
-    final contextLimit = AiModelManager.instance.config.maxContextLength;
-    final genTokens = (maxTokens ?? 512).clamp(64, 512);
-    // Allow at most contextLimit - genTokens - 64 tokens for the input prompt
-    final maxPromptTokens = (contextLimit - genTokens - 64).clamp(256, contextLimit - 128);
-    // At ~3 chars/token (conservative for technical text/symbols/numbers), budget chars:
-    final maxPromptChars = maxPromptTokens * 3;
+    // Strict prompt budgeting:
+    // CRITICAL: In llama.cpp / jni_wrapper.cpp, if prompt tokens exceed contextSize,
+    // (g_n_past + tokens.size() > n_ctx) causes g_n_past to become negative (e.g. 0 - n_discard),
+    // leading to negative batch.pos, which triggers GGML_ASSERT in llama-kv-cache and crashes
+    // the process via SIGABRT with zero Dart stack trace!
+    // To prevent this completely, we guarantee prompt token count < maxPromptTokens.
+    final contextLimit = _activeContextSize;
+    // Cap generation tokens to 256 for mobile inference stability and fast responses
+    final genTokens = (maxTokens ?? 256).clamp(64, 256);
 
-    final safeSystemPrompt = systemPrompt.length > 400
-        ? systemPrompt.substring(0, 400)
+    // Leave at least genTokens + 128 safety margin tokens for generation and ChatML overhead
+    final maxPromptTokens = (contextLimit - genTokens - 128).clamp(128, 640);
+
+    // In worst-case tokenization (1 char = 1 token for numbers/symbols), budget characters strictly:
+    // maxTotalPromptChars ensures tokens.size() will NEVER exceed maxPromptTokens
+    final maxTotalPromptChars = (maxPromptTokens * 1.5).floor();
+
+    final safeSystemPrompt = systemPrompt.length > 200
+        ? systemPrompt.substring(0, 200)
         : systemPrompt;
-    final maxUserChars = max(200, maxPromptChars - safeSystemPrompt.length - 80);
+
+    final maxUserChars = max(150, maxTotalPromptChars - safeSystemPrompt.length - 60);
 
     final safeUserPrompt = userPrompt.length > maxUserChars
-        ? '${userPrompt.substring(0, maxUserChars)}\n[...content truncated for model capacity]'
+        ? '${userPrompt.substring(0, maxUserChars)}\n[...truncated for model memory]'
         : userPrompt;
 
     final chunks = <String>[];
@@ -599,29 +628,33 @@ class LocalLlmService {
     _generationSubscription = null;
 
     final done = Completer<void>();
-    _generationSubscription = _controller!.generateChat(
-      messages: [
-        ChatMessage(role: 'system', content: safeSystemPrompt),
-        ChatMessage(role: 'user', content: safeUserPrompt),
-      ],
-      template: 'chatml',
-      temperature: temperature ?? AiModelManager.instance.config.temperature,
-      maxTokens: genTokens,
-      topP: 0.9,
-      topK: 40,
-      minP: 0.05,
-      repeatPenalty: 1.12,
-      repeatLastN: 64,
-    ).listen(
-      chunks.add,
-      onError: (Object error, StackTrace stack) {
-        if (!done.isCompleted) done.completeError(error, stack);
-      },
-      onDone: () {
-        if (!done.isCompleted) done.complete();
-      },
-      cancelOnError: true,
-    );
+    try {
+      _generationSubscription = _controller!.generateChat(
+        messages: [
+          ChatMessage(role: 'system', content: safeSystemPrompt),
+          ChatMessage(role: 'user', content: safeUserPrompt),
+        ],
+        template: 'chatml',
+        temperature: temperature ?? AiModelManager.instance.config.temperature,
+        maxTokens: genTokens,
+        topP: 0.9,
+        topK: 40,
+        minP: 0.05,
+        repeatPenalty: 1.12,
+        repeatLastN: 64,
+      ).listen(
+        chunks.add,
+        onError: (Object error, StackTrace stack) {
+          if (!done.isCompleted) done.completeError(error, stack);
+        },
+        onDone: () {
+          if (!done.isCompleted) done.complete();
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      throw LocalLlmException('Failed to start inference: $e');
+    }
 
     try {
       await done.future.timeout(
@@ -637,8 +670,12 @@ class LocalLlmService {
       throw LocalLlmException('Inference error: $e');
     }
 
-    final text = _cleanModelText(chunks.join());
+    final rawOutput = chunks.join();
+    final text = _cleanModelText(rawOutput);
     if (text.trim().isEmpty) {
+      // If thinking tags were stripped and resulted in empty, fallback to raw output without tag markers
+      final fallback = rawOutput.replaceAll('<think>', '').replaceAll('</think>', '').trim();
+      if (fallback.isNotEmpty) return fallback;
       throw const LocalLlmException('The local model returned an empty response.');
     }
     return text;
@@ -662,13 +699,25 @@ class LocalLlmService {
       try {
         await controller.dispose();
       } catch (_) {}
+    } else {
+      try {
+        final probe = LlamaController();
+        if (await probe.isModelLoaded()) {
+          await probe.dispose();
+        }
+      } catch (_) {}
     }
   }
 
   String _cleanModelText(String text) {
     var value = text.replaceAll('\r\n', '\n').trim();
-    value = value.replaceAll(RegExp(r'<think>[\s\S]*?</think>', multiLine: true), '').trim();
-    value = value.replaceAll(RegExp(r'<think>[\s\S]*$', multiLine: true), '').trim();
+    // Strip completed think blocks
+    final withoutCompleteThink = value.replaceAll(RegExp(r'<think>[\s\S]*?</think>', multiLine: true), '').trim();
+    if (withoutCompleteThink.isNotEmpty) {
+      value = withoutCompleteThink;
+    }
+    // If thinking block was opened but not closed, strip the think open tag
+    value = value.replaceAll('<think>', '').replaceAll('</think>', '').trim();
     value = value.replaceAll('<|im_end|>', '').replaceAll('<|endoftext|>', '').replaceAll('<|im_start|>', '');
     value = value.replaceAll(RegExp(r'^```(?:json|text)?\s*', caseSensitive: false), '');
     value = value.replaceAll(RegExp(r'\s*```$'), '');
