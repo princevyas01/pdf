@@ -1,9 +1,33 @@
+// lib/core/ai/local_llm_service.dart
+// Replace the entire file with this implementation.
+
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
+
+import 'package:flutter/foundation.dart';
 import 'package:llama_flutter_android/llama_flutter_android.dart';
+
 import 'ai_model_manager.dart';
 import 'local_model_downloader.dart';
+
+class ContextHelper {
+  final int contextSize;
+  const ContextHelper({required this.contextSize});
+
+  int estimateTokens(String text) => (text.length / 3.5).ceil();
+
+  int calculateSafeMaxTokens(int promptTokens, int requestedOutput) {
+    final available = contextSize - promptTokens - 32;
+    return min(available, requestedOutput);
+  }
+}
+
+class LocalLlmMemoryException implements Exception {
+  final String message;
+  const LocalLlmMemoryException(this.message);
+  @override
+  String toString() => 'LocalLlmMemoryException: $message';
+}
 
 class LocalLlmException implements Exception {
   final String message;
@@ -13,8 +37,8 @@ class LocalLlmException implements Exception {
 }
 
 class LocalLlmService {
-  static final LocalLlmService instance = LocalLlmService._init();
-  LocalLlmService._init();
+  LocalLlmService._();
+  static final LocalLlmService instance = LocalLlmService._();
 
   LlamaController? _controller;
   StreamSubscription<String>? _generationSubscription;
@@ -22,221 +46,261 @@ class LocalLlmService {
   String? _loadedModelId;
   int _activeContextSize = 1024;
 
-  bool get isLoaded => _loaded;
-  int get activeContextSize => _activeContextSize;
+  // One queue for the entire native-controller lifecycle.
+  Future<void> _operationTail = Future<void>.value();
 
-  Future<File?> _resolveInstalledModel() async {
-    final id = AiModelManager.instance.installedModelId;
-    if (id == null) return null;
-    LocalModelDescriptor? model;
-    for (final candidate in LocalModelDownloader.models) {
-      if (candidate.id == id) {
-        model = candidate;
-        break;
+  Future<T> _runExclusive<T>(Future<T> Function() action) {
+    final completer = Completer<T>();
+    _operationTail = _operationTail.catchError((_) {}).then((_) async {
+      try {
+        completer.complete(await action());
+      } catch (e, st) {
+        completer.completeError(e, st);
       }
-    }
-    if (model == null) return null;
-    final file = await LocalModelDownloader.modelFile(model);
-    if (!await file.exists()) return null;
-    return file;
+    });
+    return completer.future;
   }
 
-  Future<void> load() async {
+  Future<LocalModelDescriptor?> _resolveInstalledModel() async {
     await AiModelManager.instance.initialize();
-    final file = await _resolveInstalledModel();
-    if (file == null) throw const LocalLlmException('No verified local model is installed.');
-    if (_loaded && _loadedModelId == AiModelManager.instance.installedModelId && _controller != null) return;
-    await unload();
+    final modelId = AiModelManager.instance.installedModelId ??
+        (LocalModelDownloader.models.isNotEmpty
+            ? LocalModelDownloader.models.first.id
+            : null);
+    if (modelId == null || modelId.isEmpty) return null;
+    const models = LocalModelDownloader.models;
+    for (final model in models) {
+      if (model.id != modelId) continue;
+      final installed = await LocalModelDownloader.isInstalled(model);
+      if (!installed) return null;
+      return model;
+    }
+    return null;
+  }
+
+  Future<void> _disposeControllerLocked() async {
+    await _generationSubscription?.cancel();
+    _generationSubscription = null;
+
+    final controller = _controller;
+    _controller = null;
+    _loaded = false;
+    _loadedModelId = null;
+
+    if (controller != null) {
+      try {
+        await controller.stop();
+      } catch (_) {}
+      try {
+        await controller.dispose();
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _loadLocked() async {
+    final model = await _resolveInstalledModel();
+    if (model == null) {
+      throw StateError('No verified local AI model is installed.');
+    }
+
+    if (_loaded && _controller != null && _loadedModelId == model.id) {
+      return;
+    }
+
+    if (_controller != null || _loaded) {
+      await _disposeControllerLocked();
+    }
 
     final controller = LlamaController();
-
-    // Check and clean any orphaned native model instance before attempting load
     try {
-      if (await controller.isModelLoaded()) {
+      final gpuInfo = await controller.detectGpu();
+      final freeRam = gpuInfo.freeRamBytes;
+      final expectedSize = model.expectedSizeBytes ?? 2497280640;
+      final requiredFloor = expectedSize + (1024 * 1024 * 1024);
+
+      // Do not enter native inference when the device is already under pressure.
+      if (model.id.contains('4b') && freeRam > 0 && freeRam < requiredFloor) {
         await controller.dispose();
+        throw LocalLlmMemoryException(
+          'Insufficient free RAM for the selected 4B model. '
+          'Free RAM: ${freeRam ~/ (1024 * 1024)} MB; '
+          'minimum safety floor: ${requiredFloor ~/ (1024 * 1024)} MB.',
+        );
       }
-    } catch (_) {}
 
-    final configuredContext = AiModelManager.instance.config.maxContextLength;
-    // For large models (4B+ weights ~2.5GB), cap context to 1024 on mobile to prevent KV cache OOM.
-    // 1024 context uses ~150MB KV cache vs ~300MB for 2048, which keeps total app RSS safely below Android LMK thresholds.
-    final fileBytes = await file.length();
-    final isLargeModel = fileBytes > 1500 * 1024 * 1024;
-    final targetContext = isLargeModel
-        ? min(configuredContext > 0 ? configuredContext : 1024, 1024)
-        : (configuredContext > 0 ? configuredContext : 1024);
+      int gpuLayers = 0;
+      final recommended = gpuInfo.recommendedGpuLayers;
+      if (gpuInfo.vulkanSupported && recommended > 0) {
+        gpuLayers = min(recommended, 16);
+      }
 
-    // Use 2 threads on mobile to run on primary performance cores without memory bus saturation or thread thrashing
-    const threads = 2;
+      int targetContext = 1024;
+      if (!model.id.contains('4b')) {
+        targetContext = 1024;
+      }
+      _activeContextSize = targetContext;
 
-    int loadedCtx = targetContext;
-    try {
+      final file = await LocalModelDownloader.modelFile(model);
       await controller.loadModel(
         modelPath: file.path,
-        threads: threads,
         contextSize: targetContext,
-        gpuLayers: 0,
+        gpuLayers: gpuLayers,
+        threads: 2,
       );
-    } catch (e) {
-      if (targetContext > 512) {
-        await controller.loadModel(
-          modelPath: file.path,
-          threads: threads,
-          contextSize: 512,
-          gpuLayers: 0,
-        );
-        loadedCtx = 512;
-      } else {
-        rethrow;
-      }
-    }
 
-    _controller = controller;
-    _activeContextSize = loadedCtx;
-    _loaded = true;
-    _loadedModelId = AiModelManager.instance.installedModelId;
+      _controller = controller;
+      _loaded = true;
+      _loadedModelId = model.id;
+    } catch (_) {
+      try {
+        await controller.stop();
+      } catch (_) {}
+      try {
+        await controller.dispose();
+      } catch (_) {}
+      rethrow;
+    }
   }
+
+  Future<void> load() => _runExclusive(_loadLocked);
 
   Future<String> generate({
     required String systemPrompt,
     required String userPrompt,
     int? maxTokens,
-    double? temperature,
-  }) async {
-    await load();
-    if (_controller == null) {
-      throw const LocalLlmException('Local LLM controller is not loaded.');
+    double temperature = 0.2,
+    double topP = 0.9,
+  }) =>
+      _runExclusive(() async {
+        await _loadLocked();
+        final controller = _controller;
+        if (controller == null || !_loaded) {
+          throw StateError('Local LLM controller is not available.');
+        }
+
+        await _generationSubscription?.cancel();
+        _generationSubscription = null;
+
+        await controller.clearContext();
+
+        final helper = ContextHelper(contextSize: _activeContextSize);
+        final requestedOutput = (maxTokens ?? 256).clamp(96, 192).toInt();
+        final safeOutput = helper
+            .calculateSafeMaxTokens(0, requestedOutput)
+            .clamp(64, 192)
+            .toInt();
+
+        const systemCharsMax = 1200;
+        final safeSystem = systemPrompt.length > systemCharsMax
+            ? systemPrompt.substring(0, systemCharsMax)
+            : systemPrompt;
+
+        final baseOverheadTokens = helper.estimateTokens(safeSystem) + 64;
+        final remaining =
+            max(64, _activeContextSize - safeOutput - baseOverheadTokens - 32);
+        final safeUser = _trimToTokenBudget(userPrompt, helper, remaining);
+
+        final messages = <ChatMessage>[
+          ChatMessage(role: 'system', content: safeSystem),
+          ChatMessage(role: 'user', content: safeUser),
+        ];
+
+        controller.setSystemPromptLength(safeSystem.length);
+
+        final buffer = StringBuffer();
+        final completer = Completer<String>();
+        try {
+          final stream = controller.generateChat(
+            messages: messages,
+            template: 'chatml',
+            temperature: temperature,
+            topP: topP,
+            maxTokens: safeOutput,
+          );
+
+          _generationSubscription = stream.listen(
+            (token) => buffer.write(token),
+            onError: (Object error, StackTrace stack) {
+              if (!completer.isCompleted) completer.completeError(error, stack);
+            },
+            onDone: () {
+              if (!completer.isCompleted) {
+                completer.complete(buffer.toString().trim());
+              }
+            },
+            cancelOnError: true,
+          );
+
+          final rawText = await completer.future.timeout(
+            const Duration(seconds: 120),
+            onTimeout: () =>
+                throw TimeoutException('Local LLM generation timed out.'),
+          );
+          return _cleanModelText(rawText);
+        } finally {
+          await _generationSubscription?.cancel();
+          _generationSubscription = null;
+          try {
+            await controller.stop();
+          } catch (_) {}
+        }
+      });
+
+  String _trimToTokenBudget(
+      String input, ContextHelper helper, int tokenBudget) {
+    if (input.isEmpty) return input;
+    if (helper.estimateTokens(input) <= tokenBudget) return input;
+
+    int low = 0;
+    int high = input.length;
+    while (low < high) {
+      final mid = (low + high + 1) >> 1;
+      final candidate = input.substring(0, mid);
+      if (helper.estimateTokens(candidate) <= tokenBudget) {
+        low = mid;
+      } else {
+        high = mid - 1;
+      }
     }
-
-    // Always reset KV cache position to avoid accumulating past context overflow
-    try {
-      await _controller!.clearContext();
-    } catch (_) {}
-
-    // Strict prompt budgeting:
-    // CRITICAL: In llama.cpp / jni_wrapper.cpp, if prompt tokens exceed contextSize,
-    // (g_n_past + tokens.size() > n_ctx) causes g_n_past to become negative (e.g. 0 - n_discard),
-    // leading to negative batch.pos, which triggers GGML_ASSERT in llama-kv-cache and crashes
-    // the process via SIGABRT with zero Dart stack trace!
-    // To prevent this completely, we guarantee prompt token count < maxPromptTokens.
-    final contextLimit = _activeContextSize;
-    // Cap generation tokens to 256 for mobile inference stability and fast responses
-    final genTokens = (maxTokens ?? 256).clamp(64, 256);
-
-    // Leave at least genTokens + 128 safety margin tokens for generation and ChatML overhead
-    final maxPromptTokens = (contextLimit - genTokens - 128).clamp(128, 640);
-
-    // In worst-case tokenization (1 char = 1 token for numbers/symbols), budget characters strictly:
-    // maxTotalPromptChars ensures tokens.size() will NEVER exceed maxPromptTokens
-    final maxTotalPromptChars = (maxPromptTokens * 1.5).floor();
-
-    final safeSystemPrompt = systemPrompt.length > 200
-        ? systemPrompt.substring(0, 200)
-        : systemPrompt;
-
-    final maxUserChars = max(150, maxTotalPromptChars - safeSystemPrompt.length - 60);
-
-    final safeUserPrompt = userPrompt.length > maxUserChars
-        ? '${userPrompt.substring(0, maxUserChars)}\n[...truncated for model memory]'
-        : userPrompt;
-
-    final chunks = <String>[];
-    await _generationSubscription?.cancel();
-    _generationSubscription = null;
-
-    final done = Completer<void>();
-    try {
-      _generationSubscription = _controller!.generateChat(
-        messages: [
-          ChatMessage(role: 'system', content: safeSystemPrompt),
-          ChatMessage(role: 'user', content: safeUserPrompt),
-        ],
-        template: 'chatml',
-        temperature: temperature ?? AiModelManager.instance.config.temperature,
-        maxTokens: genTokens,
-        topP: 0.9,
-        topK: 40,
-        minP: 0.05,
-        repeatPenalty: 1.12,
-        repeatLastN: 64,
-      ).listen(
-        chunks.add,
-        onError: (Object error, StackTrace stack) {
-          if (!done.isCompleted) done.completeError(error, stack);
-        },
-        onDone: () {
-          if (!done.isCompleted) done.complete();
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      throw LocalLlmException('Failed to start inference: $e');
-    }
-
-    try {
-      await done.future.timeout(
-        const Duration(seconds: 120),
-        onTimeout: () {
-          _controller?.stop();
-          throw const LocalLlmException('Generation timed out after 120 seconds.');
-        },
-      );
-    } catch (e) {
-      await _controller?.stop();
-      if (e is LocalLlmException) rethrow;
-      throw LocalLlmException('Inference error: $e');
-    }
-
-    final rawOutput = chunks.join();
-    final text = _cleanModelText(rawOutput);
-    if (text.trim().isEmpty) {
-      // If thinking tags were stripped and resulted in empty, fallback to raw output without tag markers
-      final fallback = rawOutput.replaceAll('<think>', '').replaceAll('</think>', '').trim();
-      if (fallback.isNotEmpty) return fallback;
-      throw const LocalLlmException('The local model returned an empty response.');
-    }
-    return text;
+    return input.substring(0, low);
   }
 
   Future<void> stop() async {
-    try {
-      await _generationSubscription?.cancel();
-      _generationSubscription = null;
-      await _controller?.stop();
-    } catch (_) {}
-  }
-
-  Future<void> unload() async {
-    await stop();
     final controller = _controller;
-    _controller = null;
-    _loaded = false;
-    _loadedModelId = null;
-    if (controller != null) {
-      try {
-        await controller.dispose();
-      } catch (_) {}
-    } else {
-      try {
-        final probe = LlamaController();
-        if (await probe.isModelLoaded()) {
-          await probe.dispose();
-        }
-      } catch (_) {}
+    if (controller == null) return;
+    try {
+      await controller.stop();
+    } catch (e, st) {
+      debugPrint('LocalLlmService.stop: $e');
+      debugPrintStack(stackTrace: st);
     }
   }
+
+  Future<void> unload() => _runExclusive(() async {
+        await _disposeControllerLocked();
+      });
+
+  bool get isLoaded => _loaded;
+  int get activeContextSize => _activeContextSize;
+  String? get loadedModelId => _loadedModelId;
 
   String _cleanModelText(String text) {
     var value = text.replaceAll('\r\n', '\n').trim();
     // Strip completed think blocks
-    final withoutCompleteThink = value.replaceAll(RegExp(r'<think>[\s\S]*?</think>', multiLine: true), '').trim();
+    final withoutCompleteThink = value
+        .replaceAll(RegExp(r'<think>[\s\S]*?</think>', multiLine: true), '')
+        .trim();
     if (withoutCompleteThink.isNotEmpty) {
       value = withoutCompleteThink;
     }
     // If thinking block was opened but not closed, strip the think open tag
     value = value.replaceAll('<think>', '').replaceAll('</think>', '').trim();
-    value = value.replaceAll('<|im_end|>', '').replaceAll('<|endoftext|>', '').replaceAll('<|im_start|>', '');
-    value = value.replaceAll(RegExp(r'^```(?:json|text)?\s*', caseSensitive: false), '');
+    value = value
+        .replaceAll('<|im_end|>', '')
+        .replaceAll('<|endoftext|>', '')
+        .replaceAll('<|im_start|>', '');
+    value = value.replaceAll(
+        RegExp(r'^```(?:json|text)?\s*', caseSensitive: false), '');
     value = value.replaceAll(RegExp(r'\s*```$'), '');
     return value.trim();
   }
