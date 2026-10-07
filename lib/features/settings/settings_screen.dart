@@ -7,7 +7,6 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/editorial_tokens.dart';
 import '../../widgets/editorial_components.dart';
 import '../home/pdf_list_provider.dart';
-import 'local_ai_models_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -414,39 +413,6 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // 4. Local Intelligence
-                const EditorialSectionHeader(
-                  number: '04',
-                  label: 'Local Intelligence',
-                  count: 'on-device AI',
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
-                    borderRadius: BorderRadius.circular(EditorialTokens.r4),
-                    border: Border.all(
-                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
-                      width: EditorialTokens.hairline,
-                    ),
-                  ),
-                  child: ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.memory_outlined, size: 20, color: EditorialTokens.primary),
-                    title: Text(
-                      'Local AI Models',
-                      style: EditorialTokens.titleSmall(color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink),
-                    ),
-                    subtitle: Text(
-                      'Download and manage the offline study model',
-                      style: EditorialTokens.metadata(color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
-                    ),
-                    trailing: Icon(Icons.chevron_right, size: 18, color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LocalAiModelsScreen())),
                   ),
                 ),
                 const SizedBox(height: 32),
