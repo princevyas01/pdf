@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,11 +22,6 @@ import '../study/study_mode_screen.dart';
 import '../ai/doc_qa_screen.dart';
 import '../ai/explain_text_dialog.dart';
 import '../home/pdf_list_provider.dart';
-import '../../core/ai/on_device_ai_service.dart';
-import '../../core/pet/dragon_pet_controller.dart';
-import '../../widgets/dragon_pet_widget.dart';
-import '../../widgets/dragon_pet_menu.dart';
-import '../settings/local_ai_models_screen.dart';
 
 enum MarkupAnnotationType { highlight, underline, strikethrough, squiggly }
 
@@ -87,45 +81,11 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
 
   final Stopwatch _sessionStopwatch = Stopwatch();
 
-  static const _petPosXKey = 'dragon_pet_pos_x';
-  static const _petPosYKey = 'dragon_pet_pos_y';
-  double _petX = 12.0;
-  double _petY = 16.0;
-
-  Future<void> _loadPetPosition() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final x = prefs.getDouble(_petPosXKey);
-      final y = prefs.getDouble(_petPosYKey);
-      if (x != null && y != null && mounted) {
-        setState(() {
-          _petX = x;
-          _petY = y;
-        });
-      }
-    } catch (_) {}
-  }
-
-  late final DragonPetController _dragonPetController;
-
-  void _setDragonState(
-    DragonPetState state, {
-    Duration? returnToPreviousAfter,
-  }) {
-    _dragonPetController.setState(
-      state,
-      returnToPreviousAfter: returnToPreviousAfter,
-    );
-  }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _pdfViewerController = PdfViewerController();
-    _dragonPetController = DragonPetController();
-    _dragonPetController.markInteraction();
-    _loadPetPosition();
     if (widget.initialPage > 1) {
       _initialPage = widget.initialPage;
       _currentPage = widget.initialPage;
@@ -154,7 +114,6 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _searchFieldController.dispose();
     _ttsDocument?.dispose();
     _zoomNotifier.dispose();
-    _dragonPetController.dispose();
     super.dispose();
   }
 
@@ -1975,7 +1934,6 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
   }
 
   void _openStudyMode() {
-    _setDragonState(DragonPetState.holdingBook);
     final pdfFile = PdfFile(
       docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
       path: widget.filePath,
@@ -1993,7 +1951,6 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
   }
 
   void _openDocQa() {
-    _setDragonState(DragonPetState.thinking);
     final pdfFile = PdfFile(
       docId: DateTime.now().microsecondsSinceEpoch.toRadixString(36) + widget.filePath.hashCode.toRadixString(36),
       path: widget.filePath,
@@ -2015,73 +1972,10 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
     _pdfViewerController.clearSelection();
     setState(() => _showSelectionMenu = false);
     if (text != null && text.trim().isNotEmpty) {
-      _setDragonState(DragonPetState.explaining);
       showDialog(
         context: context,
         builder: (_) => ExplainTextDialog(selectedText: text),
       );
-    }
-  }
-
-  void _showDragonPetMenu() {
-    final hasSelection = (_lastTextSelectionDetails?.selectedText ?? '').trim().isNotEmpty;
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => DragonPetMenu(
-        hasSelection: hasSelection,
-        onAskDocument: () {
-          Navigator.pop(context);
-          _openDocQa();
-        },
-        onExplainSelection: () {
-          Navigator.pop(context);
-          if (hasSelection) {
-            _handleExplainText();
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select PDF text first.')));
-          }
-        },
-        onStudyMode: () {
-          Navigator.pop(context);
-          _openStudyMode();
-        },
-        onSummarizePage: () async {
-          Navigator.pop(context);
-          final pageText = await _extractCurrentPageTextForPet();
-          if (!mounted) return;
-          if (pageText.trim().isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No text available on the current page.')));
-          } else {
-            _setDragonState(DragonPetState.thinking);
-            final result = await OnDeviceAIService.instance.summarizeSection(text: pageText, startPage: _currentPage, endPage: _currentPage);
-            if (!mounted) return;
-            _setDragonState(DragonPetState.happy, returnToPreviousAfter: const Duration(seconds: 2));
-            showDialog(context: context, builder: (_) => AlertDialog(title: Text('Page $_currentPage Summary'), content: SingleChildScrollView(child: Text(result))));
-          }
-        },
-        onAiModels: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LocalAiModelsScreen()));
-        },
-      ),
-    );
-  }
-
-  Future<String> _extractCurrentPageTextForPet() async {
-    try {
-      if (_ttsDocument == null) {
-        final fileBytes = await File(widget.filePath).readAsBytes();
-        _ttsDocument = sf.PdfDocument(inputBytes: fileBytes);
-      }
-      final extractor = sf.PdfTextExtractor(_ttsDocument!);
-      final pageText = extractor.extractText(
-        startPageIndex: _currentPage - 1,
-        endPageIndex: _currentPage - 1,
-      );
-      return pageText;
-    } catch (_) {
-      return '';
     }
   }
 
@@ -2180,7 +2074,6 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         _lastTextSelectionDetails = details;
         if (details.selectedText != null &&
             details.selectedText!.trim().isNotEmpty) {
-          _setDragonState(DragonPetState.curious);
           setState(() => _showSelectionMenu = true);
         } else {
           setState(() => _showSelectionMenu = false);
@@ -2190,7 +2083,6 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         _zoomNotifier.value = details.newZoomLevel;
       },
       onDocumentLoaded: (details) {
-        _setDragonState(DragonPetState.holdingBook);
         setState(() {
           _totalPages = details.document.pages.count;
           _docBookmarks = details.document.bookmarks;
@@ -2209,10 +2101,6 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
         }
       },
       onPageChanged: (details) {
-        _setDragonState(
-          DragonPetState.reading,
-          returnToPreviousAfter: const Duration(milliseconds: 1800),
-        );
         setState(() {
           _currentPage = details.newPageNumber;
         });
@@ -2525,47 +2413,6 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen>
                 : viewerWidget,
             if (_showSelectionMenu) _buildSelectionToolbar(),
             if (_isAnnotationToolbarOpen) _buildEditorialAnnotationInspector(),
-            if (!_isCorrupted)
-              Positioned(
-                left: _petX,
-                top: _petY,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onPanUpdate: (details) {
-                    setState(() {
-                      final mq = MediaQuery.of(context);
-                      final maxX = (mq.size.width - 64.0).clamp(0.0, double.infinity);
-                      final maxY = (mq.size.height - 180.0).clamp(0.0, double.infinity);
-                      _petX = (_petX + details.delta.dx).clamp(4.0, maxX);
-                      _petY = (_petY + details.delta.dy).clamp(4.0, maxY);
-                    });
-                  },
-                  onPanEnd: (_) async {
-                    try {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setDouble(_petPosXKey, _petX);
-                      await prefs.setDouble(_petPosYKey, _petY);
-                    } catch (_) {}
-                  },
-                  onTap: () {
-                    _dragonPetController.markInteraction();
-                    _setDragonState(
-                      DragonPetState.curious,
-                      returnToPreviousAfter: const Duration(milliseconds: 900),
-                    );
-                    _showDragonPetMenu();
-                  },
-                  child: AnimatedBuilder(
-                    animation: _dragonPetController,
-                    builder: (context, _) {
-                      return DragonPetWidget(
-                        size: 56,
-                        state: _dragonPetController.state,
-                      );
-                    },
-                  ),
-                ),
-              ),
           ],
         ),
         bottomNavigationBar: Container(
