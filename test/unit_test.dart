@@ -16,6 +16,8 @@ import 'package:offline_pdf_reader/core/tools/pdf_metadata_service.dart';
 import 'package:offline_pdf_reader/core/tools/pdf_target_size_compressor_service.dart';
 import 'package:offline_pdf_reader/core/tools/image_target_size_compressor_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -92,8 +94,11 @@ void main() {
       expect(restored.sourceType, 'scanned');
       expect(restored.scanCreatedAt, 1600000000000);
 
-      final cleared =
-          pdf.copyWith(lastOpenedAt: null, extractedText: null, folder: null, scanCreatedAt: null);
+      final cleared = pdf.copyWith(
+          lastOpenedAt: null,
+          extractedText: null,
+          folder: null,
+          scanCreatedAt: null);
       expect(cleared.lastOpenedAt, isNull);
       expect(cleared.extractedText, isNull);
       expect(cleared.folder, isNull);
@@ -184,7 +189,8 @@ void main() {
   });
 
   group('Phase 2 Study Tools & NLP Services Tests', () {
-    test('LocalSummarizerService summarizes text locally without network', () async {
+    test('LocalSummarizerService summarizes text locally without network',
+        () async {
       const sampleText =
           'Database Normalization is the process of structuring a relational database in accordance with a series of normal forms to reduce data redundancy and improve data integrity. Primary Key uniquely identifies each tuple in a relation. Foreign Key establishes a link between tables.';
 
@@ -193,41 +199,49 @@ void main() {
       expect(result.keyPoints, isNotEmpty);
     });
 
-    test('TopicExtractorService extracts topics and terms with page numbers', () async {
+    test('TopicExtractorService extracts topics and terms with page numbers',
+        () async {
       final pageMap = {
         1: 'Chapter 1 Introduction to Database Architecture. Normalization reduces redundancy.',
         2: 'Primary Key uniquely identifies a record. Foreign Key links tables.',
       };
 
-      final topics = await TopicExtractorService.extractTopicsFromPages('/sample.pdf', pageMap);
+      final topics = await TopicExtractorService.extractTopicsFromPages(
+          '/sample.pdf', pageMap);
       expect(topics, isNotEmpty);
 
       final terms = await TopicExtractorService.extractImportantTerms(pageMap);
       expect(terms, isNotEmpty);
     });
 
-    test('StudyGeneratorService generates Flashcards and MCQs locally', () async {
+    test('StudyGeneratorService generates Flashcards and MCQs locally',
+        () async {
       final pageMap = {
         1: 'Database Normalization is defined as reducing data redundancy in relational tables.',
         2: 'Primary Key is defined as a unique record identifier in a database table.',
       };
 
-      final cards = await StudyGeneratorService.generateFlashcards('/sample.pdf', pageMap);
+      final cards = await StudyGeneratorService.generateFlashcards(
+          '/sample.pdf', pageMap);
       expect(cards, isNotEmpty);
 
-      final questions = await StudyGeneratorService.generateQuestions('/sample.pdf', pageMap);
+      final questions =
+          await StudyGeneratorService.generateQuestions('/sample.pdf', pageMap);
       expect(questions, isNotEmpty);
     });
   });
 
   group('Phase 3 Local Intelligence & Semantic Search Tests', () {
-    test('SemanticSearchService chunks and ranks query relevance via vector similarity', () async {
+    test(
+        'SemanticSearchService chunks and ranks query relevance via vector similarity',
+        () async {
       final pageMap = {
         1: 'Normalization reduces data redundancy in relational databases by organizing table structures.',
         2: 'Indexing accelerates query performance by creating B-tree data structures.',
       };
 
-      final chunks = await SemanticSearchService.chunkDocumentText('/sample.pdf', pageMap);
+      final chunks =
+          await SemanticSearchService.chunkDocumentText('/sample.pdf', pageMap);
       expect(chunks, isNotEmpty);
 
       final results = SemanticSearchService.search('data redundancy', chunks);
@@ -235,7 +249,8 @@ void main() {
       expect(results.first.chunk.pageNumber, 1);
     });
 
-    test('OnDeviceAIService performs grounded Q&A with source page references', () async {
+    test('OnDeviceAIService performs grounded Q&A with source page references',
+        () async {
       final pageMap = {
         10: 'Primary Key uniquely identifies each record in a database table.',
       };
@@ -280,7 +295,10 @@ void main() {
         fileAPages: 5,
         fileBPages: 5,
         pageDiffs: [
-          PageDiff(pageNumber: 1, addedLines: ['+ New line'], removedLines: ['- Old line']),
+          PageDiff(
+              pageNumber: 1,
+              addedLines: ['+ New line'],
+              removedLines: ['- Old line']),
         ],
         summary: '1 page modified',
       );
@@ -305,9 +323,12 @@ void main() {
     });
 
     test('PdfTargetSizeCompressorService unit parsing and result metrics', () {
-      expect(PdfTargetSizeCompressorService.parseSizeToBytes(100, 'KB'), 102400);
-      expect(PdfTargetSizeCompressorService.parseSizeToBytes(1.5, 'MB'), (1.5 * 1024 * 1024).round());
-      expect(PdfTargetSizeCompressorService.parseSizeToBytes(500, 'kb'), 512000);
+      expect(
+          PdfTargetSizeCompressorService.parseSizeToBytes(100, 'KB'), 102400);
+      expect(PdfTargetSizeCompressorService.parseSizeToBytes(1.5, 'MB'),
+          (1.5 * 1024 * 1024).round());
+      expect(
+          PdfTargetSizeCompressorService.parseSizeToBytes(500, 'kb'), 512000);
 
       final result = TargetCompressionResult(
         originalPath: '/storage/original.pdf',
@@ -329,14 +350,16 @@ void main() {
       expect(result.pageCount, 12);
     });
 
-    test('PdfTargetSizeCompressorService prefers largest candidate at or below target', () {
+    test(
+        'PdfTargetSizeCompressorService prefers largest candidate at or below target',
+        () {
       const targetBytes = 1024 * 1024; // 1 MB = 1048576 bytes
       final candidates = [
         1650000, // Over target
         1280000, // Over target
-        980000,  // Best under target (closest to 1 MB)
-        720000,  // Undersized
-        320000,  // Too small
+        980000, // Best under target (closest to 1 MB)
+        720000, // Undersized
+        320000, // Too small
       ];
 
       int bestUnderTarget = 0;
@@ -359,9 +382,12 @@ void main() {
       expect(chosenSize <= targetBytes, true);
     });
 
-    test('ImageTargetSizeCompressorService unit parsing and result metrics', () {
-      expect(ImageTargetSizeCompressorService.parseSizeToBytes(100, 'KB'), 102400);
-      expect(ImageTargetSizeCompressorService.parseSizeToBytes(2.5, 'MB'), (2.5 * 1024 * 1024).round());
+    test('ImageTargetSizeCompressorService unit parsing and result metrics',
+        () {
+      expect(
+          ImageTargetSizeCompressorService.parseSizeToBytes(100, 'KB'), 102400);
+      expect(ImageTargetSizeCompressorService.parseSizeToBytes(2.5, 'MB'),
+          (2.5 * 1024 * 1024).round());
 
       final imgResult = ImageTargetCompressionResult(
         originalPath: '/storage/photo.jpg',
@@ -389,7 +415,169 @@ void main() {
       expect(imgResult.isTargetAchieved, true);
     });
   });
+
+  group('Structural PDF Operations (Delete, Merge, Split) Verification', () {
+    test(
+        'In-place page deletion via document.pages.removeAt preserves remaining pages and structure',
+        () async {
+      final doc = sf.PdfDocument();
+      for (int i = 0; i < 3; i++) {
+        final page = doc.pages.add();
+        page.graphics.drawString(
+          'Page content ${i + 1}',
+          sf.PdfStandardFont(sf.PdfFontFamily.helvetica, 12),
+          bounds: const Rect.fromLTWH(20, 20, 200, 30),
+        );
+      }
+      expect(doc.pages.count, 3);
+
+      final bytes = await doc.save();
+      doc.dispose();
+
+      // Test in-place removal of page index 1 (descending order)
+      final docToEdit = sf.PdfDocument(inputBytes: bytes);
+      final indicesToRemove = [1]..sort((a, b) => b.compareTo(a));
+      for (final idx in indicesToRemove) {
+        docToEdit.pages.removeAt(idx);
+      }
+      expect(docToEdit.pages.count, 2);
+
+      final editedBytes = await docToEdit.save();
+      docToEdit.dispose();
+
+      // Verify reloaded document has 2 pages with intact text
+      final reloadedDoc = sf.PdfDocument(inputBytes: editedBytes);
+      expect(reloadedDoc.pages.count, 2);
+      final textP1 = sf.PdfTextExtractor(reloadedDoc)
+          .extractText(startPageIndex: 0, endPageIndex: 0);
+      final textP2 = sf.PdfTextExtractor(reloadedDoc)
+          .extractText(startPageIndex: 1, endPageIndex: 1);
+      expect(textP1, contains('Page content 1'));
+      expect(textP2, contains('Page content 3'));
+      reloadedDoc.dispose();
+    });
+
+    test(
+        'Structural merge via exact-size PdfSection preserves original geometry and non-raster text',
+        () async {
+      // Document 1 with custom size 300x500
+      final doc1 = sf.PdfDocument();
+      doc1.pageSettings.size = const Size(300, 500);
+      doc1.pageSettings.margins.all = 0;
+      final p1 = doc1.pages.add();
+      p1.graphics.drawString(
+        'Document 1 Text',
+        sf.PdfStandardFont(sf.PdfFontFamily.helvetica, 12),
+        bounds: const Rect.fromLTWH(10, 10, 200, 30),
+      );
+      final bytes1 = await doc1.save();
+      doc1.dispose();
+
+      // Document 2 with custom size 450x650
+      final doc2 = sf.PdfDocument();
+      doc2.pageSettings.size = const Size(450, 650);
+      doc2.pageSettings.margins.all = 0;
+      final p2 = doc2.pages.add();
+      p2.graphics.drawString(
+        'Document 2 Text',
+        sf.PdfStandardFont(sf.PdfFontFamily.helvetica, 12),
+        bounds: const Rect.fromLTWH(10, 10, 200, 30),
+      );
+      final bytes2 = await doc2.save();
+      doc2.dispose();
+
+      // Perform structural merge with exact PdfSection geometry
+      final outputDoc = sf.PdfDocument();
+      sf.PdfSection? currentSection;
+
+      for (final docBytes in [bytes1, bytes2]) {
+        final input = sf.PdfDocument(inputBytes: docBytes);
+        for (int i = 0; i < input.pages.count; i++) {
+          final srcPage = input.pages[i];
+          final template = srcPage.createTemplate();
+          if (currentSection == null ||
+              currentSection.pageSettings.size != template.size) {
+            currentSection = outputDoc.sections!.add();
+            currentSection.pageSettings.size = template.size;
+            currentSection.pageSettings.margins.all = 0;
+          }
+          final newPage = currentSection.pages.add();
+          newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+        }
+        input.dispose();
+      }
+
+      final mergedBytes = await outputDoc.save();
+      outputDoc.dispose();
+
+      // Reload and assert geometry and extractable text
+      final mergedReloaded = sf.PdfDocument(inputBytes: mergedBytes);
+      expect(mergedReloaded.pages.count, 2);
+      expect(mergedReloaded.pages[0].size.width, 300);
+      expect(mergedReloaded.pages[0].size.height, 500);
+      expect(mergedReloaded.pages[1].size.width, 450);
+      expect(mergedReloaded.pages[1].size.height, 650);
+
+      final text1 = sf.PdfTextExtractor(mergedReloaded)
+          .extractText(startPageIndex: 0, endPageIndex: 0);
+      final text2 = sf.PdfTextExtractor(mergedReloaded)
+          .extractText(startPageIndex: 1, endPageIndex: 1);
+      expect(text1, contains('Document 1 Text'));
+      expect(text2, contains('Document 2 Text'));
+      mergedReloaded.dispose();
+    });
+
+    test(
+        'Structural split via exact-size PdfSection preserves original geometry without rasterization',
+        () async {
+      // Document with 2 distinct custom page sizes
+      final srcDoc = sf.PdfDocument();
+      final sec1 = srcDoc.sections!.add();
+      sec1.pageSettings.size = const Size(350, 450);
+      sec1.pageSettings.margins.all = 0;
+      final sp1 = sec1.pages.add();
+      sp1.graphics.drawString(
+        'Split Page 1 Text',
+        sf.PdfStandardFont(sf.PdfFontFamily.helvetica, 12),
+        bounds: const Rect.fromLTWH(10, 10, 200, 30),
+      );
+
+      final sec2 = srcDoc.sections!.add();
+      sec2.pageSettings.size = const Size(400, 600);
+      sec2.pageSettings.margins.all = 0;
+      final sp2 = sec2.pages.add();
+      sp2.graphics.drawString(
+        'Split Page 2 Text',
+        sf.PdfStandardFont(sf.PdfFontFamily.helvetica, 12),
+        bounds: const Rect.fromLTWH(10, 10, 200, 30),
+      );
+
+      final srcBytes = await srcDoc.save();
+      srcDoc.dispose();
+
+      // Extract page 2 using structural split
+      final inputDoc = sf.PdfDocument(inputBytes: srcBytes);
+      final outDoc = sf.PdfDocument();
+      final template = inputDoc.pages[1].createTemplate();
+      final targetSection = outDoc.sections!.add();
+      targetSection.pageSettings.size = template.size;
+      targetSection.pageSettings.margins.all = 0;
+      final extractedPage = targetSection.pages.add();
+      extractedPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+
+      final splitBytes = await outDoc.save();
+      outDoc.dispose();
+      inputDoc.dispose();
+
+      final reloadedSplit = sf.PdfDocument(inputBytes: splitBytes);
+      expect(reloadedSplit.pages.count, 1);
+      expect(reloadedSplit.pages[0].size.width, 400);
+      expect(reloadedSplit.pages[0].size.height, 600);
+
+      final splitText = sf.PdfTextExtractor(reloadedSplit)
+          .extractText(startPageIndex: 0, endPageIndex: 0);
+      expect(splitText, contains('Split Page 2 Text'));
+      reloadedSplit.dispose();
+    });
+  });
 }
-
-
-
