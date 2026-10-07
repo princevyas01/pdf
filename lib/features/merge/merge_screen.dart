@@ -29,7 +29,7 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
   double _progress = 0.0;
   String? _outputFilePath;
 
-  bool _standardizeA4 = true;
+  bool _standardizeA4 = false;
   bool _generateTocBookmarks = true;
   bool _sanitizeMetadata = true;
 
@@ -93,47 +93,63 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
 
       final outputDocument = sf.PdfDocument();
       int processedCount = 0;
+      sf.PdfSection? currentSection;
 
       for (final file in _selectedFiles) {
         try {
           final bytes = await File(file.path).readAsBytes();
           final inputDoc = sf.PdfDocument(inputBytes: bytes);
-          final bookmarkPageIndex = outputDocument.pages.count;
+          try {
+            final bookmarkPageIndex = outputDocument.pages.count;
 
-          for (int i = 0; i < inputDoc.pages.count; i++) {
-            final srcPage = inputDoc.pages[i];
-            final template = srcPage.createTemplate();
-            final sf.PdfPage newPage;
-            if (_standardizeA4) {
-              outputDocument.pageSettings.size = sf.PdfPageSize.a4;
-              newPage = outputDocument.pages.add();
-              final a4Size = newPage.getClientSize();
-              final double scale = (a4Size.width / srcPage.size.width)
-                  .clamp(0.1, a4Size.height / srcPage.size.height);
-              final double scaledW = srcPage.size.width * scale;
-              final double scaledH = srcPage.size.height * scale;
-              final double offsetX = (a4Size.width - scaledW) / 2;
-              final double offsetY = (a4Size.height - scaledH) / 2;
-              newPage.graphics.drawPdfTemplate(
-                template,
-                Offset(offsetX, offsetY),
-                Size(scaledW, scaledH),
-              );
-            } else {
-              outputDocument.pageSettings.size = srcPage.size;
-              newPage = outputDocument.pages.add();
-              newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+            for (int i = 0; i < inputDoc.pages.count; i++) {
+              final srcPage = inputDoc.pages[i];
+              final template = srcPage.createTemplate();
+
+              if (_standardizeA4) {
+                if (currentSection == null ||
+                    currentSection.pageSettings.size != sf.PdfPageSize.a4) {
+                  currentSection = outputDocument.sections!.add();
+                  currentSection.pageSettings.size = sf.PdfPageSize.a4;
+                  currentSection.pageSettings.margins.all = 0;
+                }
+                final newPage = currentSection.pages.add();
+                final a4Size = newPage.getClientSize();
+                final double scale = (a4Size.width / srcPage.size.width)
+                    .clamp(0.01, a4Size.height / srcPage.size.height);
+                final double scaledW = srcPage.size.width * scale;
+                final double scaledH = srcPage.size.height * scale;
+                final double offsetX = (a4Size.width - scaledW) / 2;
+                final double offsetY = (a4Size.height - scaledH) / 2;
+                newPage.graphics.drawPdfTemplate(
+                  template,
+                  Offset(offsetX, offsetY),
+                  Size(scaledW, scaledH),
+                );
+              } else {
+                if (currentSection == null ||
+                    currentSection.pageSettings.size != template.size) {
+                  currentSection = outputDocument.sections!.add();
+                  currentSection.pageSettings.size = template.size;
+                  currentSection.pageSettings.margins.all = 0;
+                }
+                final newPage = currentSection.pages.add();
+                newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+              }
             }
-          }
 
-          if (_generateTocBookmarks && outputDocument.pages.count > bookmarkPageIndex) {
-            final startPage = outputDocument.pages[bookmarkPageIndex];
-            final cleanName = file.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
-            final bookmark = outputDocument.bookmarks.add(cleanName);
-            bookmark.destination = sf.PdfDestination(startPage, const Offset(0, 0));
+            if (_generateTocBookmarks &&
+                outputDocument.pages.count > bookmarkPageIndex) {
+              final startPage = outputDocument.pages[bookmarkPageIndex];
+              final cleanName = file.name
+                  .replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+              final bookmark = outputDocument.bookmarks.add(cleanName);
+              bookmark.destination =
+                  sf.PdfDestination(startPage, const Offset(0, 0));
+            }
+          } finally {
+            inputDoc.dispose();
           }
-
-          inputDoc.dispose();
         } catch (_) {}
 
         processedCount++;
@@ -175,7 +191,8 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
   void _showNotice(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
+        content:
+            Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
         backgroundColor: EditorialTokens.secondary,
         behavior: SnackBarBehavior.floating,
       ),
@@ -199,9 +216,11 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
       final size = file.existsSync() ? file.lengthSync() : 0;
 
       return Scaffold(
-        backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+        backgroundColor:
+            isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
         appBar: AppBar(
-          backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          backgroundColor:
+              isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
@@ -231,10 +250,14 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                color: isDark
+                    ? EditorialTokens.darkSurface
+                    : EditorialTokens.surface,
                 borderRadius: BorderRadius.circular(EditorialTokens.r4),
                 border: Border.all(
-                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                  color: isDark
+                      ? EditorialTokens.darkBorder
+                      : EditorialTokens.border,
                   width: EditorialTokens.hairline,
                 ),
               ),
@@ -258,7 +281,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                   Text(
                     'Merged PDF Saved',
                     style: EditorialTokens.headlineSmall(
-                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      color: isDark
+                          ? EditorialTokens.darkInk
+                          : EditorialTokens.ink,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -266,7 +291,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                   Text(
                     file.uri.pathSegments.last,
                     style: EditorialTokens.metadataStrong(
-                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      color: isDark
+                          ? EditorialTokens.darkInk
+                          : EditorialTokens.ink,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -274,7 +301,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                   Text(
                     '${Utils.formatBytes(size)} · $_totalPageCount Total Pages',
                     style: EditorialTokens.metadata(
-                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      color: isDark
+                          ? EditorialTokens.darkInkSecondary
+                          : EditorialTokens.inkSecondary,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -289,7 +318,8 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => PdfViewerScreen(filePath: _outputFilePath!),
+                            builder: (_) =>
+                                PdfViewerScreen(filePath: _outputFilePath!),
                           ),
                         );
                       },
@@ -325,9 +355,11 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      backgroundColor:
+          isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
       appBar: AppBar(
-        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        backgroundColor:
+            isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
@@ -364,7 +396,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
-            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            color: isDark
+                ? EditorialTokens.darkBorderSoft
+                : EditorialTokens.borderSoft,
             height: EditorialTokens.hairline,
           ),
         ),
@@ -386,14 +420,18 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                     Text(
                       'Merging Documents... ${(_progress * 100).round()}%',
                       style: EditorialTokens.titleMedium(
-                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        color: isDark
+                            ? EditorialTokens.darkInk
+                            : EditorialTokens.ink,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       'Combining pages and saving PDF',
                       style: EditorialTokens.bodySmall(
-                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        color: isDark
+                            ? EditorialTokens.darkInkSecondary
+                            : EditorialTokens.inkSecondary,
                       ),
                     ),
                   ],
@@ -404,12 +442,17 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
               children: [
                 // Sequence summary sub-strip
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    color: isDark
+                        ? EditorialTokens.darkSurfaceMuted
+                        : EditorialTokens.surfaceMuted,
                     border: Border(
                       bottom: BorderSide(
-                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        color: isDark
+                            ? EditorialTokens.darkBorderSoft
+                            : EditorialTokens.borderSoft,
                         width: EditorialTokens.hairline,
                       ),
                     ),
@@ -418,13 +461,16 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                     children: [
                       Text(
                         'DOCUMENT SEQUENCE',
-                        style: EditorialTokens.eyebrow(color: EditorialTokens.primary),
+                        style: EditorialTokens.eyebrow(
+                            color: EditorialTokens.primary),
                       ),
                       const Spacer(),
                       Text(
                         '${_selectedFiles.length} FILES · $_totalPageCount PAGES · ${Utils.formatBytes(_totalSizeBytes)}',
                         style: EditorialTokens.metadata(
-                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          color: isDark
+                              ? EditorialTokens.darkInkSecondary
+                              : EditorialTokens.inkSecondary,
                         ),
                       ),
                     ],
@@ -437,27 +483,38 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                   child: TextField(
                     controller: _fileNameController,
                     style: EditorialTokens.bodyMedium(
-                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                      color: isDark
+                          ? EditorialTokens.darkInk
+                          : EditorialTokens.ink,
                     ),
                     decoration: InputDecoration(
                       labelText: 'OUTPUT FILENAME',
                       labelStyle: EditorialTokens.metadataStrong(
-                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        color: isDark
+                            ? EditorialTokens.darkInkSecondary
+                            : EditorialTokens.inkSecondary,
                       ),
                       filled: true,
-                      fillColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      fillColor: isDark
+                          ? EditorialTokens.darkSurface
+                          : EditorialTokens.surface,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(EditorialTokens.r4),
                         borderSide: BorderSide(
-                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          color: isDark
+                              ? EditorialTokens.darkBorderSoft
+                              : EditorialTokens.borderSoft,
                           width: EditorialTokens.hairline,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(EditorialTokens.r4),
                         borderSide: BorderSide(
-                          color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                          color: isDark
+                              ? EditorialTokens.darkBorderSoft
+                              : EditorialTokens.borderSoft,
                           width: EditorialTokens.hairline,
                         ),
                       ),
@@ -474,13 +531,18 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
 
                 // Bookmaking Protocols (Design 01 Page 5 Screen 2)
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                    color: isDark
+                        ? EditorialTokens.darkSurfaceMuted
+                        : EditorialTokens.surfaceMuted,
                     borderRadius: BorderRadius.circular(EditorialTokens.r4),
                     border: Border.all(
-                      color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                      color: isDark
+                          ? EditorialTokens.darkBorderSoft
+                          : EditorialTokens.borderSoft,
                       width: EditorialTokens.hairline,
                     ),
                   ),
@@ -498,13 +560,17 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                         title: Text(
                           'Standardize Page Geometry (A4 210×297mm)',
                           style: EditorialTokens.bodyMedium(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ).copyWith(fontSize: 12),
                         ),
                         subtitle: Text(
                           'Normalize mixed canvas dimensions to uniform archival standard',
                           style: EditorialTokens.metadata(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ).copyWith(fontSize: 10),
                         ),
                         value: _standardizeA4,
@@ -517,18 +583,23 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                         title: Text(
                           'Generate Master Table of Contents Bookmarks',
                           style: EditorialTokens.bodyMedium(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ).copyWith(fontSize: 12),
                         ),
                         subtitle: Text(
                           'Insert navigational document bookmarks at chapter boundaries',
                           style: EditorialTokens.metadata(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ).copyWith(fontSize: 10),
                         ),
                         value: _generateTocBookmarks,
                         activeColor: EditorialTokens.primary,
-                        onChanged: (v) => setState(() => _generateTocBookmarks = v),
+                        onChanged: (v) =>
+                            setState(() => _generateTocBookmarks = v),
                       ),
                       SwitchListTile(
                         dense: true,
@@ -536,13 +607,17 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                         title: Text(
                           'Sanitize Source Metadata',
                           style: EditorialTokens.bodyMedium(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ).copyWith(fontSize: 12),
                         ),
                         subtitle: Text(
                           'Purge tracking identifiers, author signatures, and software fingerprints',
                           style: EditorialTokens.metadata(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ).copyWith(fontSize: 10),
                         ),
                         value: _sanitizeMetadata,
@@ -562,10 +637,15 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
-                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                color: isDark
+                                    ? EditorialTokens.darkSurface
+                                    : EditorialTokens.surface,
+                                borderRadius:
+                                    BorderRadius.circular(EditorialTokens.r4),
                                 border: Border.all(
-                                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                  color: isDark
+                                      ? EditorialTokens.darkBorder
+                                      : EditorialTokens.border,
                                   width: EditorialTokens.hairline,
                                 ),
                               ),
@@ -575,13 +655,17 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                                   Icon(
                                     Icons.layers_outlined,
                                     size: 48,
-                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    color: isDark
+                                        ? EditorialTokens.darkInkSecondary
+                                        : EditorialTokens.inkSecondary,
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
                                     'No Documents Added Yet',
                                     style: EditorialTokens.headlineSmall(
-                                      color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                      color: isDark
+                                          ? EditorialTokens.darkInk
+                                          : EditorialTokens.ink,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -589,7 +673,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                                   Text(
                                     'Select two or more PDF files to combine them into a single document.',
                                     style: EditorialTokens.bodySmall(
-                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                      color: isDark
+                                          ? EditorialTokens.darkInkSecondary
+                                          : EditorialTokens.inkSecondary,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -605,7 +691,8 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                           ),
                         )
                       : ReorderableListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           itemCount: _selectedFiles.length,
                           onReorder: (oldIdx, newIdx) {
                             setState(() {
@@ -616,27 +703,36 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                           },
                           itemBuilder: (context, index) {
                             final file = _selectedFiles[index];
-                            final seqNum = (index + 1).toString().padLeft(2, '0');
+                            final seqNum =
+                                (index + 1).toString().padLeft(2, '0');
 
                             return Container(
                               key: ValueKey(file.path),
                               margin: const EdgeInsets.only(bottom: 8),
                               decoration: BoxDecoration(
-                                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
-                                borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                                color: isDark
+                                    ? EditorialTokens.darkSurface
+                                    : EditorialTokens.surface,
+                                borderRadius:
+                                    BorderRadius.circular(EditorialTokens.r4),
                                 border: Border.all(
-                                  color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                                  color: isDark
+                                      ? EditorialTokens.darkBorder
+                                      : EditorialTokens.border,
                                   width: EditorialTokens.hairline,
                                 ),
                               ),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 4),
                                 leading: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       seqNum,
-                                      style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 12),
+                                      style: EditorialTokens.eyebrow(
+                                              color: EditorialTokens.primary)
+                                          .copyWith(fontSize: 12),
                                     ),
                                     const SizedBox(width: 10),
                                     const EditorialPaperThumbnail(
@@ -649,7 +745,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                                 title: Text(
                                   file.name,
                                   style: EditorialTokens.titleSmall(
-                                    color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                    color: isDark
+                                        ? EditorialTokens.darkInk
+                                        : EditorialTokens.ink,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -657,7 +755,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                                 subtitle: Text(
                                   '${file.pageCount} Pages · ${Utils.formatBytes(file.sizeBytes)}',
                                   style: EditorialTokens.metadata(
-                                    color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                    color: isDark
+                                        ? EditorialTokens.darkInkSecondary
+                                        : EditorialTokens.inkSecondary,
                                   ),
                                 ),
                                 trailing: Row(
@@ -667,7 +767,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                                       icon: Icon(
                                         Icons.close,
                                         size: 18,
-                                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                        color: isDark
+                                            ? EditorialTokens.darkInkSecondary
+                                            : EditorialTokens.inkSecondary,
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -678,7 +780,9 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                                     Icon(
                                       Icons.drag_indicator,
                                       size: 20,
-                                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                      color: isDark
+                                          ? EditorialTokens.darkInkSecondary
+                                          : EditorialTokens.inkSecondary,
                                     ),
                                   ],
                                 ),
@@ -690,12 +794,17 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
 
                 // Docked Merge Action
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    color: isDark
+                        ? EditorialTokens.darkSurface
+                        : EditorialTokens.surface,
                     border: Border(
                       top: BorderSide(
-                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        color: isDark
+                            ? EditorialTokens.darkBorderSoft
+                            : EditorialTokens.borderSoft,
                         width: EditorialTokens.hairline,
                       ),
                     ),
@@ -714,7 +823,8 @@ class _MergeScreenState extends ConsumerState<MergeScreen> {
                         child: EditorialButton(
                           label: 'MERGE DOCUMENTS',
                           icon: Icons.layers_outlined,
-                          onPressed: _selectedFiles.length >= 2 ? _performMerge : null,
+                          onPressed:
+                              _selectedFiles.length >= 2 ? _performMerge : null,
                         ),
                       ),
                     ],
