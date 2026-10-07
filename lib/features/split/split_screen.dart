@@ -29,8 +29,10 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
   PdfFile? _selectedFile;
   SplitMethod _method = SplitMethod.ranges;
 
-  final TextEditingController _rangeController = TextEditingController(text: '1-2');
-  final TextEditingController _everyNController = TextEditingController(text: '2');
+  final TextEditingController _rangeController =
+      TextEditingController(text: '1-2');
+  final TextEditingController _everyNController =
+      TextEditingController(text: '2');
   final TextEditingController _prefixController = TextEditingController();
 
   bool _isSplitting = false;
@@ -43,7 +45,11 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
   List<String> _getRangeSegments() {
     final raw = _rangeController.text.trim();
     if (raw.isEmpty) return [];
-    return raw.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+    return raw
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
   }
 
   @override
@@ -51,7 +57,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
     super.initState();
     _selectedFile = widget.sourceFile;
     if (_selectedFile != null) {
-      _prefixController.text = _selectedFile!.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+      _prefixController.text = _selectedFile!.name
+          .replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
     }
   }
 
@@ -79,7 +86,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
       final file = result.first;
       setState(() {
         _selectedFile = file;
-        _prefixController.text = file.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
+        _prefixController.text =
+            file.name.replaceFirst(RegExp(r'\.pdf$', caseSensitive: false), '');
       });
     }
   }
@@ -116,9 +124,16 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
           final pagesToExtract = Utils.parsePageRanges(rawRanges, totalPages);
           if (pagesToExtract.isNotEmpty) {
             final outDoc = PdfDocument();
+            PdfSection? section;
             for (final pageNum in pagesToExtract) {
               final template = sourceDoc.pages[pageNum - 1].createTemplate();
-              final newPage = outDoc.pages.add();
+              if (section == null ||
+                  section.pageSettings.size != template.size) {
+                section = outDoc.sections!.add();
+                section.pageSettings.size = template.size;
+                section.pageSettings.margins.all = 0;
+              }
+              final newPage = section.pages.add();
               newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
             }
             if (_preserveBookmarks && sourceDoc.bookmarks.count > 0) {
@@ -127,7 +142,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                 outDoc.bookmarks.add(srcBm.title);
               }
             }
-            final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_extracted.pdf';
+            final targetPath =
+                '$parentDir${Platform.pathSeparator}${prefix}_extracted.pdf';
             await File(targetPath).writeAsBytes(await outDoc.save());
             outDoc.dispose();
             newFiles.add(targetPath);
@@ -138,13 +154,21 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
             final segPages = Utils.parsePageRanges(seg, totalPages);
             if (segPages.isNotEmpty) {
               final outDoc = PdfDocument();
+              PdfSection? section;
               for (final pageNum in segPages) {
                 final template = sourceDoc.pages[pageNum - 1].createTemplate();
-                final newPage = outDoc.pages.add();
+                if (section == null ||
+                    section.pageSettings.size != template.size) {
+                  section = outDoc.sections!.add();
+                  section.pageSettings.size = template.size;
+                  section.pageSettings.margins.all = 0;
+                }
+                final newPage = section.pages.add();
                 newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
               }
               final cleanSeg = seg.replaceAll(' ', '').replaceAll('-', '_');
-              final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_part_${partIdx}_pp$cleanSeg.pdf';
+              final targetPath =
+                  '$parentDir${Platform.pathSeparator}${prefix}_part_${partIdx}_pp$cleanSeg.pdf';
               await File(targetPath).writeAsBytes(await outDoc.save());
               outDoc.dispose();
               newFiles.add(targetPath);
@@ -156,10 +180,14 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
         for (int i = 0; i < totalPages; i++) {
           final outDoc = PdfDocument();
           final template = sourceDoc.pages[i].createTemplate();
-          final newPage = outDoc.pages.add();
+          final section = outDoc.sections!.add();
+          section.pageSettings.size = template.size;
+          section.pageSettings.margins.all = 0;
+          final newPage = section.pages.add();
           newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
 
-          final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_page_${i + 1}.pdf';
+          final targetPath =
+              '$parentDir${Platform.pathSeparator}${prefix}_page_${i + 1}.pdf';
           await File(targetPath).writeAsBytes(await outDoc.save());
           outDoc.dispose();
           newFiles.add(targetPath);
@@ -169,13 +197,20 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
         int partIndex = 1;
         for (int i = 0; i < totalPages; i += n) {
           final outDoc = PdfDocument();
+          PdfSection? section;
           final end = (i + n < totalPages) ? i + n : totalPages;
           for (int j = i; j < end; j++) {
             final template = sourceDoc.pages[j].createTemplate();
-            final newPage = outDoc.pages.add();
+            if (section == null || section.pageSettings.size != template.size) {
+              section = outDoc.sections!.add();
+              section.pageSettings.size = template.size;
+              section.pageSettings.margins.all = 0;
+            }
+            final newPage = section.pages.add();
             newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
           }
-          final targetPath = '$parentDir${Platform.pathSeparator}${prefix}_part_$partIndex.pdf';
+          final targetPath =
+              '$parentDir${Platform.pathSeparator}${prefix}_part_$partIndex.pdf';
           await File(targetPath).writeAsBytes(await outDoc.save());
           outDoc.dispose();
           newFiles.add(targetPath);
@@ -186,7 +221,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
       sourceDoc.dispose();
 
       if (_retainAnnotations && _selectedFile != null) {
-        final sourceNotes = await DatabaseHelper.instance.getNotesForFile(_selectedFile!.path);
+        final sourceNotes =
+            await DatabaseHelper.instance.getNotesForFile(_selectedFile!.path);
         for (final newPath in newFiles) {
           for (final n in sourceNotes) {
             await DatabaseHelper.instance.addNote(PdfNote(
@@ -220,7 +256,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
   void _showNotice(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
+        content:
+            Text(msg, style: EditorialTokens.bodyMedium(color: Colors.white)),
         backgroundColor: EditorialTokens.secondary,
         behavior: SnackBarBehavior.floating,
       ),
@@ -233,9 +270,11 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
     if (_createdFilePaths.isNotEmpty) {
       return Scaffold(
-        backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+        backgroundColor:
+            isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
         appBar: AppBar(
-          backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+          backgroundColor:
+              isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
@@ -264,10 +303,14 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                color: isDark
+                    ? EditorialTokens.darkSurfaceMuted
+                    : EditorialTokens.surfaceMuted,
                 border: Border(
                   bottom: BorderSide(
-                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    color: isDark
+                        ? EditorialTokens.darkBorderSoft
+                        : EditorialTokens.borderSoft,
                     width: EditorialTokens.hairline,
                   ),
                 ),
@@ -279,7 +322,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                   Text(
                     '${_createdFilePaths.length} NEW DOCUMENTS CREATED',
                     style: EditorialTokens.metadata(
-                      color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                      color: isDark
+                          ? EditorialTokens.darkInkSecondary
+                          : EditorialTokens.inkSecondary,
                     ),
                   ),
                 ],
@@ -299,21 +344,28 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
 
                   return Container(
                     decoration: BoxDecoration(
-                      color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                      color: isDark
+                          ? EditorialTokens.darkSurface
+                          : EditorialTokens.surface,
                       borderRadius: BorderRadius.circular(EditorialTokens.r4),
                       border: Border.all(
-                        color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                        color: isDark
+                            ? EditorialTokens.darkBorder
+                            : EditorialTokens.border,
                         width: EditorialTokens.hairline,
                       ),
                     ),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
                       leading: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             seqNum,
-                            style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 12),
+                            style: EditorialTokens.eyebrow(
+                                    color: EditorialTokens.primary)
+                                .copyWith(fontSize: 12),
                           ),
                           const SizedBox(width: 10),
                           const EditorialPaperThumbnail(
@@ -326,7 +378,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                       title: Text(
                         name,
                         style: EditorialTokens.titleSmall(
-                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          color: isDark
+                              ? EditorialTokens.darkInk
+                              : EditorialTokens.ink,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -334,7 +388,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                       subtitle: Text(
                         Utils.formatBytes(size),
                         style: EditorialTokens.metadata(
-                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          color: isDark
+                              ? EditorialTokens.darkInkSecondary
+                              : EditorialTokens.inkSecondary,
                         ),
                       ),
                       trailing: Row(
@@ -344,7 +400,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                             icon: Icon(
                               Icons.share_outlined,
                               size: 18,
-                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              color: isDark
+                                  ? EditorialTokens.darkInkSecondary
+                                  : EditorialTokens.inkSecondary,
                             ),
                             onPressed: () => Share.shareXFiles([XFile(path)]),
                             tooltip: 'Share',
@@ -359,7 +417,8 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => PdfViewerScreen(filePath: path),
+                                  builder: (_) =>
+                                      PdfViewerScreen(filePath: path),
                                 ),
                               );
                             },
@@ -375,10 +434,14 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                color: isDark
+                    ? EditorialTokens.darkSurface
+                    : EditorialTokens.surface,
                 border: Border(
                   top: BorderSide(
-                    color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                    color: isDark
+                        ? EditorialTokens.darkBorderSoft
+                        : EditorialTokens.borderSoft,
                     width: EditorialTokens.hairline,
                   ),
                 ),
@@ -397,9 +460,11 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
+      backgroundColor:
+          isDark ? EditorialTokens.darkCanvas : EditorialTokens.canvas,
       appBar: AppBar(
-        backgroundColor: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+        backgroundColor:
+            isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
@@ -425,7 +490,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
-            color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+            color: isDark
+                ? EditorialTokens.darkBorderSoft
+                : EditorialTokens.borderSoft,
             height: EditorialTokens.hairline,
           ),
         ),
@@ -447,14 +514,18 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                     Text(
                       'Extracting Pages...',
                       style: EditorialTokens.titleMedium(
-                        color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                        color: isDark
+                            ? EditorialTokens.darkInk
+                            : EditorialTokens.ink,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       'Creating documents and saving to storage',
                       style: EditorialTokens.bodySmall(
-                        color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                        color: isDark
+                            ? EditorialTokens.darkInkSecondary
+                            : EditorialTokens.inkSecondary,
                       ),
                     ),
                   ],
@@ -474,10 +545,14 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                      color: isDark
+                          ? EditorialTokens.darkSurface
+                          : EditorialTokens.surface,
                       borderRadius: BorderRadius.circular(EditorialTokens.r4),
                       border: Border.all(
-                        color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                        color: isDark
+                            ? EditorialTokens.darkBorder
+                            : EditorialTokens.border,
                         width: EditorialTokens.hairline,
                       ),
                     ),
@@ -496,7 +571,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                               Text(
                                 _selectedFile!.name,
                                 style: EditorialTokens.titleSmall(
-                                  color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                                  color: isDark
+                                      ? EditorialTokens.darkInk
+                                      : EditorialTokens.ink,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -505,7 +582,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                               Text(
                                 '${_selectedFile!.pageCount} Pages · ${Utils.formatBytes(_selectedFile!.sizeBytes)}',
                                 style: EditorialTokens.metadata(
-                                  color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                                  color: isDark
+                                      ? EditorialTokens.darkInkSecondary
+                                      : EditorialTokens.inkSecondary,
                                 ),
                               ),
                             ],
@@ -515,7 +594,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                           icon: Icon(
                             Icons.swap_horiz,
                             size: 20,
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ),
                           onPressed: _pickFile,
                           tooltip: 'Change document',
@@ -527,10 +608,14 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
+                      color: isDark
+                          ? EditorialTokens.darkSurfaceMuted
+                          : EditorialTokens.surfaceMuted,
                       borderRadius: BorderRadius.circular(EditorialTokens.r4),
                       border: Border.all(
-                        color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                        color: isDark
+                            ? EditorialTokens.darkBorderSoft
+                            : EditorialTokens.borderSoft,
                         width: EditorialTokens.hairline,
                       ),
                     ),
@@ -539,20 +624,26 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         Icon(
                           Icons.call_split_outlined,
                           size: 36,
-                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          color: isDark
+                              ? EditorialTokens.darkInkSecondary
+                              : EditorialTokens.inkSecondary,
                         ),
                         const SizedBox(height: 10),
                         Text(
                           'No document selected',
                           style: EditorialTokens.titleSmall(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Choose a PDF to split by page range or extract pages',
                           style: EditorialTokens.bodySmall(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -582,19 +673,22 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                       EditorialChip(
                         label: 'Page Ranges',
                         selected: _method == SplitMethod.ranges,
-                        onTap: () => setState(() => _method = SplitMethod.ranges),
+                        onTap: () =>
+                            setState(() => _method = SplitMethod.ranges),
                       ),
                       const SizedBox(width: 8),
                       EditorialChip(
                         label: 'Single Pages',
                         selected: _method == SplitMethod.singlePages,
-                        onTap: () => setState(() => _method = SplitMethod.singlePages),
+                        onTap: () =>
+                            setState(() => _method = SplitMethod.singlePages),
                       ),
                       const SizedBox(width: 8),
                       EditorialChip(
                         label: 'Every N Pages',
                         selected: _method == SplitMethod.everyNPages,
-                        onTap: () => setState(() => _method = SplitMethod.everyNPages),
+                        onTap: () =>
+                            setState(() => _method = SplitMethod.everyNPages),
                       ),
                     ],
                   ),
@@ -611,10 +705,14 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? EditorialTokens.darkSurface : EditorialTokens.surface,
+                    color: isDark
+                        ? EditorialTokens.darkSurface
+                        : EditorialTokens.surface,
                     borderRadius: BorderRadius.circular(EditorialTokens.r4),
                     border: Border.all(
-                      color: isDark ? EditorialTokens.darkBorder : EditorialTokens.border,
+                      color: isDark
+                          ? EditorialTokens.darkBorder
+                          : EditorialTokens.border,
                       width: EditorialTokens.hairline,
                     ),
                   ),
@@ -625,7 +723,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         Text(
                           'PAGE RANGE SPECIFICATION (e.g. 1-5, 8, 12-15)',
                           style: EditorialTokens.metadataStrong(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ).copyWith(fontSize: 10),
                         ),
                         const SizedBox(height: 6),
@@ -633,20 +733,30 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                           controller: _rangeController,
                           onChanged: (_) => setState(() {}),
                           style: EditorialTokens.bodyMedium(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ),
                           decoration: InputDecoration(
                             hintText: '1-5, 8',
                             hintStyle: EditorialTokens.bodySmall(
-                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              color: isDark
+                                  ? EditorialTokens.darkInkSecondary
+                                  : EditorialTokens.inkSecondary,
                             ),
                             filled: true,
-                            fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            fillColor: isDark
+                                ? EditorialTokens.darkSurfaceMuted
+                                : EditorialTokens.surfaceMuted,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 12),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              borderRadius:
+                                  BorderRadius.circular(EditorialTokens.r4),
                               borderSide: BorderSide(
-                                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                color: isDark
+                                    ? EditorialTokens.darkBorderSoft
+                                    : EditorialTokens.borderSoft,
                                 width: EditorialTokens.hairline,
                               ),
                             ),
@@ -656,26 +766,35 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         if (_getRangeSegments().isNotEmpty) ...[
                           Text(
                             'PARSED SEQUENCE PREVIEW',
-                            style: EditorialTokens.eyebrow(color: EditorialTokens.primary).copyWith(fontSize: 9),
+                            style: EditorialTokens.eyebrow(
+                                    color: EditorialTokens.primary)
+                                .copyWith(fontSize: 9),
                           ),
                           const SizedBox(height: 4),
                           Wrap(
                             spacing: 6,
                             runSpacing: 4,
-                            children: _getRangeSegments().asMap().entries.map((e) {
+                            children:
+                                _getRangeSegments().asMap().entries.map((e) {
                               return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: EditorialTokens.primary.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(EditorialTokens.r2),
+                                  color:
+                                      EditorialTokens.primary.withOpacity(0.08),
+                                  borderRadius:
+                                      BorderRadius.circular(EditorialTokens.r2),
                                   border: Border.all(
-                                    color: EditorialTokens.primary.withOpacity(0.3),
+                                    color: EditorialTokens.primary
+                                        .withOpacity(0.3),
                                     width: EditorialTokens.hairline,
                                   ),
                                 ),
                                 child: Text(
                                   'Part ${e.key + 1}: pp. ${e.value}',
-                                  style: EditorialTokens.metadata(color: EditorialTokens.primary).copyWith(fontSize: 10),
+                                  style: EditorialTokens.metadata(
+                                          color: EditorialTokens.primary)
+                                      .copyWith(fontSize: 10),
                                 ),
                               );
                             }).toList(),
@@ -687,7 +806,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         Text(
                           'PAGES PER FILE (N)',
                           style: EditorialTokens.metadataStrong(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ).copyWith(fontSize: 10),
                         ),
                         const SizedBox(height: 6),
@@ -695,17 +816,25 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                           controller: _everyNController,
                           keyboardType: TextInputType.number,
                           style: EditorialTokens.bodyMedium(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ),
                           decoration: InputDecoration(
                             hintText: '2',
                             filled: true,
-                            fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            fillColor: isDark
+                                ? EditorialTokens.darkSurfaceMuted
+                                : EditorialTokens.surfaceMuted,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 12),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                              borderRadius:
+                                  BorderRadius.circular(EditorialTokens.r4),
                               borderSide: BorderSide(
-                                color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                                color: isDark
+                                    ? EditorialTokens.darkBorderSoft
+                                    : EditorialTokens.borderSoft,
                                 width: EditorialTokens.hairline,
                               ),
                             ),
@@ -716,24 +845,34 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                       Text(
                         'OUTPUT FILENAME PREFIX',
                         style: EditorialTokens.metadataStrong(
-                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          color: isDark
+                              ? EditorialTokens.darkInkSecondary
+                              : EditorialTokens.inkSecondary,
                         ).copyWith(fontSize: 10),
                       ),
                       const SizedBox(height: 6),
                       TextField(
                         controller: _prefixController,
                         style: EditorialTokens.bodyMedium(
-                          color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                          color: isDark
+                              ? EditorialTokens.darkInk
+                              : EditorialTokens.ink,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Document_Prefix',
                           filled: true,
-                          fillColor: isDark ? EditorialTokens.darkSurfaceMuted : EditorialTokens.surfaceMuted,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          fillColor: isDark
+                              ? EditorialTokens.darkSurfaceMuted
+                              : EditorialTokens.surfaceMuted,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 12),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(EditorialTokens.r4),
+                            borderRadius:
+                                BorderRadius.circular(EditorialTokens.r4),
                             borderSide: BorderSide(
-                              color: isDark ? EditorialTokens.darkBorderSoft : EditorialTokens.borderSoft,
+                              color: isDark
+                                  ? EditorialTokens.darkBorderSoft
+                                  : EditorialTokens.borderSoft,
                               width: EditorialTokens.hairline,
                             ),
                           ),
@@ -745,7 +884,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                       Text(
                         'EXTRACTION FIDELITY PROTOCOLS',
                         style: EditorialTokens.eyebrow(
-                          color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                          color: isDark
+                              ? EditorialTokens.darkInkSecondary
+                              : EditorialTokens.inkSecondary,
                         ).copyWith(fontSize: 10),
                       ),
                       const SizedBox(height: 6),
@@ -756,7 +897,9 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                           title: Text(
                             'Compile into Single Document',
                             style: EditorialTokens.bodyMedium(
-                              color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                              color: isDark
+                                  ? EditorialTokens.darkInk
+                                  : EditorialTokens.ink,
                             ).copyWith(fontSize: 12),
                           ),
                           subtitle: Text(
@@ -764,12 +907,15 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                                 ? 'All parsed ranges will be bound into one extracted PDF'
                                 : 'Each range segment will generate an isolated discrete PDF',
                             style: EditorialTokens.metadata(
-                              color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                              color: isDark
+                                  ? EditorialTokens.darkInkSecondary
+                                  : EditorialTokens.inkSecondary,
                             ).copyWith(fontSize: 10),
                           ),
                           value: _extractAsSingleCompiled,
                           activeColor: EditorialTokens.primary,
-                          onChanged: (v) => setState(() => _extractAsSingleCompiled = v),
+                          onChanged: (v) =>
+                              setState(() => _extractAsSingleCompiled = v),
                         ),
                       SwitchListTile(
                         dense: true,
@@ -777,18 +923,23 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         title: Text(
                           'Preserve Table of Contents & Outlines',
                           style: EditorialTokens.bodyMedium(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ).copyWith(fontSize: 12),
                         ),
                         subtitle: Text(
                           'Transfer navigational bookmarks into target extracted documents',
                           style: EditorialTokens.metadata(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ).copyWith(fontSize: 10),
                         ),
                         value: _preserveBookmarks,
                         activeColor: EditorialTokens.primary,
-                        onChanged: (v) => setState(() => _preserveBookmarks = v),
+                        onChanged: (v) =>
+                            setState(() => _preserveBookmarks = v),
                       ),
                       SwitchListTile(
                         dense: true,
@@ -796,18 +947,23 @@ class _SplitScreenState extends ConsumerState<SplitScreen> {
                         title: Text(
                           'Retain Marginalia & Notes',
                           style: EditorialTokens.bodyMedium(
-                            color: isDark ? EditorialTokens.darkInk : EditorialTokens.ink,
+                            color: isDark
+                                ? EditorialTokens.darkInk
+                                : EditorialTokens.ink,
                           ).copyWith(fontSize: 12),
                         ),
                         subtitle: Text(
                           'Mirror local marginalia annotations into generated file ledger',
                           style: EditorialTokens.metadata(
-                            color: isDark ? EditorialTokens.darkInkSecondary : EditorialTokens.inkSecondary,
+                            color: isDark
+                                ? EditorialTokens.darkInkSecondary
+                                : EditorialTokens.inkSecondary,
                           ).copyWith(fontSize: 10),
                         ),
                         value: _retainAnnotations,
                         activeColor: EditorialTokens.primary,
-                        onChanged: (v) => setState(() => _retainAnnotations = v),
+                        onChanged: (v) =>
+                            setState(() => _retainAnnotations = v),
                       ),
                     ],
                   ),
