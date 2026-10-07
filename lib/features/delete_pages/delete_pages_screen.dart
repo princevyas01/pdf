@@ -115,22 +115,27 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                 const SizedBox(height: 12),
                 Text(
                   'Delete $selCount pages from "${_selectedFile!.name}"? The remaining ${total - selCount} pages will be saved cleanly.',
-                  style: EditorialTokens.body(color: EditorialTokens.inkSecondary),
+                  style:
+                      EditorialTokens.body(color: EditorialTokens.inkSecondary),
                 ),
                 const SizedBox(height: 16),
                 GestureDetector(
-                  onTap: () => setDialogState(() => replaceOriginal = !replaceOriginal),
+                  onTap: () =>
+                      setDialogState(() => replaceOriginal = !replaceOriginal),
                   child: Row(
                     children: [
                       Icon(
-                        replaceOriginal ? Icons.check_box : Icons.check_box_outline_blank,
+                        replaceOriginal
+                            ? Icons.check_box
+                            : Icons.check_box_outline_blank,
                         size: 18,
                         color: EditorialTokens.primary,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         'Replace source document in place',
-                        style: EditorialTokens.bodyMedium(color: EditorialTokens.ink),
+                        style: EditorialTokens.bodyMedium(
+                            color: EditorialTokens.ink),
                       ),
                     ],
                   ),
@@ -167,20 +172,19 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
 
     try {
       final sourceBytes = await File(_selectedFile!.path).readAsBytes();
-      final sourceDoc = sf.PdfDocument(inputBytes: sourceBytes);
-      final outDoc = sf.PdfDocument();
+      final document = sf.PdfDocument(inputBytes: sourceBytes);
 
-      for (int i = 0; i < sourceDoc.pages.count; i++) {
-        if (!_selectedPageIndices.contains(i)) {
-          final template = sourceDoc.pages[i].createTemplate();
-          final newPage = outDoc.pages.add();
-          newPage.graphics.drawPdfTemplate(template, const Offset(0, 0));
+      // Sort descending to avoid index shifting when calling removeAt
+      final indicesToRemove = _selectedPageIndices.toList()
+        ..sort((a, b) => b.compareTo(a));
+      for (final pageIndex in indicesToRemove) {
+        if (pageIndex >= 0 && pageIndex < document.pages.count) {
+          document.pages.removeAt(pageIndex);
         }
       }
 
-      final savedBytes = await outDoc.save();
-      outDoc.dispose();
-      sourceDoc.dispose();
+      final savedBytes = await document.save();
+      document.dispose();
 
       String targetPath = _selectedFile!.path;
       if (!replaceOriginal) {
@@ -250,7 +254,8 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                      style: EditorialTokens.metadata(
+                          color: EditorialTokens.inkMuted),
                     ),
                     const SizedBox(height: 24),
                     Row(
@@ -284,7 +289,8 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                       onPressed: () => Navigator.pop(context),
                       child: Text(
                         'RETURN TO LIBRARY',
-                        style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                        style: EditorialTokens.metadata(
+                            color: EditorialTokens.inkMuted),
                       ),
                     ),
                   ],
@@ -329,7 +335,9 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                         ],
                       ),
                     )
-                  : (_selectedFile == null ? _buildEmptyPicker() : _buildPageGrid()),
+                  : (_selectedFile == null
+                      ? _buildEmptyPicker()
+                      : _buildPageGrid()),
             ),
             if (_selectedFile != null) _buildBottomBar(),
           ],
@@ -345,7 +353,8 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back, color: EditorialTokens.ink, size: 20),
+            icon: const Icon(Icons.arrow_back,
+                color: EditorialTokens.ink, size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             visualDensity: VisualDensity.compact,
@@ -370,14 +379,16 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
               onPressed: _selectAll,
               child: Text(
                 'ALL',
-                style: EditorialTokens.metadataStrong(color: EditorialTokens.primary),
+                style: EditorialTokens.metadataStrong(
+                    color: EditorialTokens.primary),
               ),
             ),
             TextButton(
               onPressed: _deselectAll,
               child: Text(
                 'CLEAR',
-                style: EditorialTokens.metadataStrong(color: EditorialTokens.inkMuted),
+                style: EditorialTokens.metadataStrong(
+                    color: EditorialTokens.inkMuted),
               ),
             ),
           ],
@@ -400,13 +411,15 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                   _selectedFile?.name ?? 'No Document Selected',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: EditorialTokens.titleSmall().copyWith(fontWeight: FontWeight.w600),
+                  style: EditorialTokens.titleSmall()
+                      .copyWith(fontWeight: FontWeight.w600),
                 ),
                 Text(
                   _selectedFile != null
                       ? '${_selectedFile!.pageCount} PAGES TOTAL'
                       : 'TAP BROWSE TO SELECT DOCUMENT',
-                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                  style:
+                      EditorialTokens.metadata(color: EditorialTokens.inkMuted),
                 ),
               ],
             ),
@@ -448,7 +461,8 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
             const SizedBox(height: 20),
             Text(
               'No Document Selected',
-              style: EditorialTokens.titleMedium().copyWith(fontWeight: FontWeight.w600),
+              style: EditorialTokens.titleMedium()
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Text(
@@ -493,10 +507,13 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFFBF1EE) : EditorialTokens.paper,
+              color:
+                  isSelected ? const Color(0xFFFBF1EE) : EditorialTokens.paper,
               borderRadius: BorderRadius.circular(EditorialTokens.r4),
               border: Border.all(
-                color: isSelected ? EditorialTokens.primary : EditorialTokens.border,
+                color: isSelected
+                    ? EditorialTokens.primary
+                    : EditorialTokens.border,
                 width: isSelected ? 1.5 : EditorialTokens.hairline,
               ),
               boxShadow: [
@@ -516,13 +533,17 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                       Icon(
                         Icons.description_outlined,
                         size: 32,
-                        color: isSelected ? EditorialTokens.primary : EditorialTokens.inkSecondary,
+                        color: isSelected
+                            ? EditorialTokens.primary
+                            : EditorialTokens.inkSecondary,
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'P. ${index + 1}',
                         style: EditorialTokens.metadataStrong(
-                          color: isSelected ? EditorialTokens.primary : EditorialTokens.ink,
+                          color: isSelected
+                              ? EditorialTokens.primary
+                              : EditorialTokens.ink,
                         ),
                       ),
                     ],
@@ -533,14 +554,16 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                     top: 6,
                     right: 6,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 2),
                       decoration: BoxDecoration(
                         color: EditorialTokens.primary,
                         borderRadius: BorderRadius.circular(EditorialTokens.r2),
                       ),
                       child: Text(
                         'REMOVE',
-                        style: EditorialTokens.metadata(color: Colors.white).copyWith(
+                        style: EditorialTokens.metadata(color: Colors.white)
+                            .copyWith(
                           fontSize: 8,
                           letterSpacing: 0.5,
                         ),
@@ -581,12 +604,15 @@ class _DeletePagesScreenState extends ConsumerState<DeletePagesScreen> {
                 Text(
                   '$selCount MARKED FOR REMOVAL',
                   style: EditorialTokens.metadataStrong(
-                    color: selCount > 0 ? EditorialTokens.primary : EditorialTokens.inkMuted,
+                    color: selCount > 0
+                        ? EditorialTokens.primary
+                        : EditorialTokens.inkMuted,
                   ),
                 ),
                 Text(
                   '${total - selCount} PAGES REMAINING',
-                  style: EditorialTokens.metadata(color: EditorialTokens.inkMuted),
+                  style:
+                      EditorialTokens.metadata(color: EditorialTokens.inkMuted),
                 ),
               ],
             ),
